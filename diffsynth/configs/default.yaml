@@ -1,0 +1,28 @@
+dataset_base_path: ""        # Base path of the dataset. (Required)
+dataset_metadata_path: null  # Path to the metadata file of the dataset.
+max_pixels: 921600           # Maximum number of pixels per frame, used for dynamic resolution.
+height: null                 # Height of images or videos. Leave empty for dynamic resolution.
+width: null                  # Width of images or videos. Leave empty for dynamic resolution.
+num_frames: 81               # Number of frames per video. Frames are sampled from the video prefix.
+data_file_keys: "image,video" # Data file keys in the metadata. Comma-separated.
+dataset_repeat: 1            # Number of times to repeat the dataset per epoch.
+model_paths: null            # Paths to load models. In JSON format.
+model_id_with_origin_paths: null # Model ID with origin paths, comma-separated.
+learning_rate: 0.0001        # Learning rate.
+num_epochs: 1                # Number of epochs.
+output_path: "./models"      # Output save path.
+remove_prefix_in_ckpt: "pipe.dit." # Remove prefix in ckpt.
+trainable_models: null       # Models to train, e.g., dit, vae, text_encoder.
+lora_base_model: null        # Which model LoRA is added to.
+lora_target_modules: "q,k,v,o,ffn.0,ffn.2" # Which layers LoRA is added to.
+lora_rank: 32                # Rank of LoRA.
+lora_checkpoint: null        # Path to the LoRA checkpoint. If provided, LoRA will be loaded from this checkpoint.
+extra_inputs: null           # Additional model inputs, comma-separated.
+use_gradient_checkpointing_offload: false # Whether to offload gradient checkpointing to CPU memory.
+gradient_accumulation_steps: 1 # Gradient accumulation steps.
+max_timestep_boundary: 1.0   # Max timestep boundary (for mixed models).
+min_timestep_boundary: 0.0   # Min timestep boundary (for mixed models).
+find_unused_parameters: false # Whether to find unused parameters in DDP.
+save_steps: null             # Number of checkpoint saving intervals. If null, saves every epoch.
+dataset_num_workers: 0       # Number of workers for data loading.
+weight_decay: 0.01           # Weight decay.
