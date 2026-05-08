@@ -139,10 +139,8 @@ class SelfAttention(nn.Module):
         
         self.attn = AttentionModule(self.num_heads)
 
-
-        if not self.no_rope_add:
-            self.all_info_embedding = nn.Linear(48, self.head_dim)
-            self.all_info_embedding_gate = nn.Parameter(torch.full((self.head_dim//2,), 0.0)) 
+        self.all_info_embedding = nn.Linear(48, self.head_dim)
+        self.all_info_embedding_gate = nn.Parameter(torch.full((self.head_dim//2,), 0.0)) 
 
     
     def forward(self, x, freqs, all_info):
@@ -167,6 +165,9 @@ class SelfAttention(nn.Module):
 
         if self.no_rope_add:
             print("SelfAttention: No RoPE add")
+            #dummy trick
+            q = q + torch.sum(self.all_info_embedding(all_info.to(self.all_info_embedding.weight.dtype)))*0 + torch.sum(self.all_info_embedding_gate)*0
+
         else:
             all_info_freqs = self.all_info_embedding(all_info.to(self.all_info_embedding.weight.dtype))
             gate = self.all_info_embedding_gate
