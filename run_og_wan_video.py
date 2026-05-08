@@ -8,21 +8,6 @@ load_dotenv()
 from diffsynth_og import save_video
 from diffsynth_og.pipelines.wan_video_new import WanVideoPipeline, ModelConfig
 
-# pipe = WanVideoPipeline.from_pretrained(
-#     torch_dtype=torch.bfloat16,
-#     device="cuda",
-#     model_configs=[
-#         # ModelConfig(path="/data2/saikiran.tedla/hdrvideo/diff/models/Wan-AI/Wan2.1-T2V-1.3B/diffusion_pytorch_model.safetensors", origin_file_pattern="diffusion_pytorch_model*.safetensors", offload_device="cpu", skip_download=True),
-#         # ModelConfig(path="/data2/saikiran.tedla/hdrvideo/diff/models/Wan-AI/Wan2.1-T2V-1.3B/Wan2.1_VAE.pth", origin_file_pattern="models_t5_umt5-xxl-enc-bf16.pth", offload_device="cpu", skip_download=True),
-#         # ModelConfig(path="/data2/saikiran.tedla/hdrvideo/diff/models/Wan-AI/Wan2.1-T2V-1.3B/models_t5_umt5-xxl-enc-bf16.pth", origin_file_pattern="Wan2.1_VAE.pth", offload_device="cpu", skip_download=True),
-       
-#         ModelConfig(model_id="Wan-AI/Wan2.2-TI2V-5B", origin_file_pattern="diffusion_pytorch_model*.safetensors", offload_device="cpu"), #skip_download=True),
-#         ModelConfig(model_id="Wan-AI/Wan2.2-TI2V-5B", origin_file_pattern="models_t5_umt5-xxl-enc-bf16.pth", offload_device="cpu"), #skip_download=True),
-#         ModelConfig(model_id="Wan-AI/Wan2.2-TI2V-5B", origin_file_pattern="Wan2.1_VAE.pth", offload_device="cpu"), #skip_download=True),
-  
-#     ],
-#     use_usp=False
-# )
 
 pipe = WanVideoPipeline.from_pretrained(
     torch_dtype=torch.bfloat16,
@@ -36,62 +21,6 @@ pipe = WanVideoPipeline.from_pretrained(
 )
 
 pipe.enable_vram_management()
-
-#prompts = [{"name": "brighter.mp4", "prompt": "A puppy running over the grass in slow motion. The puppy has brown-yellow fur, upright ears, and looks focused and joyful. The scene gradually becomes brighter over time, as if the exposure is slowly increasing frame by frame."},
-#           {"name": "darker.mp4", "prompt": "A puppy running over the grass in slow motion. The puppy has brown-yellow fur, upright ears, and looks focused and joyful. The scene gradually becomes darker over time, as if the exposure is slowly decreasing frame by frame."}]
-# prompts = [{
-#     "name": "brighter.mp4",
-#         "prompt": (
-#         "A puppy running over the grass in slow motion. "
-#         "The first frames appear dim and underexposed, with muted colors and low contrast. "
-#         "As the video progresses, the scene becomes dramatically brighter, ending in intense, high-exposure lighting "
-#         "with blown-out highlights, washed-out whites, and strong glare from the sun."
-#     )
-# },
-# {
-#     "name": "brighter_stil.mp4",
-#         "prompt": (
-#         "A puppy sitting still on the grass in slow motion. "
-#         "The first frames appear dim and underexposed, with muted colors and low contrast. "
-#         "As the video progresses, the scene becomes dramatically brighter, ending in intense, high-exposure lighting "
-#         "with blown-out highlights, washed-out whites, and strong glare from the sun."
-#     )
-# },
-#   {"name": "spotlight_brightening.mp4",
-#   "prompt": (
-#     "A single performer standing on a dark stage. "
-#     "The scene begins almost completely dark, with only faint outlines visible. "
-#     "Over time, powerful stage spotlights turn on and intensify, "
-#     "flooding the stage with extremely bright light, causing strong glare, "
-#     "lens flare, and blown-out highlights by the final frames."
-#   ),
-#   },{
-#     "name": "tunnel_exit.mp4",
-#   "prompt": (
-#     "A camera moving through a dark tunnel toward an exit. "
-#     "The interior appears dim and underexposed. "
-#     "As the camera approaches the tunnel opening, "
-#     "intense sunlight pours in, rapidly increasing brightness until "
-#     "the exterior becomes extremely bright and partially overexposed."
-#   ),
-#     },{
-#     "name": "sunrise_city.mp4",
-#   "prompt": (
-#     "A static shot of a city skyline before sunrise. "
-#     "The scene starts very dark with silhouettes of buildings. "
-#     "As the sun rises, the sky rapidly brightens, flooding the scene with "
-#     "intense morning light, increasing exposure and washing out the sky "
-#     "by the end of the sequence."
-#   ),
-#     },{
-#     "name": "lights_on.mp4",
-#   "prompt": (
-#     "A dimly lit room with furniture barely visible. "
-#     "Suddenly, the lights switch on and continue to brighten, "
-#     "making the room extremely bright with flat lighting and clipped highlights."
-#   )
-# }   
-# ]
 
 
 prompts = [
@@ -202,26 +131,3 @@ for item in prompts:
     )
     save_video(video, item["name"], fps=15, quality=5)
     print(f"Saved video: {item['name']}")
-
-# Image-to-video
-# from PIL import Image
-# input_image = Image.open("/data2/saikiran.tedla/hdrvideo/diff/dog.jpg").resize((1248, 704))
-# video = pipe(
-#     prompt="make the exposure darker over time",
-#     negative_prompt="色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
-#     seed=0, tiled=False,
-#     height=704, width=1248,
-#     input_image=input_image,
-#     num_frames=17,
-# )
-# save_video(video, "darker.mp4", fps=15, quality=5)
-
-# video = pipe(
-#     prompt="make the lighting brighter over time",
-#     negative_prompt="色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
-#     seed=0, tiled=False,
-#     height=704, width=1248,
-#     input_image=input_image,
-#     num_frames=17,
-# )
-#save_video(video, "brighter.mp4", fps=15, quality=5)
