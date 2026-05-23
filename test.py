@@ -50,6 +50,14 @@ def validate(val_dataloader, model, accelerator, dataset, args):
                 condition_video = data["input_video"]
                 unwrapped_model = accelerator.unwrap_model(model)
                 import numpy as np
+                input_exposures = data["exposures"]
+                if all(e >= 0 for e in input_exposures):
+                    generate_exposures = (0, 4, 8)
+                elif all(e <= 0 for e in input_exposures):
+                    generate_exposures = (-8, -4, 0)
+                else:
+                    generate_exposures = (-4, 0, 4)
+
                 outputs = unwrapped_model.pipe(
                     prompt=data["prompt"],
                     #negative_prompt="色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
@@ -60,8 +68,8 @@ def validate(val_dataloader, model, accelerator, dataset, args):
                     seed=1, tiled=False,
                     cfg_scale=1.0,
                     encoder_decoder_mode=unwrapped_model.encoder_decoder_mode,
-                    exposures = data["exposures"],
-                    generate_exposures = (-4, 0, 4),
+                    exposures = input_exposures,
+                    generate_exposures = generate_exposures,
                     use_vae_ea=unwrapped_model.use_vae_ea,
                 )
                 out_hdr_video = rearrange(outputs["hdr_video"], 'b c t h w -> b t c h w')
@@ -79,7 +87,7 @@ if __name__ == "__main__":
 
     val_dataset = VideoDataset(
         base_path="/data2/saikiran.tedla/hdrvideo/diff/evaluations/stuttgart",
-        out_path = "/data2/saikiran.tedla/hdrvideo/diff/evaluations/ablatel2_stuttgart",
+        out_path = "/data2/saikiran.tedla/hdrvideo/diff/evaluations/oursmay21_stuttgart",
         main_data_operator=VideoDataset.default_video_operator(
             num_frames=17,
             max_pixels=args.max_pixels,

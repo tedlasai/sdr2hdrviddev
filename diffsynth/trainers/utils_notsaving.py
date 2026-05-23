@@ -370,148 +370,154 @@ class ModelLogger:
 def validate(val_dataloader, model, model_logger, epoch_id, accelerator, dataset, args):
     skip_val = False #debugging thing
     max_value = 16.0
-    out_metrics,data_gathered,outputs_gathered = None, None, None
-    saves = 0
-    for step, data in enumerate(tqdm(val_dataloader, desc="Validation", disable=not accelerator.is_local_main_process)):
-        if skip_val:
-            break
-        with accelerator.accumulate(model):
-            if dataset.load_from_cache:
-                loss = model({}, inputs=data)
-            else:
-                condition_video = data["input_video"]
-                exposures = data["exposures"]
-                unwrapped_model = accelerator.unwrap_model(model)
-                import numpy as np
-                outputs = unwrapped_model.pipe(
-                    prompt=data["prompt"],
-                    #negative_prompt="色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
-                    condition_video=condition_video, 
-                    exposures=exposures,
-                    height = args.height,
-                    width = args.width,
-                    num_inference_steps=50,
-                    seed=1, tiled=False,
-                    cfg_scale=1.0,
-                    encoder_decoder_mode=unwrapped_model.encoder_decoder_mode,
-                    input_type = data["input_type"]
-                )
-                unwrapped_model.pipe.scheduler.set_timesteps(1000, training=True) #reset timesteps after inference
 
+    eval_modes = [
+        ("default",  (-4, 0, 4)),
+        ("darken",   (-8, -4, 0)),
+        ("brighten", (0, 4, 8)),
+    ]
 
-        from utils import get_psnr_fn, get_ssim_fn, get_lpips_fn, compute_all_metrics, average_metrics, flatten_dict
+    for eval_mode, viz_exposures in eval_modes:
+        if hasattr(dataset, 'set_predict_mode'):
+            dataset.set_predict_mode(eval_mode)
 
-        
-        outputs["dummy_string"] = "dummy" #add string to outputs to make it match data (this makes gathering same across both)
-        torch.cuda.empty_cache() #try to free up memory before gathering, this is crucial to avoid OOMs during validation
-        data_gathered = accelerator.gather_for_metrics((data,), use_gather_object=False)
-        outputs_gathered = accelerator.gather_for_metrics((outputs,), use_gather_object=False)
-        
+        out_metrics, data_gathered, outputs_gathered = None, None, None
+        saves = 0
 
-        #data, outputs = accelerator.gather_for_metrics((data, outputs), use_gather_object=True)
-        if accelerator.is_main_process:
-            for i in range(len(data_gathered)):
-                device = outputs_gathered[0]["hdr_video"].device
+        for step, data in enumerate(tqdm(val_dataloader, desc=f"Validation [{eval_mode}]", disable=not accelerator.is_local_main_process)):
+            if skip_val:
+                break
+            with accelerator.accumulate(model):
+                if dataset.load_from_cache:
+                    loss = model({}, inputs=data)
+                else:
+                    condition_video = data["input_video"]
+                    exposures = data["exposures"]
+                    unwrapped_model = accelerator.unwrap_model(model)
+                    import numpy as np
+                    outputs = unwrapped_model.pipe(
+                        prompt=data["prompt"],
+                        #negative_prompt="色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
+                        condition_video=condition_video,
+                        exposures=exposures,
+                        height=args.height,
+                        width=args.width,
+                        num_inference_steps=50,
+                        seed=1, tiled=False,
+                        cfg_scale=1.0,
+                        encoder_decoder_mode=unwrapped_model.encoder_decoder_mode,
+                        input_type=data["input_type"]
+                    )
+                    unwrapped_model.pipe.scheduler.set_timesteps(1000, training=True) #reset timesteps after inference
 
-                if out_metrics is None:
-                    psnr_fn = get_psnr_fn(device)
+            from utils import get_psnr_fn, get_ssim_fn, get_lpips_fn, compute_all_metrics, average_metrics, flatten_dict
 
-                    metrics = {
-                        "low":  {"psnr": psnr_fn},# "ssim": ssim_fn},#, "lpips": lpips_fn},
-                        "mid":  {"psnr": psnr_fn},# "ssim": ssim_fn},#, "lpips": lpips_fn},
-                        "high": {"psnr": psnr_fn},# "ssim": ssim_fn},#, "lpips": lpips_fn},
-                        "hdr":  {"psnr": psnr_fn},# "ssim": ssim_fn},#, "lpips": lpips_fn},
-                        "combined":  {"psnr": psnr_fn},# "ssim": ssim_fn},
-                    }
-                    out_metrics = {
-                    t: {m: torch.empty(0, device=device) for m in ["psnr"]}
-                    for t in ["low", "mid", "high", "hdr", "combined"]
-                }
-                    
-                data = data_gathered[i]
-                outputs = outputs_gathered[i]
-                out_dir = model_logger.output_path / "../" / "val_videos"
-                out_dir.mkdir(parents=True, exist_ok=True)
-                
-                out_hdr_video = outputs["hdr_video"].to(device)
-                out_combined_video = outputs["combined_video"].to(device)
-                frames_per_exposure = data["bracket_video"].shape[0] // data["exposures"].shape[0]
-                in_crf_video = torch.from_numpy(data["bracket_video"][0*frames_per_exposure:1*frames_per_exposure]).unsqueeze(0).to(device)/255 #This scale feels funky here
-                gt_hdr_video = torch.from_numpy(data["hdr_video"]).unsqueeze(0).to(device)
-                gt_combined_video = torch.from_numpy(data["bracket_video"]).unsqueeze(0).to(device)/255 #This scale feels funky here
-                in_crf_video = rearrange(in_crf_video, 'b t h w c -> b t c h w')
-                gt_hdr_video = rearrange(gt_hdr_video, 'b t h w c -> b t c h w') 
-                gt_combined_video = rearrange(gt_combined_video, 'b t h w c -> b t c h w')
-                out_hdr_video = rearrange(out_hdr_video, 'b c t h w -> b t c h w')
-                out_combined_video = rearrange(out_combined_video, 'b c t h w -> b t c h w')
-                normalized_out_hdr_video = out_hdr_video.to(torch.float32)/max_value
-                normalized_gt_hdr_video = gt_hdr_video.to(torch.float32)/max_value
+            outputs["dummy_string"] = "dummy" #add string to outputs to make it match data (this makes gathering same across both)
+            torch.cuda.empty_cache() #try to free up memory before gathering, this is crucial to avoid OOMs during validation
+            data_gathered = accelerator.gather_for_metrics((data,), use_gather_object=False)
+            outputs_gathered = accelerator.gather_for_metrics((outputs,), use_gather_object=False)
 
-                from utils import generate_multi_exposure_video
-                out_multi_exposure_video = generate_multi_exposure_video(normalized_out_hdr_video*max_value, exposures=(-4, 0, 4))
-                gt_multi_exposure_video = generate_multi_exposure_video(normalized_gt_hdr_video*max_value, exposures=(-4, 0, 4))
+            if accelerator.is_main_process:
+                for i in range(len(data_gathered)):
+                    device = outputs_gathered[0]["hdr_video"].device
 
-                # ---- delete all outputs from last epoch on disk ----
-                if epoch_id >= 1:
-                    import shutil, glob, os
-                    prev_epoch = epoch_id
-                    for f in glob.glob(str(out_dir / f"*epoch-{prev_epoch}_item-*.mp4")):
-                        try: os.remove(f)
-                        except FileNotFoundError: pass
-                    for root in ["low_gt","mid_gt","high_gt","combined_gt","low_pred","mid_pred","high_pred","combined_pred","hdrnorm_gt","hdrnorm_pred","hdr_gt","hdr_pred"]:
-                        for p in glob.glob(str(out_dir / root / f"*epoch-{prev_epoch}_item-*")):
-                            shutil.rmtree(p, ignore_errors=True)
+                    if out_metrics is None:
+                        psnr_fn = get_psnr_fn(device)
+                        metrics = {
+                            "low":      {"psnr": psnr_fn},
+                            "mid":      {"psnr": psnr_fn},
+                            "high":     {"psnr": psnr_fn},
+                            "hdr":      {"psnr": psnr_fn},
+                            "combined": {"psnr": psnr_fn},
+                        }
+                        out_metrics = {
+                            t: {m: torch.empty(0, device=device) for m in ["psnr"]}
+                            for t in ["low", "mid", "high", "hdr", "combined"]
+                        }
 
-                # ---- exposure map ----
-                exposures = [("low", 0), ("mid", 1), ("high", 2)]
-                save_ldr = lambda tensor, rel: output_ldr_video(tensor, str(out_dir / rel), channel_order="NCHW")
+                    data = data_gathered[i]
+                    outputs = outputs_gathered[i]
+                    out_dir = model_logger.output_path / "../" / "val_videos" / eval_mode
+                    out_dir.mkdir(parents=True, exist_ok=True)
 
-                for b in range(normalized_out_hdr_video.shape[0]):
+                    out_hdr_video = outputs["hdr_video"].to(device)
+                    out_combined_video = outputs["combined_video"].to(device)
+                    frames_per_exposure = data["bracket_video"].shape[0] // data["exposures"].shape[0]
+                    in_crf_video = torch.from_numpy(data["bracket_video"][0*frames_per_exposure:1*frames_per_exposure]).unsqueeze(0).to(device)/255 #This scale feels funky here
+                    gt_hdr_video = torch.from_numpy(data["hdr_video"]).unsqueeze(0).to(device)
+                    gt_combined_video = torch.from_numpy(data["bracket_video"]).unsqueeze(0).to(device)/255 #This scale feels funky here
+                    in_crf_video = rearrange(in_crf_video, 'b t h w c -> b t c h w')
+                    gt_hdr_video = rearrange(gt_hdr_video, 'b t h w c -> b t c h w')
+                    gt_combined_video = rearrange(gt_combined_video, 'b t h w c -> b t c h w')
+                    out_hdr_video = rearrange(out_hdr_video, 'b c t h w -> b t c h w')
+                    out_combined_video = rearrange(out_combined_video, 'b c t h w -> b t c h w')
+                    normalized_out_hdr_video = out_hdr_video.to(torch.float32)/max_value
+                    normalized_gt_hdr_video = gt_hdr_video.to(torch.float32)/max_value
 
-                    if gt_multi_exposure_video[b].shape != out_multi_exposure_video[b].shape:
-                        [compute_all_metrics(gt_multi_exposure_video[b, idx], out_multi_exposure_video[b, idx,:gt_multi_exposure_video[b, idx].shape[0]], name, metrics, out_metrics) for name, idx in exposures]
-                        [compute_all_metrics(normalized_gt_hdr_video[b], normalized_out_hdr_video[b,:normalized_gt_hdr_video[b].shape[0]], "hdr", metrics, out_metrics)]
-                    else:
-                        # ----- metrics (now fully one-liner) -----
-                        [compute_all_metrics(gt_multi_exposure_video[b, idx], out_multi_exposure_video[b, idx], name, metrics, out_metrics) for name, idx in exposures] + \
-                        [compute_all_metrics(normalized_gt_hdr_video[b], normalized_out_hdr_video[b], "hdr", metrics, out_metrics)] + \
-                        [compute_all_metrics(gt_combined_video[b][gt_combined_video.shape[1]//4:], out_combined_video[b], "combined", metrics, out_metrics)]
-            
+                    from utils import generate_multi_exposure_video
+                    out_multi_exposure_video = generate_multi_exposure_video(normalized_out_hdr_video*max_value, exposures=viz_exposures)
+                    gt_multi_exposure_video = generate_multi_exposure_video(normalized_gt_hdr_video*max_value, exposures=viz_exposures)
 
+                    # ---- delete all outputs from last epoch on disk ----
+                    if epoch_id >= 1:
+                        import shutil, glob, os
+                        prev_epoch = epoch_id
+                        for f in glob.glob(str(out_dir / f"*epoch-{prev_epoch}_item-*.mp4")):
+                            try: os.remove(f)
+                            except FileNotFoundError: pass
+                        for root in ["low_gt","mid_gt","high_gt","combined_gt","low_pred","mid_pred","high_pred","combined_pred","hdrnorm_gt","hdrnorm_pred","hdr_gt","hdr_pred"]:
+                            for p in glob.glob(str(out_dir / root / f"*epoch-{prev_epoch}_item-*")):
+                                shutil.rmtree(p, ignore_errors=True)
 
+                    # ---- exposure map ----
+                    exp_labels = [("low", 0), ("mid", 1), ("high", 2)]
+                    save_ldr = lambda tensor, rel: output_ldr_video(tensor, str(out_dir / rel), channel_order="NCHW")
 
-                    # ----- videos (fully one-liner too) -----
-                    [save_ldr(gt_multi_exposure_video[b, idx], f"{name}_orig_epoch-{epoch_id+1}_item-{saves}.mp4") for name, idx in exposures] 
-                    [save_ldr(gt_combined_video[b], f"gt_combined_epoch-{epoch_id+1}_item-{saves}.mp4")] 
-                    [save_ldr(out_multi_exposure_video[b, idx], f"{name}_pred_epoch-{epoch_id+1}_item-{saves}.mp4") for name, idx in exposures] 
-                    save_ldr(out_combined_video[b], f"out_combined_epoch-{epoch_id+1}_item-{saves}.mp4")
-                    save_ldr(in_crf_video[b], f"input_crf_epoch-{epoch_id+1}_item-{saves}.mp4")
-                    save_ldr(normalized_gt_hdr_video[b],  f"hdrnorm_gt_epoch-{epoch_id+1}_item-{saves}.mp4")
-                    save_ldr(normalized_out_hdr_video[b], f"hdrnorm_pred_epoch-{epoch_id+1}_item-{saves}.mp4")
+                    for b in range(normalized_out_hdr_video.shape[0]):
 
-                    # ----- frames (kept readable) -----
-                    for name, idx in exposures:
-                        output_frames(gt_multi_exposure_video[b, idx],  str(out_dir / f"{name}_gt" / f"gt_epoch-{epoch_id+1}_item-{saves}"),   mode="ldr", channel_order="NCHW")
-                    output_frames(gt_combined_video[b],                 str(out_dir / "combined_gt"  / f"gt_epoch-{epoch_id+1}_item-{saves}"),  mode="ldr", channel_order="NCHW")
-                    for name, idx in exposures:
-                        output_frames(out_multi_exposure_video[b, idx], str(out_dir / f"{name}_pred"/ f"ours_epoch-{epoch_id+1}_item-{saves}"), mode="ldr", channel_order="NCHW")
-                    output_frames(out_combined_video[b],                str(out_dir / "combined_pred"/ f"ours_epoch-{epoch_id+1}_item-{saves}"), mode="ldr", channel_order="NCHW")
-                    output_frames(normalized_gt_hdr_video[b],           str(out_dir / "hdrnorm_gt"   / f"gt_epoch-{epoch_id+1}_item-{saves}"),  mode="ldr", channel_order="NCHW")
-                    output_frames(normalized_out_hdr_video[b],          str(out_dir / "hdrnorm_pred" / f"ours_epoch-{epoch_id+1}_item-{saves}"),mode="ldr", channel_order="NCHW")
-                    output_frames(normalized_gt_hdr_video[b],           str(out_dir / "hdr_gt"       / f"gt_epoch-{epoch_id+1}_item-{saves}"),  mode="hdr", channel_order="NCHW")
-                    output_frames(normalized_out_hdr_video[b],          str(out_dir / "hdr_pred"     / f"ours_epoch-{epoch_id+1}_item-{saves}"),mode="hdr", channel_order="NCHW")
-                    output_frames(in_crf_video[b],                     str(out_dir / "input_crf"    / f"input_epoch-{epoch_id+1}_item-{saves}"), mode="ldr", channel_order="NCHW")
+                        if gt_multi_exposure_video[b].shape != out_multi_exposure_video[b].shape:
+                            [compute_all_metrics(gt_multi_exposure_video[b, idx], out_multi_exposure_video[b, idx,:gt_multi_exposure_video[b, idx].shape[0]], name, metrics, out_metrics) for name, idx in exp_labels]
+                            [compute_all_metrics(normalized_gt_hdr_video[b], normalized_out_hdr_video[b,:normalized_gt_hdr_video[b].shape[0]], "hdr", metrics, out_metrics)]
+                        else:
+                            # ----- metrics -----
+                            [compute_all_metrics(gt_multi_exposure_video[b, idx], out_multi_exposure_video[b, idx], name, metrics, out_metrics) for name, idx in exp_labels] + \
+                            [compute_all_metrics(normalized_gt_hdr_video[b], normalized_out_hdr_video[b], "hdr", metrics, out_metrics)] + \
+                            [compute_all_metrics(gt_combined_video[b][gt_combined_video.shape[1]//4:], out_combined_video[b], "combined", metrics, out_metrics)]
 
-                    saves += 1
-                del out_multi_exposure_video, gt_multi_exposure_video, normalized_out_hdr_video, normalized_gt_hdr_video, gt_combined_video, out_combined_video, in_crf_video
-                torch.cuda.empty_cache() #try to free up memory after saving each item, this is crucial to avoid OOMs during validation
+                        # ----- videos -----
+                        [save_ldr(gt_multi_exposure_video[b, idx], f"{name}_orig_epoch-{epoch_id+1}_item-{saves}.mp4") for name, idx in exp_labels]
+                        [save_ldr(gt_combined_video[b], f"gt_combined_epoch-{epoch_id+1}_item-{saves}.mp4")]
+                        [save_ldr(out_multi_exposure_video[b, idx], f"{name}_pred_epoch-{epoch_id+1}_item-{saves}.mp4") for name, idx in exp_labels]
+                        save_ldr(out_combined_video[b], f"out_combined_epoch-{epoch_id+1}_item-{saves}.mp4")
+                        save_ldr(in_crf_video[b], f"input_crf_epoch-{epoch_id+1}_item-{saves}.mp4")
+                        save_ldr(normalized_gt_hdr_video[b],  f"hdrnorm_gt_epoch-{epoch_id+1}_item-{saves}.mp4")
+                        save_ldr(normalized_out_hdr_video[b], f"hdrnorm_pred_epoch-{epoch_id+1}_item-{saves}.mp4")
 
-                #delete all outputs from last epoch on disk
-    if accelerator.is_main_process and not skip_val:
-        averaged_metrics = average_metrics(out_metrics)
-        flattened_metrics = flatten_dict(averaged_metrics)
-        accelerator.log(flattened_metrics)
-    
+                        # ----- frames -----
+                        for name, idx in exp_labels:
+                            output_frames(gt_multi_exposure_video[b, idx],  str(out_dir / f"{name}_gt" / f"gt_epoch-{epoch_id+1}_item-{saves}"),   mode="ldr", channel_order="NCHW")
+                        output_frames(gt_combined_video[b],                 str(out_dir / "combined_gt"  / f"gt_epoch-{epoch_id+1}_item-{saves}"),  mode="ldr", channel_order="NCHW")
+                        for name, idx in exp_labels:
+                            output_frames(out_multi_exposure_video[b, idx], str(out_dir / f"{name}_pred"/ f"ours_epoch-{epoch_id+1}_item-{saves}"), mode="ldr", channel_order="NCHW")
+                        output_frames(out_combined_video[b],                str(out_dir / "combined_pred"/ f"ours_epoch-{epoch_id+1}_item-{saves}"), mode="ldr", channel_order="NCHW")
+                        output_frames(normalized_gt_hdr_video[b],           str(out_dir / "hdrnorm_gt"   / f"gt_epoch-{epoch_id+1}_item-{saves}"),  mode="ldr", channel_order="NCHW")
+                        output_frames(normalized_out_hdr_video[b],          str(out_dir / "hdrnorm_pred" / f"ours_epoch-{epoch_id+1}_item-{saves}"),mode="ldr", channel_order="NCHW")
+                        output_frames(normalized_gt_hdr_video[b],           str(out_dir / "hdr_gt"       / f"gt_epoch-{epoch_id+1}_item-{saves}"),  mode="hdr", channel_order="NCHW")
+                        output_frames(normalized_out_hdr_video[b],          str(out_dir / "hdr_pred"     / f"ours_epoch-{epoch_id+1}_item-{saves}"),mode="hdr", channel_order="NCHW")
+                        output_frames(in_crf_video[b],                      str(out_dir / "input_crf"    / f"input_epoch-{epoch_id+1}_item-{saves}"), mode="ldr", channel_order="NCHW")
+
+                        saves += 1
+                    del out_multi_exposure_video, gt_multi_exposure_video, normalized_out_hdr_video, normalized_gt_hdr_video, gt_combined_video, out_combined_video, in_crf_video
+                    torch.cuda.empty_cache() #try to free up memory after saving each item, this is crucial to avoid OOMs during validation
+
+        if accelerator.is_main_process and not skip_val:
+            averaged_metrics = average_metrics(out_metrics)
+            flattened_metrics = {f"{eval_mode}/{k}": v for k, v in flatten_dict(averaged_metrics).items()}
+            accelerator.log(flattened_metrics)
+
+        del data_gathered, outputs_gathered, out_metrics
+        torch.cuda.empty_cache()
+
     
     del data_gathered, outputs_gathered, out_metrics #crucial to free up memory
     torch.cuda.empty_cache()

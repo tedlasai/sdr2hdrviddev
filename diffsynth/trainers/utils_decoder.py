@@ -1,6 +1,5 @@
 import imageio, os, torch, warnings, torchvision, argparse, json
 
-from hdrvideo.diff.utils import generate_multi_exposure_video
 from ..utils import ModelConfig
 from ..models.utils import load_state_dict
 from peft import LoraConfig, inject_adapter_in_model
@@ -17,7 +16,7 @@ from utils import vid_lpips
 
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-from utils import output_frames, output_ldr_video
+from utils import output_frames, output_ldr_video, generate_multi_exposure_video
 
 class ImageDataset(torch.utils.data.Dataset):
     def __init__(
@@ -674,7 +673,7 @@ def launch_training_task(
                         normalized_out_hdr_video = out_hdr_video.to(torch.float32)/max_val
                         normalized_gt_hdr_video = gt_hdr_video.to(torch.float32)/max_val
 
-                        from utils import generate_multi_exposure_video
+                        
                         arbitrary_scale_metrics = 16 #(if things  are normalized to 1 than this just lets me visualize correctlY)
                         out_multi_exposure_video = generate_multi_exposure_video(normalized_out_hdr_video*arbitrary_scale_metrics, exposures=(-4, 0, 4)) #using 16 here just for viz
                         gt_multi_exposure_video = generate_multi_exposure_video(normalized_gt_hdr_video*arbitrary_scale_metrics, exposures=(-4, 0, 4))
@@ -759,27 +758,43 @@ def launch_training_task(
                     loss_dict["long_video_loss"] = long_video_loss
                 elif loss_type == "hdr_multilpips":
                     eps = 1e-6
-                    scale = 16.0
+                    scale = 2**6
                     hdr_loss = torch.nn.functional.l1_loss(torch.log(outputs["hdr_video"]/scale + eps), torch.log(inputs["hdr_video"]/scale + eps))
                     #multi exposure losses
 
-                    normal_video_l1loss = torch.nn.functional.l1_loss(inputs["normal_video"], outputs["normal_video"])
-                    short_video_l1loss = torch.nn.functional.l1_loss(inputs["short_video"], outputs["short_video"])
-                    long_video_l1loss = torch.nn.functional.l1_loss(inputs["long_video"], outputs["long_video"])
-                    normal_video_lpips = vid_lpips(outputs["normal_video"], inputs["normal_video"], lpips_loss)
-                    short_video_lpips  = vid_lpips(outputs["short_video"],  inputs["short_video"],  lpips_loss)
-                    long_video_lpips   = vid_lpips(outputs["long_video"],   inputs["long_video"],   lpips_loss)
+                    out_multi_exposure_video = generate_multi_exposure_video(outputs["hdr_video"], exposures=(-6, 0, 6)) #using 16 here just for viz
+                    gt_multi_exposure_video = generate_multi_exposure_video(inputs["hdr_video"], exposures=(-6, 0, 6))
+
+                    # (B, E, T, C, H, W) -> (B, C, E*T, H, W) for vid_lpips
+                    B, E, C, T, H, W = out_multi_exposure_video.shape
+                    out_flat = out_multi_exposure_video.permute(0, 2, 1, 3, 4, 5).reshape(B, C, E * T, H, W)
+                    gt_flat = gt_multi_exposure_video.permute(0, 2, 1, 3, 4, 5).reshape(B, C, E * T, H, W)
+                    lpips_l = vid_lpips(out_flat, gt_flat, lpips_loss)
+
+                    # quick vis: dump out_flat and gt_flat for batch 0
+                    _out_vis = out_flat[0].detach().permute(1, 2, 3, 0).clamp(0, 1).float()
+                    _gt_vis  = gt_flat[0].detach().permute(1, 2, 3, 0).clamp(0, 1).float()
+                    # output_ldr_video(_out_vis, "./tmp/vis_out_flat.mp4", channel_order="NHWC")
+                    # output_ldr_video(_gt_vis,  "./tmp/vis_gt_flat.mp4",  channel_order="NHWC")
+                    # output_frames(_out_vis, "./tmp/vis_out_flat_frames", mode="ldr", channel_order="NHWC")
+                    # output_frames(_gt_vis,  "./tmp/vis_gt_flat_frames",  mode="ldr", channel_order="NHWC")
+
+                    # normal_video_l1loss = torch.nn.functional.l1_loss(inputs["normal_video"], outputs["normal_video"])
+                    # short_video_l1loss = torch.nn.functional.l1_loss(inputs["short_video"], outputs["short_video"])
+                    # long_video_l1loss = torch.nn.functional.l1_loss(inputs["long_video"], outputs["long_video"])
+                    #short_video_lpips  = vid_lpips(outputs["short_video"],  inputs["short_video"],  lpips_loss)
+                    #long_video_lpips   = vid_lpips(outputs["long_video"],   inputs["long_video"],   lpips_loss)
                     lpips_alpha = 1
-                    loss = hdr_loss + normal_video_l1loss + short_video_l1loss + long_video_l1loss + lpips_alpha*(normal_video_lpips + short_video_lpips + long_video_lpips)
+                    loss = hdr_loss + lpips_alpha*lpips_l
                     loss_dict["hdr_loss"] = hdr_loss
-                    loss_dict["normal_video_l1loss"] = normal_video_l1loss
-                    loss_dict["short_video_l1loss"] = short_video_l1loss
-                    loss_dict["long_video_l1loss"] = long_video_l1loss
-                    loss_dict["normal_video_lpips"] = normal_video_lpips
-                    loss_dict["short_video_lpips"] = short_video_lpips
-                    loss_dict["long_video_lpips"] = long_video_lpips
+                    loss_dict["lpips_l"] = lpips_l
 
                 accelerator.backward(loss)
+
+                for name, param in model.named_parameters():
+                    if param.requires_grad and param.grad is None:
+                        print(f"[unused param] {name}")
+
                 optimizer.step()
                 model_logger.on_step_end(accelerator, model, save_steps)
                 scheduler.step()

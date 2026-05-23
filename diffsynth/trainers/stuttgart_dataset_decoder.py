@@ -249,82 +249,47 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], spli
                                 (same order as exposures).
     """
 
+    # --- Pass 1: load all raw frames to get global max ---
+    raw_frames = []
+    for hdr_path in hdr_paths:
+        hdr_in = cv2.imread(hdr_path, cv2.IMREAD_ANYDEPTH | cv2.IMREAD_COLOR)[:, :, ::-1].copy()
+        hdr_in = hdr_in[10:-10, 10:-10, :]
+        raw_frames.append(hdr_in)
+
+    global_max = max(f.max() for f in raw_frames)
+
+    exposure_gap = 7
+    exposures = [-exposure_gap, 0, exposure_gap]
+
+    MAP_MAX = 0.8
+    fit_scale = MAP_MAX / (global_max * 2**exposures[0])  # global max → darkest bracket peaks at MAP_MAX
+
+    # --- Pass 2: apply frame_processor, compute brackets ---
     all_brackets = []
     hdr_images = []
-    ldr_w_crf_images = []
-    for i, hdr_path in enumerate(hdr_paths):
-        hdr_in = cv2.imread( hdr_path, cv2.IMREAD_ANYDEPTH | cv2.IMREAD_COLOR)[:, :, ::-1]
 
-        data_type = "stuttgart"
-        if data_type == "stuttgart":
-            hdr_in = hdr_in[10:-10, 10:-10, :]  #remove 10 pixel black border
-
-
-
-        min_exposure = np.log2(exposure_scale(hdr_in, 0.1, "under")) #np.log(1/ max_value)
-        max_exposure = np.log2(exposure_scale(hdr_in, 0.3, "over")) #np.log2(1/median_value)
-
-
-        min_in_exposure = np.log2(0.02 / hdr_in.mean())
-
-        #num_exposures
-
-        
-        
-
-        if i == 0:
-            exposures = [0, -4, 4]
-            #choose random number between 3 and 5
-            if split == "train":
-                num_exposures =3
-                if (min_exposure) < (max_exposure):
-                    center = np.random.uniform(min_exposure, max_exposure)
-                else:
-                    center = (min_exposure + max_exposure)//2 #this shouldn't be reached that often
-                
-                if num_exposures == 4:
-                    #either add -8 or +8
-                    if np.random.rand() < 0.5:
-                        exposures.append(-8)
-                    else:
-                        exposures.append(8)
-                elif num_exposures == 5:
-                    exposures.append(-8)
-                    exposures.append(8)
-            else:
-                print("IN VAL")
-                exposures = [0, -4, 4]
-                center = min_in_exposure
-
-
-                
-
-            random_scale = center
-
-        hdr_in = hdr_in * 2**(random_scale)
-
-            #cache[hdr_path] = hdr_in
-        hdr_in =np.clip(hdr_in, 0.0, 2**max(exposures)) #CLIP
+    hdr_in = hdr_in*fit_scale
+    for i, hdr_in in enumerate(raw_frames):
         hdr_in = frame_processor(hdr_in)
-
         hdr_images.append(hdr_in)
 
         ldr_images = []
         for ev in exposures:
-            # Scale exposure (2^EV), clip to [0,1]
             ldr = np.clip(hdr_in * (2.0 ** ev), 0.0, 1.0)
+            print("Using gamma in dataloader")
+            ldr = ldr ** (1/2.2) #use agamma
             ldr = (ldr * 255.0)
             ldr_images.append(ldr)
         all_brackets.append(ldr_images)
 
     hdr_images = np.array(hdr_images)  # shape (N, H, W, 3)
     all_brackets = np.array(all_brackets)  # shape (N, len(exposures), H, W, 3)
-    all_brackets = all_brackets.transpose(1,0,2,3,4)  # shape (len(exposures), N, H, W, 3)
+    all_brackets = all_brackets.transpose(1, 0, 2, 3, 4)  # shape (len(exposures), N, H, W, 3)
 
-    exposures = np.array(exposures)/4
+    exposures = np.array(exposures)
 
-    input_type = "crf" #DUMMY
-    input_video = all_brackets[0]  #DUMMY (shouldn't be used anyway)
+    input_type = "crf"  # DUMMY
+    input_video = all_brackets[0]  # DUMMY (shouldn't be used anyway)
 
     print("exposures at data loader", exposures)
 

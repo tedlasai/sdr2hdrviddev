@@ -1,11 +1,15 @@
 import cv2
 import numpy as np
 import os
-from torchmetrics.image import PeakSignalNoiseRatio
 import torch
+import torch.nn.functional as F
 from einops import rearrange
 import imageio.v3 as iio
+import imageio
 from pathlib import Path
+from torchmetrics.image import PeakSignalNoiseRatio
+from torchmetrics.image import StructuralSimilarityIndexMeasure
+from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 def output_frames(frames, out_folder, mode, channel_order='NHWC'):
     #force mode to be either 'hdr' or 'ldr'
     assert mode in ('hdr', 'ldr'), "mode must be either 'hdr' or 'ldr'"
@@ -14,17 +18,20 @@ def output_frames(frames, out_folder, mode, channel_order='NHWC'):
         frames = frames.permute(0, 2, 3, 1)  # N,C,H,W -> N,H,W,C
     N, H, W, C = frames.shape
     for i in range(N):
+
+            
         frame = frames[i].cpu().numpy()  # H, W, C
         frame = frame[:, :, ::-1]  # Convert RGB to BGR
         if mode == "hdr":
             filename = f"{out_folder}/frame_{i:04d}.exr"
+            if i == 0:
+                scale = 0.3 / np.mean(frame)
+            frame = frame * scale
         else:
             filename = f"{out_folder}/frame_{i:04d}.png"
             if frame.dtype != np.uint8:
                 frame = (np.clip(frame, 0, 1) * 255).astype(np.uint8)
         cv2.imwrite(filename, frame)  # Save as .hdr image
-
-import imageio
 
 def output_ldr_video(ldr_video, out_path, channel_order='NHWC', fps=24, quality=10, ffmpeg_params=None):
     os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
@@ -40,16 +47,13 @@ def output_ldr_video(ldr_video, out_path, channel_order='NHWC', fps=24, quality=
         writer.append_data(frame)
     writer.close()
 
-from torchmetrics.image import PeakSignalNoiseRatio
 def get_psnr_fn(device):
     psnr_metric = PeakSignalNoiseRatio(data_range=1.0, reduction='none', dim=(1, 2, 3)).to(device=device)
     return psnr_metric
 
-from torchmetrics.image import StructuralSimilarityIndexMeasure
 def get_ssim_fn(device):
     ssim_metric = StructuralSimilarityIndexMeasure(data_range=1.0, reduction='none').to(device=device)
     return ssim_metric
-from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 def get_lpips_fn(device):
     lpips_metric = LearnedPerceptualImagePatchSimilarity(net_type='vgg', reduction='none').to(device=device)
     return lpips_metric
@@ -107,23 +111,23 @@ def flatten_dict(d, parent_key="", sep="_"):
 def generate_multi_exposure_video(hdr_video: torch.Tensor, exposures=(-4, 0, 4)) -> torch.Tensor:
     """
     Args:
-        hdr_video: Tensor of shape (B, T, C, H, W), float, HDR or LDR in [0, 1+] range.
+        hdr_video: Tensor of shape (B, C, T, H, W), float, HDR or LDR in [0, 1+] range.
         exposures: Iterable of EV stops. Each exposure scales by 2**EV.
 
     Returns:
-        Tensor of shape (B, E, T, C, H, W) with values clamped to [0, 1].
+        Tensor of shape (B, E, C, T, H, W) with values clamped to [0, 1].
     """
     if hdr_video.ndim != 5:
-        raise ValueError(f"Expected (B, T, C, H, W), got {hdr_video.shape}")
+        raise ValueError(f"Expected (B, C, T, H, W), got {hdr_video.shape}")
 
-    B, T, C, H, W = hdr_video.shape
+    B, C, T, H, W = hdr_video.shape
     E = len(exposures)
 
     factors = torch.tensor(exposures, dtype=hdr_video.dtype, device=hdr_video.device)
     factors = (2.0 ** factors).view(1, E, 1, 1, 1, 1)  # (1, E, 1, 1, 1, 1)
 
     # Add exposure axis and scale
-    multi = hdr_video.unsqueeze(1) * factors  # (B, E, T, C, H, W)
+    multi = hdr_video.unsqueeze(1) * factors  # (B, E, C, T, H, W)
 
     # Clip to displayable range
     return multi.clamp(0.0, 1.0)
@@ -190,11 +194,6 @@ def weight_function(video: torch.Tensor, eps: float = 1e-6) -> torch.Tensor:
     w = torch.clamp(w, min=0.0)
     return w + eps
 
-import torch
-import torch.nn.functional as F
-
-import torch
-
 def merge_hdr_avg_linear_boost(
     normal_exposure, low_exposure, high_exposure,
     normal_radiance, low_radiance, high_radiance,
@@ -247,45 +246,30 @@ def merge_hdr(normal_exposure, low_exposure, high_exposure, normal_radiance, low
     hdr_image = numerator / denominator
     return hdr_image
 
-def process_bracketed_video(video):
-    #assert that video has 12 frames
-    assert video.shape[0] == 15, "Video must have 15 frames for bracketed HDR processing"
-    normal_exposure = video[0:5] #EV 0
-    low_exposure = video[5:10] #EV -4
-    high_exposure = video[10:15] #EV +4
+# def process_bracketed_video(video):
+#     #assert that video has 12 frames
+#     assert video.shape[0] == 15, "Video must have 15 frames for bracketed HDR processing"
+#     normal_exposure = video[0:5] #EV 0
+#     low_exposure = video[5:10] #EV -4
+#     high_exposure = video[10:15] #EV +4
 
-    normal_radiance = normal_exposure
-    low_radiance = low_exposure * (2 ** 4)  # EV -4
-    high_radiance = high_exposure * (2 ** -4)  # EV +4
+#     normal_radiance = normal_exposure
+#     low_radiance = low_exposure * (2 ** 4)  # EV -4
+#     high_radiance = high_exposure * (2 ** -4)  # EV +4
 
-    hdr_video = merge_hdr(normal_exposure,low_exposure,high_exposure, normal_radiance, low_radiance,high_radiance)
+#     hdr_video = merge_hdr(normal_exposure,low_exposure,high_exposure, normal_radiance, low_radiance,high_radiance)
 
-    return hdr_video
+#     return hdr_video
 
 def output_hdr_video(hdr_video, out_folder):
     os.makedirs(out_folder, exist_ok=True)
-    #write out each frame of hdr_video to path as .rad file
     N, H, W, C = hdr_video.shape
     for i in range(N):
         frame = hdr_video[i].cpu().numpy()  # H, W, C
         frame = frame[:, :, ::-1]  # Convert RGB to BGR
         filename = f"{out_folder}/frame_{i:04d}.hdr"
-        cv2.imwrite(filename, frame)  # Save as .hdr image
+        cv2.imwrite(filename, frame)
 
-
-def write_exposure_bracket(hdr_path, evs, out_dir_name="bracket"):
-    hdr_path = Path(hdr_path)
-    img = cv2.imread(hdr_path, cv2.IMREAD_UNCHANGED).astype(np.float32)[:,:,::-1]  # BGR to RGB
-
-    out_dir = hdr_path.parent / out_dir_name
-    out_dir.mkdir(exist_ok=True)
-
-    for ev in evs:
-        exposed = np.clip(img * (2.0 ** ev), 0.0, 1.0)
-        png = (exposed * 255).astype(np.uint8)
-        iio.imwrite(out_dir / f"{hdr_path.stem}_ev{ev:+.2f}.png", png)
-
-    return out_dir
 
 def write_mp4_avc1(frames: np.ndarray, output_file: str, fps: int = 30):
     """

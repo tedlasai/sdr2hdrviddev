@@ -109,9 +109,11 @@ class WanVideoVAEMergeDecoder(nn.Module):
         exposures = exposures.to(device=vids.device, dtype=vids.dtype).view(1, E, 1, 1, 1, 1)
 
         # LDR inputs
-        ldr = vids  # (B,E,3,T,H,W)
+        print("Ungamma in model")
+        ldr = vids ** (2.2)  # (B,E,3,T,H,W)
 
         # Radiance scaling (matches your convention: radiance = ldr * 2**(-EV))
+        print(f"exposures: {exposures}")
         radiance = ldr * (2.0 ** (-exposures))  # broadcast over B,C,T,H,W
 
         # exposure scalar channel for tokens
@@ -125,9 +127,9 @@ class WanVideoVAEMergeDecoder(nn.Module):
         if encoder_decoder_mode == "seperate_debevec":
             # keep your merge_hdr behavior (expects normal/low/high), but only valid if E==3
             assert E == 3, "seperate_debevec expects exactly 3 exposures"
-            low_idx = (exposures == -4).nonzero(as_tuple=True)[1].item()
+            low_idx = (exposures == -7).nonzero(as_tuple=True)[1].item()
             normal_idx = (exposures == 0).nonzero(as_tuple=True)[1].item()
-            high_idx = (exposures == 4).nonzero(as_tuple=True)[1].item()
+            high_idx = (exposures == 7).nonzero(as_tuple=True)[1].item()
             normal, low, high = vids[:, normal_idx], vids[:, low_idx], vids[:, high_idx]
             normal_r, low_r, high_r = radiance[:, normal_idx], radiance[:, low_idx], radiance[:, high_idx]
 

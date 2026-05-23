@@ -21,4 +21,5 @@ wandb
 /final_metrics_may_4
 /final_metrics_may_4_eval_output/
 /genvideos
+/data
 /tmp*

@@ -23,7 +23,7 @@ lora_rank: 32
 lora_checkpoint: null
 extra_inputs: "bracket_video"
 use_gradient_checkpointing_offload: false
-gradient_accumulation_steps: 4
+gradient_accumulation_steps: 8
 max_timestep_boundary: 1.0
 min_timestep_boundary: 0.0
 find_unused_parameters: false

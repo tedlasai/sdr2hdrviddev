@@ -1553,17 +1553,20 @@ class Decoder3d_38WithEA(Decoder3d_38):
     """
     Decoder3d_38 with ExposureAttentionBlocks after the middle blocks and after
     every upsample level. forward() takes an extra num_exposures kwarg (default 1 = no EA).
+    Set use_ea=False to skip creating the EA modules entirely (no parameters added).
     """
     def __init__(self, dim=128, z_dim=4, dim_mult=[1, 2, 4, 4], num_res_blocks=2,
                  attn_scales=[], temperal_upsample=[False, True, True], dropout=0.0,
-                 ea_num_heads=4):
+                 ea_num_heads=4, use_ea=True):
         super().__init__(dim, z_dim, dim_mult, num_res_blocks, attn_scales, temperal_upsample, dropout)
-        dims = [dim * u for u in [dim_mult[-1]] + dim_mult[::-1]]
-        self.ea_middle = ExposureAttentionBlock(dims[0], num_heads=ea_num_heads)
-        # One EA block per upsample level (each Up_ResidualBlock is a full level)
-        self.ea_upsamples = nn.ModuleList([
-            ExposureAttentionBlock(d, num_heads=ea_num_heads) for d in dims[1:]
-        ])
+        self.use_ea = use_ea
+        if use_ea:
+            dims = [dim * u for u in [dim_mult[-1]] + dim_mult[::-1]]
+            self.ea_middle = ExposureAttentionBlock(dims[0], num_heads=ea_num_heads)
+            # One EA block per upsample level (each Up_ResidualBlock is a full level)
+            self.ea_upsamples = nn.ModuleList([
+                ExposureAttentionBlock(d, num_heads=ea_num_heads) for d in dims[1:]
+            ])
 
     def forward(self, x, num_exposures=1, feat_cache=None, feat_idx=[0], first_chunk=False):
         # conv1
@@ -1587,8 +1590,8 @@ class Decoder3d_38WithEA(Decoder3d_38):
             else:
                 x = layer(x)
 
-        # EA at bottleneck
-        x = self.ea_middle(x, num_exposures)
+        if self.use_ea:
+            x = self.ea_middle(x, num_exposures)
 
         # upsamples — each element is one Up_ResidualBlock (a full level)
         for i, layer in enumerate(self.upsamples):
@@ -1596,7 +1599,8 @@ class Decoder3d_38WithEA(Decoder3d_38):
                 x = layer(x, feat_cache, feat_idx, first_chunk)
             else:
                 x = layer(x)
-            x = self.ea_upsamples[i](x, num_exposures)
+            if self.use_ea:
+                x = self.ea_upsamples[i](x, num_exposures)
 
         # head
         for layer in self.head:
@@ -1622,12 +1626,12 @@ class VideoVAE38_WithEA(VideoVAE38_):
     """
     def __init__(self, dim=160, z_dim=48, dec_dim=256, dim_mult=[1, 2, 4, 4],
                  num_res_blocks=2, attn_scales=[], temperal_downsample=[False, True, True],
-                 dropout=0.0, ea_num_heads=4):
+                 dropout=0.0, ea_num_heads=4, use_ea=True):
         super().__init__(dim, z_dim, dec_dim, dim_mult, num_res_blocks, attn_scales,
                          temperal_downsample, dropout)
         self.decoder = Decoder3d_38WithEA(
             dec_dim, z_dim, dim_mult, num_res_blocks, attn_scales,
-            self.temperal_upsample, dropout, ea_num_heads=ea_num_heads,
+            self.temperal_upsample, dropout, ea_num_heads=ea_num_heads, use_ea=use_ea,
         )
         self.upsampling_factor = 16
 

@@ -89,6 +89,7 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
                 attn_scales=old.attn_scales,
                 temperal_downsample=old.temperal_downsample,
                 ea_num_heads=ea_num_heads,
+                use_ea=use_vae_ea,
             ).to(dtype=torch.bfloat16)
             ea_model.load_state_dict(old.state_dict(), strict=False)
             self.pipe.vae.model = ea_model
@@ -185,14 +186,14 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
         # latents: (B, E, C, T', H', W') — stack all E exposures into batch dim for EA
         all_latents = latents[0].to(vae_device)  # (E, C, T', H', W') for B=1
         # Call VideoVAEWithEA_.decode directly so num_exposures reaches the EA block
-        with torch.no_grad():
-            raw = self.pipe.vae.model.decode(all_latents, self.pipe.vae.scale, num_exposures=E, tiled=tiled)
+        #with torch.no_grad():
+        raw = self.pipe.vae.model.decode(all_latents, self.pipe.vae.scale, num_exposures=E, tiled=tiled)
         raw = raw.clamp_(-1, 1).to(dtype=torch.float32)
         videos = [
             self.pipe.vae_output_to_video(raw[i:i+1], mode="tensor")
             for i in range(E)
         ]
-        hdr_video = self.pipe.merge_decoder(videos, exposures * 4, self.encoder_decoder_mode, mem_efficient=True)
+        hdr_video = self.pipe.merge_decoder(videos, exposures, self.encoder_decoder_mode, mem_efficient=True)
         combined_video = torch.cat(videos, dim=2)
         return {"hdr_video": hdr_video, "combined_video": combined_video}
 
@@ -203,6 +204,7 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
             bracket_video = self.pipe.preprocess_video( data["bracket_video"], min_value=0, max_value=1, in_max_value=255).to(self.pipe.device)
             encoded_latents = inputs["input_latents"]
         if self.use_vae_ea:
+            print("Using EA decoder")
             outputs = self._decode_with_vae_ea(encoded_latents, data["exposures"], tiled=inputs["tiled"])
         else:
             outputs = self.pipe.decode_latents_hdr_merge(encoded_latents, self.encoder_decoder_mode, data["exposures"], tiled=inputs["tiled"], device=self.pipe.device)

@@ -6,8 +6,8 @@ output_path: "./models/train/three_exposures_crfchanging"
 dataset_base_path: "/data2/saikiran.tedla/hdrvideo/diff/data/stuttgart" # Base path of the dataset
 dataset_metadata_path: null
 max_pixels: 921600
-height: 704 #512 #12 #512 #512 #704 #512
-width: 1280 #768 #768 #768 #768
+height: 512 #512 #12 #512 #512 #704 #512
+width: 768 #768 #768 #768 #768
 num_frames: 3
 data_file_keys: "image,video"
 dataset_repeat: 1
@@ -25,11 +25,11 @@ lora_checkpoint: null
 extra_inputs: "condition_video"
 use_gradient_checkpointing_offload: false
 use_gradient_checkpointing: true
-gradient_accumulation_steps: 8
+gradient_accumulation_steps: 5
 max_timestep_boundary: 1.0
 min_timestep_boundary: 0.0
 find_unused_parameters: false
 save_steps: null
 dataset_num_workers: 15
 weight_decay: 0.01
-ablation: "no_rope_add"
+#ablation: "no_rope_add"
