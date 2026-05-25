@@ -51,12 +51,7 @@ def validate(val_dataloader, model, accelerator, dataset, args):
                 unwrapped_model = accelerator.unwrap_model(model)
                 import numpy as np
                 input_exposures = data["exposures"]
-                if all(e >= 0 for e in input_exposures):
-                    generate_exposures = (0, 4, 8)
-                elif all(e <= 0 for e in input_exposures):
-                    generate_exposures = (-8, -4, 0)
-                else:
-                    generate_exposures = (-4, 0, 4)
+                generate_exposures = (-7, 0, 7)
 
                 outputs = unwrapped_model.pipe(
                     prompt=data["prompt"],
@@ -87,7 +82,7 @@ if __name__ == "__main__":
 
     val_dataset = VideoDataset(
         base_path="/data2/saikiran.tedla/hdrvideo/diff/evaluations/stuttgart",
-        out_path = "/data2/saikiran.tedla/hdrvideo/diff/evaluations/oursmay21_stuttgart",
+        out_path = "/data2/saikiran.tedla/hdrvideo/diff/evaluations/oursmay24_stuttgart",
         main_data_operator=VideoDataset.default_video_operator(
             num_frames=17,
             max_pixels=args.max_pixels,

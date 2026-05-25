@@ -237,8 +237,8 @@ def merge_hdr(normal_exposure, low_exposure, high_exposure, normal_radiance, low
     w_high = weight_function(high_exposure)
 
     #if pixel is clipped in low_exposure, set the weight to w_low very high
-    w_low[low_exposure >= 0.95] = 100
-    w_high[high_exposure <= 0.05] = 100
+    w_low[low_exposure >= 0.995] = 100
+    w_high[high_exposure <= 0.005] = 100
 
     numerator = (w_low * low_radiance) + (w_normal * normal_radiance) + (w_high * high_radiance)
     denominator = w_low + w_normal + w_high + 1e-8  # Avoid division by zero
@@ -305,27 +305,27 @@ import sys as _sys
 _metrics_dir = Path(__file__).resolve().parent / "metrics"
 if str(_metrics_dir) not in _sys.path:
     _sys.path.insert(0, str(_metrics_dir))
-from pu21 import PU21Encoder as _PU21Encoder  # noqa: E402
+#from pu21 import PU21Encoder as _PU21Encoder  # noqa: E402
 
 # Upper bound for scaling PU values into [0, 1] before the VAE (matches typical PU21 range).
-PU21_IN_MAX_VALUE = 600.0
-_pu21_default = _PU21Encoder("banding_glare")
+# PU21_IN_MAX_VALUE = 600.0
+# _pu21_default = _PU21Encoder("banding_glare")
 
 
-def pu21_encode_linear_video(video: torch.Tensor) -> torch.Tensor:
-    """Linear RGB (B, T, 3, H, W) in absolute/nits-like units -> PU21-encoded, same layout."""
-    device, dtype = video.device, video.dtype
-    arr = video.detach().float().cpu().numpy()
-    b, t, c, h, w = arr.shape
-    if c != 3:
-        raise ValueError("PU21 path expects 3 RGB channels")
-    out = np.empty((b, t, c, h, w), dtype=np.float32)
-    for bi in range(b):
-        for ti in range(t):
-            hwc = np.transpose(arr[bi, ti], (1, 2, 0))
-            pu = _pu21_default.encode(hwc).astype(np.float32)
-            out[bi, ti] = np.transpose(pu, (2, 0, 1))
-    return torch.from_numpy(out).to(device=device, dtype=dtype)
+# def pu21_encode_linear_video(video: torch.Tensor) -> torch.Tensor:
+#     """Linear RGB (B, T, 3, H, W) in absolute/nits-like units -> PU21-encoded, same layout."""
+#     device, dtype = video.device, video.dtype
+#     arr = video.detach().float().cpu().numpy()
+#     b, t, c, h, w = arr.shape
+#     if c != 3:
+#         raise ValueError("PU21 path expects 3 RGB channels")
+#     out = np.empty((b, t, c, h, w), dtype=np.float32)
+#     for bi in range(b):
+#         for ti in range(t):
+#             hwc = np.transpose(arr[bi, ti], (1, 2, 0))
+#             pu = _pu21_default.encode(hwc).astype(np.float32)
+#             out[bi, ti] = np.transpose(pu, (2, 0, 1))
+#     return torch.from_numpy(out).to(device=device, dtype=dtype)
 
 
 def pu21_decode_pu_video(video: torch.Tensor) -> torch.Tensor:

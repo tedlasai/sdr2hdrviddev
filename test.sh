@@ -2,7 +2,7 @@
 
 # Environment variables
 export PYTHONPATH="/data2/saikiran.tedla/hdrvideo/diff:$PYTHONPATH"
-export CUDA_VISIBLE_DEVICES=2,7
+export CUDA_VISIBLE_DEVICES=0
 export OPENCV_IO_ENABLE_OPENEXR=1
 export NCCL_P2P_LEVEL=2
 export NCCL_P2P_DISABLE=1

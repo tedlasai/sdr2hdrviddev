@@ -157,7 +157,7 @@ class LoadPNGVideo(DataProcessingOperator):
             img = self.frame_processor(img) #BGR to RGB
             imgs.append(img)
         
-        exposures = np.array([0, 0, -1, 1]) #I always used these exposures
+        exposures = np.array([0, -7, 0, 7])
         return {"input_video": np.stack(imgs), "exposures": exposures}
 
 class VideoDataset(torch.utils.data.Dataset):

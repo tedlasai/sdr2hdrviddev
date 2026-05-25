@@ -6,8 +6,8 @@ output_path: "./models/train/three_exposures_crfchanging"
 dataset_base_path: "/data2/saikiran.tedla/hdrvideo/diff/data/stuttgart" # Base path of the dataset
 dataset_metadata_path: null
 max_pixels: 921600
-height: 512 #512 #12 #512 #512 #704 #512
-width: 768 #768 #768 #768 #768
+height: 704 #512 #12 #512 #512 #704 #512
+width: 1280 #768 #768 #768 #768
 num_frames: 3
 data_file_keys: "image,video"
 dataset_repeat: 1
