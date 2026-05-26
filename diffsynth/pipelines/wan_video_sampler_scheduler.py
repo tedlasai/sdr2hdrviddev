@@ -4,7 +4,7 @@ import torch
 
 DEPENDENCY = {+8: +4, -8: -4, -12: -8, 12: +8, 0: 0, -16: -12, +16: +12}  # others have no dependency
 BASE_EXPOSURE = (0,)  # model generates -4, 0, +4 together; e=0 drives chunk scheduling
-FIRST_CHUNK = 5 # latent frames
+FIRST_CHUNK = 1 # latent frames
 NEXT_CHUNK = 3 # latent frames
 TEMPORAL_STRIDE = 4
 PREV_LATENT_FRAMES = 2 # frames of autoregressive context

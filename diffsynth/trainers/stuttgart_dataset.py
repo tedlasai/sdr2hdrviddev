@@ -267,16 +267,17 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
     # --- Compute sequence-level parameters from frame 0 ---
     hdr_0 = raw_frames[0]
     min_exposure = np.log2(exposure_scale(hdr_0, 0.3, "under"))
-    max_exposure = np.log2(exposure_scale(hdr_0, 0.3, "over"))
+    max_exposure = min_exposure
+    #max_exposure = np.log2(exposure_scale(hdr_0, 0.3, "over"))
     max_in_exposure = np.log2(0.7 / hdr_0.mean())
 
     if crf_aug == "random":
         if min_exposure < max_exposure:
             center = np.random.uniform(min_exposure, max_exposure)
         else:
-            center = (min_exposure + max_exposure) // 2
+            center = (min_exposure + max_exposure) / 2.0
     else:
-        center = max_in_exposure
+        center = min_exposure
 
     exposure_gap = 7
     exposures = [-exposure_gap, 0, exposure_gap]
@@ -388,10 +389,10 @@ class LoadHDRVideo(DataProcessingOperator):
         num_hdr_frames = (self.num_frames) // 3
         import random
         if self.crf_aug == "random":
-            num_hdr_frames = 17#7 # random.choice(num_frames_train)  #try 17 (5 latent frames per)
+            num_hdr_frames = 1#7 # random.choice(num_frames_train)  #try 17 (5 latent frames per)
 
         else:
-            num_hdr_frames = 17#7
+            num_hdr_frames = 1#7
 
         #num_hdr_frames += 4 #handle extend cases
 
@@ -477,13 +478,15 @@ class StuttgartDataset(torch.utils.data.Dataset):
         self.cached_data = {}
         self.load_from_cache = False
         self.split = split
+
+        self.OVERFITTING = False
         self.load_data_from_path()
     
             
     def load_data_from_path(self):
         self.data = []
 
-        #only val
+
         only_val = ["bistro_01", "bistro_02", "bistro_03", "showgirl_01", "showgirl_02", "smith_welding", "carousel_fireworks_02", "fireplace_01", "hdr_testimage"]
         for root, dirs, files in os.walk(self.base_path):
             if files == []:
@@ -510,8 +513,12 @@ class StuttgartDataset(torch.utils.data.Dataset):
                     "video": os.path.relpath(os.path.join(root, f), self.base_path),
                 })
 
-        if self.split == "val":
-            self.data = self.data[:]
+        #only val
+
+        if self.OVERFITTING:
+            #make train and val the same one video
+            self.data = [{"video": "/data2/saikiran.tedla/hdrvideo/diff/data/stuttgart/carousel_fireworks_02/carousel_fireworks_02_000936.exr"}]
+
 
 
     @staticmethod
@@ -553,6 +560,13 @@ class StuttgartDataset(torch.utils.data.Dataset):
         return data
 
     def __len__(self):
+        if self.OVERFITTING:
+            if self.split == "val":
+                return 1
+            elif self.split == "train":
+                return 500
+            else:
+                return 1
 
         if self.split == "val":
             return min(5, len(self.data))  # Use only last 20 samples for validation

@@ -89,7 +89,7 @@ def run_inference(model, args, input_dir, output_dir):
             cfg_scale=1.0,
             encoder_decoder_mode=model.encoder_decoder_mode,
             exposures=exposures,
-            generate_exposures=(-4, 0, 4),
+            generate_exposures=(-7, 0, 7),
             use_vae_ea=model.use_vae_ea,
         )
 

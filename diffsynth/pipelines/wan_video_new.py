@@ -117,7 +117,7 @@ class WanVideoPipeline(BasePipeline):
         #loss = torch.nn.functional.mse_loss(noise_pred.float(), training_target.float())
         #loss = loss * self.scheduler.training_weight(timesteps) #haven't updated
         #diffusion forcing loss
-        loss_type = "l1"
+        loss_type = "l2"
         if loss_type == "l1":
             loss = torch.abs(noise_pred.float() - training_target.float()).mean(dim=[0,1,3,4])
             loss = torch.mean(loss * self.scheduler.training_weight(timesteps).to(loss.device))
