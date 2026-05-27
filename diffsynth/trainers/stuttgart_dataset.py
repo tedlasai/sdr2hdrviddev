@@ -370,8 +370,9 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
     return data
 
 class LoadHDRVideo(DataProcessingOperator):
-    def __init__(self, num_frames=49, time_division_factor=4, time_division_remainder=1, frame_processor=lambda x: x, crf_aug=None, predict_mode="default"):
+    def __init__(self, num_frames=49, num_hdr_frames=17, time_division_factor=4, time_division_remainder=1, frame_processor=lambda x: x, crf_aug=None, predict_mode="default"):
         self.num_frames = num_frames
+        self.num_hdr_frames = num_hdr_frames
         self.time_division_factor = time_division_factor
         self.time_division_remainder = time_division_remainder
         # frame_processor is build in the video loader for high efficiency.
@@ -389,11 +390,7 @@ class LoadHDRVideo(DataProcessingOperator):
     #     return num_frames
         
     def __call__(self, data: str):
-        #get num_frames-1 next frames with same suffix 
-        #assert that num_frames is 3n
-        num_hdr_frames = 17 #7
-
-        #num_hdr_frames += 4 #handle extend cases
+        num_hdr_frames = self.num_hdr_frames
 
         # Some datasets are actually single-image sources (e.g. RawHDR stored as
         # individual EXRs). For those, repeat the same image across the requested
@@ -597,14 +594,14 @@ class StuttgartDataset(torch.utils.data.Dataset):
         base_path="",
         max_pixels=1920*1080, height=None, width=None,
         height_division_factor=16, width_division_factor=16,
-        num_frames=81, time_division_factor=4, time_division_remainder=1,
+        num_frames=81, num_hdr_frames=17, time_division_factor=4, time_division_remainder=1,
         crop_size_h=None, crop_size_w=None,
         crf_aug=None,
         predict_mode="default",
     ):
         return RouteByType(operator_map=[(str, ToAbsolutePath(base_path) >> RouteByExtensionName(operator_map=[
                 (("hdr", "exr"), LoadHDRVideo(
-                    num_frames, time_division_factor, time_division_remainder,
+                    num_frames, num_hdr_frames, time_division_factor, time_division_remainder,
                     frame_processor=ImageCropAndResize(height, width, max_pixels, height_division_factor, width_division_factor, crop_size_h=crop_size_h, crop_size_w=crop_size_w),
                     crf_aug=crf_aug,
                     predict_mode=predict_mode,

@@ -217,6 +217,7 @@ if __name__ == "__main__":
             height_division_factor=16,
             width_division_factor=16,
             num_frames=args.num_frames,
+            num_hdr_frames=args.num_hdr_frames,
             time_division_factor=4,
             time_division_remainder=1,
             crf_aug="random"
@@ -238,6 +239,7 @@ if __name__ == "__main__":
             height_division_factor=16,
             width_division_factor=16,
             num_frames=args.num_frames,
+            num_hdr_frames=args.num_hdr_frames,
             time_division_factor=4,
             time_division_remainder=1,
         ),

@@ -11,6 +11,7 @@ max_pixels: 921600           # Maximum number of pixels per frame, used for dyna
 height: null                 # Height of images or videos. Leave empty for dynamic resolution.
 width: null                  # Width of images or videos. Leave empty for dynamic resolution.
 num_frames: 81               # Number of frames per video. Frames are sampled from the video prefix.
+num_hdr_frames: 17           # HDR frames loaded per clip (each yields 3 exposure brackets)
 data_file_keys: "image,video" # Data file keys in the metadata. Comma-separated.
 dataset_repeat: 1            # Number of times to repeat the dataset per epoch.
 model_paths: null            # Paths to load models. In JSON format.

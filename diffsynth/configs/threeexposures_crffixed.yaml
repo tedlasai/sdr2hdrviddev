@@ -20,6 +20,7 @@ max_pixels: 921600
 height: 512 #512 #12 #512 #512 #704 #512
 width: 768 #768 #768 #768 #768
 num_frames: 3
+num_hdr_frames: 17
 data_file_keys: "image,video"
 dataset_repeat: 10
 model_paths: null #[\"/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_justmerger/checkpoints/epoch-199.safetensors\"] # Paths to load models. In JSON format.
