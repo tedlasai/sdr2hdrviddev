@@ -1,4 +1,11 @@
 dataset_base_path: ""        # Base path of the dataset. (Required)
+datasets:                      # Training data sources: stuttgart, invert_pipeline, rawhdr, hdrps_raws
+  - stuttgart
+datasets_train: null           # Optional override for TRAIN split datasets (else uses `datasets`)
+datasets_val: null             # Optional override for VAL split datasets (else uses `datasets`)
+invert_pipeline_path: ""     # Root of invert_pipeline gt.hdr images (if used)
+rawhdr_path: ""               # Root of RawHDR data (contains RawHDRTrain_EXR/RawHDRTest_EXR)
+hdrps_raws_path: ""           # Root of HDRPS_Raws scene folders (each contains one .exr)
 dataset_metadata_path: null  # Path to the metadata file of the dataset.
 max_pixels: 921600           # Maximum number of pixels per frame, used for dynamic resolution.
 height: null                 # Height of images or videos. Leave empty for dynamic resolution.

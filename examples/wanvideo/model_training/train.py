@@ -205,6 +205,10 @@ if __name__ == "__main__":
     dataset = StuttgartDataset(
         base_path=args.dataset_base_path,
         repeat=args.dataset_repeat,
+        datasets=getattr(args, "datasets_train", getattr(args, "datasets", None)),
+        invert_pipeline_path=getattr(args, "invert_pipeline_path", None),
+        rawhdr_path=getattr(args, "rawhdr_path", None),
+        hdrps_raws_path=getattr(args, "hdrps_raws_path", None),
         main_data_operator=StuttgartDataset.default_video_operator(
             base_path=args.dataset_base_path,
             max_pixels=args.max_pixels,
@@ -222,6 +226,10 @@ if __name__ == "__main__":
     val_dataset = StuttgartDataset(
         base_path=args.dataset_base_path,
         repeat=args.dataset_repeat,
+        datasets=getattr(args, "datasets_val", getattr(args, "datasets", None)),
+        invert_pipeline_path=getattr(args, "invert_pipeline_path", None),
+        rawhdr_path=getattr(args, "rawhdr_path", None),
+        hdrps_raws_path=getattr(args, "hdrps_raws_path", None),
         main_data_operator=StuttgartDataset.default_video_operator(
             base_path=args.dataset_base_path,
             max_pixels=args.max_pixels,

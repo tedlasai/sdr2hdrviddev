@@ -11,6 +11,12 @@ import numpy as np
 import os
 os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "1"
 
+DATASETS = ["stuttgart"]  # e.g. ["stuttgart", "invert_pipeline", "rawhdr", "hdrps_raws"]
+INVERT_PIPELINE_PATH = "/data2/saikiran.tedla/hdrvideo/diff/data/invert_pipeline"
+RAWHDR_PATH = "/data2/saikiran.tedla/hdrvideo/diff/data/RawHDR"
+HDRPS_RAWS_PATH = "/data2/saikiran.tedla/hdrvideo/diff/data/HDRPS_Raws"
+# EXR cache: RawHDR/RawHDRTrain_EXR, RawHDR/RawHDRTest_EXR — run: python -m diffsynth.trainers.rawhdr_dataset
+
 class DataProcessingPipeline:
     def __init__(self, operators=None):
         self.operators: list[DataProcessingOperator] = [] if operators is None else operators
@@ -267,8 +273,8 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
     # --- Compute sequence-level parameters from frame 0 ---
     hdr_0 = raw_frames[0]
     min_exposure = np.log2(exposure_scale(hdr_0, 0.3, "under"))
-    max_exposure = min_exposure
-    #max_exposure = np.log2(exposure_scale(hdr_0, 0.3, "over"))
+    #max_exposure = min_exposure
+    max_exposure = np.log2(exposure_scale(hdr_0, 0.3, "over"))
     max_in_exposure = np.log2(0.7 / hdr_0.mean())
 
     if crf_aug == "random":
@@ -385,18 +391,19 @@ class LoadHDRVideo(DataProcessingOperator):
     def __call__(self, data: str):
         #get num_frames-1 next frames with same suffix 
         #assert that num_frames is 3n
-        assert (self.num_frames) % 3 == 0, "num_frames must be 3n"
-        num_hdr_frames = (self.num_frames) // 3
-        import random
-        if self.crf_aug == "random":
-            num_hdr_frames = 1#7 # random.choice(num_frames_train)  #try 17 (5 latent frames per)
-
-        else:
-            num_hdr_frames = 1#7
+        num_hdr_frames = 17 #7
 
         #num_hdr_frames += 4 #handle extend cases
 
-        hdr_paths = next_paths(data, num_hdr_frames, same_suffix=True, include_self=True)
+        # Some datasets are actually single-image sources (e.g. RawHDR stored as
+        # individual EXRs). For those, repeat the same image across the requested
+        # HDR-frame count.
+        if Path(data).parent.name in ["RawHDRTrain_EXR", "RawHDRTest_EXR"]:
+            hdr_paths = [data] * num_hdr_frames
+        else:
+            hdr_paths = next_paths(data, num_hdr_frames, same_suffix=True, include_self=True)
+            if len(hdr_paths) < num_hdr_frames:
+                hdr_paths = [hdr_paths[0]] * num_hdr_frames
 
         data = make_exposure_brackets(hdr_paths, self.frame_processor, crf_aug=self.crf_aug, predict_mode=self.predict_mode)
         data["bracket_video"] = data["bracket_video"].reshape(-1, *data["bracket_video"].shape[2:])  # shape (num_frames, H, W, 3)
@@ -467,6 +474,10 @@ class StuttgartDataset(torch.utils.data.Dataset):
         special_operator_map=None,
         mode = "brackets",
         split = "train",
+        datasets=None,
+        invert_pipeline_path=None,
+        rawhdr_path=None,
+        hdrps_raws_path=None,
     ):
         self.base_path = base_path
         self.repeat = repeat
@@ -478,6 +489,10 @@ class StuttgartDataset(torch.utils.data.Dataset):
         self.cached_data = {}
         self.load_from_cache = False
         self.split = split
+        self.datasets = DATASETS if datasets is None else datasets
+        self.invert_pipeline_path = INVERT_PIPELINE_PATH if invert_pipeline_path is None else invert_pipeline_path
+        self.rawhdr_path = RAWHDR_PATH if rawhdr_path is None else rawhdr_path
+        self.hdrps_raws_path = HDRPS_RAWS_PATH if hdrps_raws_path is None else hdrps_raws_path
 
         self.OVERFITTING = False
         self.load_data_from_path()
@@ -485,12 +500,26 @@ class StuttgartDataset(torch.utils.data.Dataset):
             
     def load_data_from_path(self):
         self.data = []
+        if "stuttgart" in self.datasets:
+            self._load_stuttgart_data()
+        if "invert_pipeline" in self.datasets:
+            self._load_invert_pipeline_data()
+        if "rawhdr" in self.datasets:
+            self._load_rawhdr_data()
+        if "hdrps_raws" in self.datasets:
+            self._load_hdrps_raws_data()
 
+        if self.OVERFITTING:
+            self.data = [{"video": "/data2/saikiran.tedla/hdrvideo/diff/data/stuttgart/carousel_fireworks_02/carousel_fireworks_02_000936.exr"}]
+
+    def _load_stuttgart_data(self):
+        if not self.base_path:
+            raise ValueError("base_path is required when using the stuttgart dataset")
 
         only_val = ["bistro_01", "bistro_02", "bistro_03", "showgirl_01", "showgirl_02", "smith_welding", "carousel_fireworks_02", "fireplace_01", "hdr_testimage"]
         for root, dirs, files in os.walk(self.base_path):
             if files == []:
-                continue  # skip folders that only contain subfolders
+                continue
             files = sorted(files)[:-17]
             
             if not files:
@@ -503,25 +532,66 @@ class StuttgartDataset(torch.utils.data.Dataset):
                     continue
             elif self.split == "train":
                 if any(val_name in root for val_name in only_val):
-                    continue  # skip validation videos during training
-
-            # if "fireworks_02" not in root:
-            #     continue  # TEMPORARY: only use fireworks_02 for testing
+                    continue
 
             for f in files:
                 self.data.append({
                     "video": os.path.relpath(os.path.join(root, f), self.base_path),
+                    "dataset": "stuttgart",
                 })
 
-        #only val
+    def _load_invert_pipeline_data(self):
+        if self.split != "train":
+            return
 
-        if self.OVERFITTING:
-            #make train and val the same one video
-            self.data = [{"video": "/data2/saikiran.tedla/hdrvideo/diff/data/stuttgart/carousel_fireworks_02/carousel_fireworks_02_000936.exr"}]
+        root = Path(self.invert_pipeline_path)
+        if not root.is_dir():
+            raise FileNotFoundError(f"invert_pipeline path does not exist: {root}")
 
+        gt_hdr_paths = sorted(root.rglob("gt.hdr"), key=lambda p: str(p))
+        for gt_hdr in gt_hdr_paths:
+            self.data.append({
+                "video": str(gt_hdr.resolve()),
+                "dataset": "invert_pipeline",
+            })
 
+    def _load_rawhdr_data(self):
+        if self.split != "train":
+            return
+        # We treat RawHDR as an image dataset:
+        # - train split reads RawHDRTrain_EXR
+        # - val split reads RawHDRTest_EXR
+        root = Path(self.rawhdr_path)
+        if not root.is_dir():
+            raise FileNotFoundError(f"rawhdr path does not exist: {root}")
 
-    @staticmethod
+        exr_root = root / "RawHDRTrain_EXR"
+
+        if not exr_root.is_dir():
+            raise FileNotFoundError(f"RawHDR EXR directory does not exist: {exr_root}")
+
+        exr_paths = sorted(exr_root.glob("*.exr"), key=lambda p: str(p))
+        for exr_path in exr_paths:
+            self.data.append({
+                "video": str(exr_path.resolve()),
+                "dataset": "rawhdr",
+            })
+
+    def _load_hdrps_raws_data(self):
+        if self.split != "train":
+            return
+
+        root = Path(self.hdrps_raws_path)
+        if not root.is_dir():
+            raise FileNotFoundError(f"hdrps_raws path does not exist: {root}")
+
+        exr_paths = sorted(root.rglob("*.exr"), key=lambda p: str(p))
+        for exr_path in exr_paths:
+            self.data.append({
+                "video": str(exr_path.resolve()),
+                "dataset": "hdrps_raws",
+            })
+
     @staticmethod
     def default_video_operator(
         base_path="",
@@ -569,17 +639,12 @@ class StuttgartDataset(torch.utils.data.Dataset):
                 return 1
 
         if self.split == "val":
-            return min(5, len(self.data))  # Use only last 20 samples for validation
-        if self.split == "train":
-            return int(len(self.data)) #this can allow us to see the outputs more often
-            return len(self.data) 
-        else:
-            return len(self.data)
+            return min(5, len(self.data))
 
-        if self.load_from_cache:
-            return len(self.cached_data) * self.repeat
-        else:
-            return len(self.data) * self.repeat
+        n = len(self.cached_data) if self.load_from_cache else len(self.data)
+        if self.split == "train":
+            return int(n * self.repeat)
+        return n
         
     def set_predict_mode(self, mode):
         op = self.main_data_operator
