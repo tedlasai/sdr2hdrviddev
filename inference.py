@@ -71,7 +71,7 @@ def run_inference(model, args, input_dir, output_dir):
     frame_processor = ImageCropAndResize(
         args.height, args.width, args.height * args.width, 16, 16
     )
-    loader = LoadPNGVideo(num_frames=17, frame_processor=frame_processor)
+    loader = LoadPNGVideo(num_frames=args.num_hdr_frames, frame_processor=frame_processor)
     data = loader(input_dir)
 
     condition_video = data['input_video']   # (T, H, W, C) uint8
@@ -91,6 +91,7 @@ def run_inference(model, args, input_dir, output_dir):
             exposures=exposures,
             generate_exposures=(-7, 0, 7),
             use_vae_ea=model.use_vae_ea,
+            num_hdr_frames=args.num_hdr_frames,
         )
 
     # outputs["hdr_video"]: (b, c, t, h, w)

@@ -1,4 +1,4 @@
-import imageio, os, torch, warnings, torchvision, argparse, json
+import gc, imageio, os, torch, warnings, torchvision, argparse, json
 from ..utils import ModelConfig
 from ..models.utils import load_state_dict
 from peft import LoraConfig, inject_adapter_in_model
@@ -272,7 +272,7 @@ class ModelLogger:
             path = os.path.join(self.output_path, file_name)
             accelerator.save(state_dict, path, safe_serialization=True)
 
-def validate(val_dataloader, model, model_logger, epoch_id, accelerator, dataset, args):
+def validate(val_dataloader, model, model_logger, epoch_id, accelerator, dataset, args, val_group=None):
     skip_val = args.skip_val #debugging thing
     max_value = 16.0
     combined_psnr = None
@@ -281,7 +281,7 @@ def validate(val_dataloader, model, model_logger, epoch_id, accelerator, dataset
     is_val_rank = accelerator.process_index in val_ranks
     subgroup_root_rank = val_ranks[0] if len(val_ranks) > 0 else 0
     use_subgroup = dist.is_available() and dist.is_initialized() and len(val_ranks) > 1
-    val_group = dist.new_group(ranks=val_ranks) if use_subgroup else None
+    val_inference_steps = int(getattr(args, "val_inference_steps", 50))
 
     eval_modes = [
         ("default",  (-4, 0, 4)),
@@ -299,54 +299,60 @@ def validate(val_dataloader, model, model_logger, epoch_id, accelerator, dataset
                 break
             if not is_val_rank:
                 continue
-            with accelerator.accumulate(model):
+            with torch.no_grad():
                 if dataset.load_from_cache:
                     loss = model({}, inputs=data)
                 else:
                     condition_video = data["input_video"]
                     exposures = data["exposures"]
+                    exp_gap = int(getattr(args, "exp_gap", 7))
+                    predict_gamma = getattr(args, "predict_gamma", True)
+                    generate_exposures = (-exp_gap, 0, exp_gap)
                     unwrapped_model = accelerator.unwrap_model(model)
-                    import numpy as np
                     outputs = unwrapped_model.pipe(
                         prompt=data["prompt"],
                         #negative_prompt="色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
                         condition_video=condition_video,
-                        generate_exposures=exposures[1:],
+                        generate_exposures=generate_exposures,
                         exposures=exposures,
                         height=args.height,
                         width=args.width,
-                        num_inference_steps=50,
+                        num_inference_steps=val_inference_steps,
                         seed=1, tiled=False,
                         cfg_scale=1.0,
                         encoder_decoder_mode=unwrapped_model.encoder_decoder_mode,
+                        num_hdr_frames=getattr(args, "num_hdr_frames", len(condition_video)),
+                        exp_gap=exp_gap,
+                        predict_gamma=predict_gamma,
                     )
                     unwrapped_model.pipe.scheduler.set_timesteps(1000, training=True) #reset timesteps after inference
 
             from utils import get_psnr_fn, get_ssim_fn, get_lpips_fn, compute_all_metrics, average_metrics, flatten_dict
 
             outputs["dummy_string"] = "dummy" #add string to outputs to make it match data (this makes gathering same across both)
+            outputs_for_gather = {
+                key: (value.detach().cpu() if torch.is_tensor(value) else value)
+                for key, value in outputs.items()
+            }
+            del outputs
             torch.cuda.empty_cache() #try to free up memory before gathering, this is crucial to avoid OOMs during validation
             if use_subgroup:
                 gathered_data = [None for _ in val_ranks]
                 gathered_outputs = [None for _ in val_ranks]
-                outputs_for_gather = {
-                    key: (value.detach().cpu() if torch.is_tensor(value) else value)
-                    for key, value in outputs.items()
-                }
                 dist.all_gather_object(gathered_data, data, group=val_group)
                 dist.all_gather_object(gathered_outputs, outputs_for_gather, group=val_group)
                 data_gathered = gathered_data
                 outputs_gathered = gathered_outputs
             else:
                 data_gathered = [data]
-                outputs_gathered = [outputs]
+                outputs_gathered = [outputs_for_gather]
+            del outputs_for_gather
 
             if accelerator.process_index == subgroup_root_rank:
+                metrics_device = accelerator.device
                 for i in range(len(data_gathered)):
-                    device = outputs_gathered[0]["hdr_video"].device
-
                     if out_metrics is None:
-                        psnr_fn = get_psnr_fn(device)
+                        psnr_fn = get_psnr_fn(metrics_device)
                         metrics = {
                             "low":      {"psnr": psnr_fn},
                             "mid":      {"psnr": psnr_fn},
@@ -355,7 +361,7 @@ def validate(val_dataloader, model, model_logger, epoch_id, accelerator, dataset
                             "combined": {"psnr": psnr_fn},
                         }
                         out_metrics = {
-                            t: {m: torch.empty(0, device=device) for m in ["psnr"]}
+                            t: {m: torch.empty(0, device=metrics_device) for m in ["psnr"]}
                             for t in ["low", "mid", "high", "hdr", "combined"]
                         }
 
@@ -364,12 +370,12 @@ def validate(val_dataloader, model, model_logger, epoch_id, accelerator, dataset
                     out_dir = model_logger.output_path / "../" / "val_videos" / eval_mode
                     out_dir.mkdir(parents=True, exist_ok=True)
 
-                    out_hdr_video = outputs["hdr_video"].to(device)
-                    out_combined_video = outputs["combined_video"].to(device)
+                    out_hdr_video = outputs["hdr_video"].to(metrics_device, non_blocking=True)
+                    out_combined_video = outputs["combined_video"].to(metrics_device, non_blocking=True)
                     frames_per_exposure = data["bracket_video"].shape[0] // data["exposures"].shape[0]
-                    in_crf_video = torch.from_numpy(data["bracket_video"][0*frames_per_exposure:1*frames_per_exposure]).unsqueeze(0).to(device)/255 #This scale feels funky here
-                    gt_hdr_video = torch.from_numpy(data["hdr_video"]).unsqueeze(0).to(device)
-                    gt_combined_video = torch.from_numpy(data["bracket_video"]).unsqueeze(0).to(device)/255 #This scale feels funky here
+                    in_crf_video = torch.from_numpy(data["bracket_video"][0*frames_per_exposure:1*frames_per_exposure]).unsqueeze(0).to(metrics_device, non_blocking=True)/255 #This scale feels funky here
+                    gt_hdr_video = torch.from_numpy(data["hdr_video"]).unsqueeze(0).to(metrics_device, non_blocking=True)
+                    gt_combined_video = torch.from_numpy(data["bracket_video"]).unsqueeze(0).to(metrics_device, non_blocking=True)/255 #This scale feels funky here
                     in_crf_video = rearrange(in_crf_video, 'b t h w c -> b t c h w')
                     gt_hdr_video = rearrange(gt_hdr_video, 'b t h w c -> b t c h w')
                     gt_combined_video = rearrange(gt_combined_video, 'b t h w c -> b t c h w')
@@ -444,10 +450,24 @@ def validate(val_dataloader, model, model_logger, epoch_id, accelerator, dataset
                     combined_psnr = combined_metric.item() if torch.is_tensor(combined_metric) else float(combined_metric)
 
         del data_gathered, outputs_gathered, out_metrics #crucial to free up memory
+        gc.collect()
         torch.cuda.empty_cache()
 
     accelerator.wait_for_everyone()
+    gc.collect()
+    torch.cuda.empty_cache()
     return combined_psnr
+
+
+def resolve_training_resolution(epoch_id, args):
+    warmup_epochs = int(getattr(args, "resolution_warmup_epochs", 0) or 0)
+    if warmup_epochs > 0 and epoch_id < warmup_epochs:
+        return int(args.height), int(args.width)
+    height_full = getattr(args, "height_full", None)
+    width_full = getattr(args, "width_full", None)
+    if height_full is not None and width_full is not None:
+        return int(height_full), int(width_full)
+    return int(args.height), int(args.width)
 
 
 def launch_training_task(
@@ -477,15 +497,21 @@ def launch_training_task(
 
     optimizer = torch.optim.AdamW(model.trainable_modules(), lr=learning_rate, weight_decay=weight_decay)
     scheduler = torch.optim.lr_scheduler.ConstantLR(optimizer)
-    dataloader = torch.utils.data.DataLoader(dataset, shuffle=True, collate_fn=lambda x: x[0], num_workers=num_workers, drop_last=True)
+
+    def make_train_dataloader():
+        return torch.utils.data.DataLoader(dataset, shuffle=True, collate_fn=lambda x: x[0], num_workers=num_workers, drop_last=True)
+
+    def make_val_dataloader():
+        return torch.utils.data.DataLoader(val_dataset, shuffle=False, collate_fn=lambda x: x[0], num_workers=num_workers)
+
+    dataloader = make_train_dataloader()
+    val_dataloader = make_val_dataloader()
     accelerator = Accelerator(
         gradient_accumulation_steps=gradient_accumulation_steps,
         kwargs_handlers=[DistributedDataParallelKwargs(find_unused_parameters=find_unused_parameters)],
         log_with="wandb",
 
     )
-        
-    val_dataloader = torch.utils.data.DataLoader(val_dataset, shuffle=False, collate_fn=lambda x: x[0], num_workers=num_workers)
 
     accelerator.init_trackers(
         project_name="hdrgen",
@@ -509,11 +535,38 @@ def launch_training_task(
         accelerator.print(f"Loaded optimizer & scheduler state from: {opt_ckpt}")
         accelerator.wait_for_everyone()
     model_logger._load_existing_best_psnr()
+
+    current_height, current_width = None, None
+
+    def maybe_update_resolution(epoch_id):
+        nonlocal current_height, current_width, dataloader, val_dataloader
+        if args is None:
+            return
+        height, width = resolve_training_resolution(epoch_id, args)
+        if height == current_height and width == current_width:
+            return
+        dataset.set_resolution(height, width)
+        val_dataset.set_resolution(height, width)
+        args.height = height
+        args.width = width
+        current_height, current_width = height, width
+        del dataloader, val_dataloader
+        gc.collect()
+        torch.cuda.empty_cache()
+        dataloader = accelerator.prepare(make_train_dataloader())
+        val_dataloader = accelerator.prepare(make_val_dataloader())
+        accelerator.print(f"Epoch {epoch_id + 1}: using resolution {height}x{width}")
+
+    val_ranks = list(range(min(5, accelerator.num_processes)))
+    use_val_subgroup = dist.is_available() and dist.is_initialized() and len(val_ranks) > 1
+    val_group = dist.new_group(ranks=val_ranks) if use_val_subgroup else None
+
     for epoch_id in range(epochs_done, num_epochs):
+        maybe_update_resolution(epoch_id)
         val_combined_psnr = None
         if epoch_id == epochs_done:
             with torch.no_grad():
-                val_combined_psnr = validate(val_dataloader, model, model_logger, epoch_id, accelerator, val_dataset, args)
+                val_combined_psnr = validate(val_dataloader, model, model_logger, epoch_id, accelerator, val_dataset, args, val_group=val_group)
             if save_steps is None:
                 model_logger.on_epoch_end(accelerator, model, optimizer, scheduler, epoch_id, val_combined_psnr=val_combined_psnr)
  
@@ -522,10 +575,19 @@ def launch_training_task(
             with accelerator.accumulate(model):
                 optimizer.zero_grad()
                 if dataset.load_from_cache:
-                    loss = model({}, inputs=data)
+                    loss_out = model({}, inputs=data)
                 else:
-                    loss = model(data)
-                loss = loss.mean()
+                    loss_out = model(data)
+
+                if isinstance(loss_out, dict):
+                    loss = loss_out["loss"]
+                    loss_dict = loss_out
+                else:
+                    loss = loss_out
+                    loss_dict = {"loss": loss}
+
+                if loss.dim() > 0:
+                    loss = loss.mean()
                 accelerator.backward(loss)
                 optimizer.step()
                 model_logger.on_step_end(accelerator, model, save_steps)
@@ -533,18 +595,25 @@ def launch_training_task(
 
                 # only log on the step that actually syncs grads
                 if accelerator.sync_gradients:
-                    # Reduce total loss
                     loss_mean = accelerator.reduce(loss.detach(), reduction="mean")
+                    reduced_loss_dict = {"train/loss": loss_mean.item()}
+                    for k, v in loss_dict.items():
+                        if torch.is_tensor(v):
+                            reduced_v = accelerator.reduce(v.detach(), reduction="mean")
+                            reduced_loss_dict[f"train/{k}"] = reduced_v.item()
                     if accelerator.is_main_process:
-                        accelerator.log({"train/loss": loss_mean})
+                        accelerator.log(reduced_loss_dict)
 
         #clean up memory
         del loss, loss_mean, data
         optimizer.zero_grad(set_to_none=True)
+        gc.collect()
         torch.cuda.empty_cache()
 
         with torch.no_grad():
-            val_combined_psnr = validate(val_dataloader, model, model_logger, epoch_id, accelerator, val_dataset, args)
+            val_combined_psnr = validate(val_dataloader, model, model_logger, epoch_id, accelerator, val_dataset, args, val_group=val_group)
+        gc.collect()
+        torch.cuda.empty_cache()
 
 
         if save_steps is None:

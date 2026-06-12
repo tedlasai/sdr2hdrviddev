@@ -10,7 +10,7 @@ from diffsynth import load_state_dict, save_video
 from diffsynth.pipelines.wan_video_new import WanVideoPipeline, ModelConfig, WanVideoUnit_PromptEmbedder
 from diffsynth.trainers.utils_decoder import DiffusionTrainingModule, ModelLogger, launch_training_task, wan_parser
 from diffsynth.trainers.unified_dataset import UnifiedDataset
-from diffsynth.trainers.stuttgart_dataset_decoder import StuttgartDataset
+from diffsynth.trainers.stuttgart_dataset import StuttgartDataset
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -61,6 +61,7 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
         loss_type="hdr_log",
         use_vae_ea=False,
         ea_num_heads=4,
+        predict_gamma=True,
     ):
         super().__init__()
         # Load models
@@ -128,23 +129,23 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
         self.min_timestep_boundary = min_timestep_boundary
         self.encoder_decoder_mode = encoder_decoder_mode
         self.loss_type = loss_type
-        
-        
+        self.predict_gamma = predict_gamma
+
     def forward_preprocess(self, data):
         # CFG-sensitive parameters
         inputs_posi = {"prompt": data["prompt"]}
         inputs_nega = {}
-        
-        # CFG-unsensitive parameters
+
+        exposures = data["exposures"]
+        num_exposures = len(exposures)
+        bracket_video = data["bracket_video"]
+        num_hdr_frames = len(bracket_video) // num_exposures
         inputs_shared = {
-            # Assume you are using this pipeline for inference,
-            # please fill in the input parameters.
-            "input_video": data["input_video"],
-            "height": data["input_video"][0].shape[0],
-            "width": data["input_video"][0].shape[1],
-            "num_frames": len(data["input_video"]),
-            # Please do not modify the following parameters
-            # unless you clearly know what this will cause.
+            "input_video": bracket_video,
+            "exposures": exposures,
+            "height": bracket_video[0].shape[0],
+            "width": bracket_video[0].shape[1],
+            "num_frames": len(bracket_video),
             "cfg_scale": 1,
             "tiled": False,
             "rand_device": self.pipe.device,
@@ -155,8 +156,9 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
             "max_timestep_boundary": self.max_timestep_boundary,
             "min_timestep_boundary": self.min_timestep_boundary,
             "encoder_decoder_mode": self.encoder_decoder_mode,
+            "input_type": data.get("input_type"),
         }
-        
+
         # Extra inputs
         for extra_input in self.extra_inputs:
             if extra_input == "input_image":
@@ -166,8 +168,7 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
             elif extra_input == "reference_image" or extra_input == "vace_reference_image":
                 inputs_shared[extra_input] = data[extra_input][0]
             elif extra_input == "bracket_video":
-                inputs_shared["input_video"] = data["bracket_video"]
-                inputs_shared["exposures"] = data["exposures"]
+                pass  # already wired above
             else:
                 inputs_shared[extra_input] = data[extra_input]
         
@@ -193,30 +194,36 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
             self.pipe.vae_output_to_video(raw[i:i+1], mode="tensor")
             for i in range(E)
         ]
-        hdr_video = self.pipe.merge_decoder(videos, exposures, self.encoder_decoder_mode, mem_efficient=True)
+        hdr_video = self.pipe.merge_decoder(videos, exposures, self.encoder_decoder_mode, mem_efficient=True, predict_gamma=self.predict_gamma)
         combined_video = torch.cat(videos, dim=2)
         return {"hdr_video": hdr_video, "combined_video": combined_video}
 
     def forward(self, data, inputs=None):
+
         with torch.no_grad():
             if inputs is None: inputs = self.forward_preprocess(data)
             hdr_video = self.pipe.preprocess_video( data["hdr_video"], min_value=0, max_value=1, in_max_value=1).to(self.pipe.device) #this keeps the scale the same
             bracket_video = self.pipe.preprocess_video( data["bracket_video"], min_value=0, max_value=1, in_max_value=255).to(self.pipe.device)
             encoded_latents = inputs["input_latents"]
+
+
+    
+        print(encoded_latents.shape)
         if self.use_vae_ea:
             print("Using EA decoder")
             outputs = self._decode_with_vae_ea(encoded_latents, data["exposures"], tiled=inputs["tiled"])
         else:
-            outputs = self.pipe.decode_latents_hdr_merge(encoded_latents, self.encoder_decoder_mode, data["exposures"], tiled=inputs["tiled"], device=self.pipe.device)
+            outputs = self.pipe.decode_latents_hdr_merge(encoded_latents, self.encoder_decoder_mode, data["exposures"], tiled=inputs["tiled"], device=self.pipe.device, predict_gamma=self.predict_gamma)
         decoded_hdr_video = outputs["hdr_video"].to(torch.bfloat16)
         
         min_value = 0
         hdr_video_gt = torch.clamp(hdr_video, min=min_value)
         outputs["hdr_video"] = torch.clamp(decoded_hdr_video, min=min_value)
 
-        num_frames = bracket_video.shape[2] // 4
-        idx = 1
-        inputs_data={"hdr_video": hdr_video_gt, "combined_video": bracket_video, "normal_video": bracket_video[:, :, (idx+0)*num_frames:(idx+1)*num_frames], "short_video": bracket_video[:, :, (idx+1)*num_frames:(idx+2)*num_frames], "long_video": bracket_video[:, :, (idx+2)*num_frames:(idx+3)*num_frames]}
+        num_exposures = len(data["exposures"])
+        n = bracket_video.shape[2] // num_exposures
+        out_idx = 0
+        inputs_data={"hdr_video": hdr_video_gt, "combined_video": bracket_video, "normal_video": bracket_video[:, :, (out_idx+0)*n:(out_idx+1)*n], "short_video": bracket_video[:, :, (out_idx+1)*n:(out_idx+2)*n], "long_video": bracket_video[:, :, (out_idx+2)*n:(out_idx+3)*n]}
 
 
         
@@ -276,6 +283,16 @@ if __name__ == "__main__":
     args = load_yaml_config(args, args.config)
     args = set_load_paths(args)
 
+    if not hasattr(args, "num_hdr_frames"):
+        raise ValueError(
+            "Decoder training requires num_hdr_frames in the config "
+            "(HDR frames per exposure stream, 4N+1). Do not use num_frames."
+        )
+
+    exp_gap = int(getattr(args, "exp_gap", 7))
+    bracket_mode = getattr(args, "bracket_mode", "flex_brackets")
+    predict_gamma = getattr(args, "predict_gamma", True)
+
     dataset = StuttgartDataset(
         base_path=args.dataset_base_path,
         repeat=args.dataset_repeat,
@@ -290,11 +307,15 @@ if __name__ == "__main__":
             width=args.width,
             height_division_factor=16,
             width_division_factor=16,
-            num_frames=args.num_frames,
+            num_hdr_frames=args.num_hdr_frames,
             time_division_factor=4,
             time_division_remainder=1,
             crop_size_h = args.crop_size_h,
             crop_size_w = args.crop_size_w,
+            include_crf_in_brackets=False,
+            exp_gap=exp_gap,
+            bracket_mode=bracket_mode,
+            predict_gamma=predict_gamma,
         ),
         mode = "hdr_and_brackets"
     )
@@ -313,9 +334,13 @@ if __name__ == "__main__":
             width=args.width,
             height_division_factor=16,
             width_division_factor=16,
-            num_frames=args.num_frames,
+            num_hdr_frames=args.num_hdr_frames,
             time_division_factor=4,
             time_division_remainder=1,
+            include_crf_in_brackets=False,
+            exp_gap=exp_gap,
+            bracket_mode=bracket_mode,
+            predict_gamma=predict_gamma,
         ),
         mode = "hdr_and_brackets",
         split = "val"
@@ -336,6 +361,7 @@ if __name__ == "__main__":
         loss_type=args.loss_type,
         use_vae_ea=getattr(args, "use_vae_ea", False),
         ea_num_heads=getattr(args, "ea_num_heads", 4),
+        predict_gamma=predict_gamma,
     )
     model_logger = ModelLogger(
         Path(args.output_path) / "checkpoints",

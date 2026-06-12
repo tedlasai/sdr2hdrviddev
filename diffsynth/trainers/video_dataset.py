@@ -135,13 +135,14 @@ class ToAbsolutePath(DataProcessingOperator):
 
 
 class LoadPNGVideo(DataProcessingOperator):
-    def __init__(self, num_frames=None, time_division_factor=4, time_division_remainder=1, frame_processor=lambda x: x, crf_aug=None):
+    def __init__(self, num_frames=None, time_division_factor=4, time_division_remainder=1, frame_processor=lambda x: x, crf_aug=None, exp_gap=7):
         self.num_frames = num_frames
         self.time_division_factor = time_division_factor
         self.time_division_remainder = time_division_remainder
         # frame_processor is build in the video loader for high efficiency.
         self.frame_processor = frame_processor
         self.crf_aug = crf_aug
+        self.exp_gap = int(exp_gap)
         self.cache = {}
 
         
@@ -157,7 +158,8 @@ class LoadPNGVideo(DataProcessingOperator):
             img = self.frame_processor(img) #BGR to RGB
             imgs.append(img)
         
-        exposures = np.array([0, -7, 0, 7])
+        g = self.exp_gap
+        exposures = np.array([0, -g, 0, g])
         return {"input_video": np.stack(imgs), "exposures": exposures}
 
 class VideoDataset(torch.utils.data.Dataset):
@@ -201,11 +203,13 @@ class VideoDataset(torch.utils.data.Dataset):
         height_division_factor=16, width_division_factor=16,
         crop_size_h=None, crop_size_w=None, 
         crf_aug=None,
+        exp_gap=7,
     ):
         return LoadPNGVideo(
                 num_frames=num_frames,
                     frame_processor=ImageCropAndResize(height, width, max_pixels, height_division_factor, width_division_factor, crop_size_h=crop_size_h, crop_size_w=crop_size_w),
                 crf_aug=crf_aug,
+                exp_gap=exp_gap,
                 )
 
             

@@ -285,7 +285,8 @@ def ours_worker(jobs, gpu_id):
     print(f'[GPU {gpu_id}] ours model loaded')
 
     frame_processor = ImageCropAndResize(args.height, args.width, args.height * args.width, 16, 16)
-    loader = LoadPNGVideo(num_frames=17, frame_processor=frame_processor)
+    num_hdr_frames = getattr(args, "num_hdr_frames", 17)
+    loader = LoadPNGVideo(num_frames=num_hdr_frames, frame_processor=frame_processor)
 
     for name, input_dir, output_dir in jobs:
         if is_done(output_dir):
@@ -307,6 +308,7 @@ def ours_worker(jobs, gpu_id):
                 exposures=data['exposures'],
                 generate_exposures=(-4, 0, 4),
                 use_vae_ea=model.use_vae_ea,
+                num_hdr_frames=num_hdr_frames,
             )
 
         out = rearrange(outputs['hdr_video'], 'b c t h w -> b t c h w')

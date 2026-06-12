@@ -2,13 +2,19 @@ name: "finetune_decoder_mergeragain"
 encode_decoder_mode: "seperate_train"
 output_path: "/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_mergeragain"
 dataset_base_path: "/data2/saikiran.tedla/hdrvideo/diff/data/stuttgart" # Base path of the dataset
-dataset_metadata_path: null
+datasets: null
+datasets_train:
+  - stuttgart
+datasets_val:
+  - stuttgart
+invert_pipeline_path: "/data2/saikiran.tedla/hdrvideo/diff/data/invert_pipeline"
 max_pixels: 921600
 height: 704
 width: 1280
 crop_size_w: 128
 crop_size_h: 128
-num_frames: 15
+num_hdr_frames: 5
+exp_gap: 6 # three-bracket EV spacing: (-exp_gap, 0, +exp_gap)
 data_file_keys: "image,video"
 dataset_repeat: 1
 model_paths: null #"[\"/data2/saikiran.tedla/hdrvideo/diff/models/train/Wan2.2-TI2V-5B_full/epoch-0.safetensors\"]" # Paths to load models. In JSON format.

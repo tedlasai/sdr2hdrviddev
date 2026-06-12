@@ -30,6 +30,9 @@ class WanTrainingModule(DiffusionTrainingModule):
         encoder_decoder_mode=None,
         ablation=None,
         use_vae_ea=False,
+        ea_num_heads=4,
+        ratio_loss_weight=0.1,
+        loss_type="l2",
     ):
         super().__init__()
         # Load models
@@ -62,6 +65,8 @@ class WanTrainingModule(DiffusionTrainingModule):
                 num_res_blocks=old.num_res_blocks,
                 attn_scales=old.attn_scales,
                 temperal_downsample=old.temperal_downsample,
+                ea_num_heads=ea_num_heads,
+                use_ea=use_vae_ea,
             ).to(dtype=torch.bfloat16)
             ea_model.load_state_dict(old.state_dict(), strict=False)
             self.pipe.vae.model = ea_model
@@ -81,6 +86,8 @@ class WanTrainingModule(DiffusionTrainingModule):
         self.min_timestep_boundary = min_timestep_boundary
         self.encoder_decoder_mode = encoder_decoder_mode
         self.use_vae_ea = use_vae_ea
+        self.ratio_loss_weight = float(ratio_loss_weight)
+        self.loss_type = loss_type
         
         
     def forward_preprocess(self, data):
@@ -111,7 +118,9 @@ class WanTrainingModule(DiffusionTrainingModule):
             "min_timestep_boundary": self.min_timestep_boundary,
             "encoder_decoder_mode": self.encoder_decoder_mode,
             "input_type": data["input_type"],
-            "test": False #train
+            "test": False, #train
+            "ratio_loss_weight": self.ratio_loss_weight,
+            "loss_type": self.loss_type,
         }
         
         # Extra inputs
@@ -201,6 +210,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args = load_yaml_config(args, args.config)
     args = set_load_paths(args)
+    exp_gap = int(getattr(args, "exp_gap", 7))
+    bracket_mode = getattr(args, "bracket_mode", "flex_brackets")
+    predict_gamma = getattr(args, "predict_gamma", True)
 
     dataset = StuttgartDataset(
         base_path=args.dataset_base_path,
@@ -216,11 +228,13 @@ if __name__ == "__main__":
             width=args.width,
             height_division_factor=16,
             width_division_factor=16,
-            num_frames=args.num_frames,
             num_hdr_frames=args.num_hdr_frames,
             time_division_factor=4,
             time_division_remainder=1,
-            crf_aug="random"
+            crf_aug="random",
+            exp_gap=exp_gap,
+            bracket_mode=bracket_mode,
+            predict_gamma=predict_gamma,
         ),
         mode="hdr_and_brackets",
     )
@@ -238,10 +252,12 @@ if __name__ == "__main__":
             width=args.width,
             height_division_factor=16,
             width_division_factor=16,
-            num_frames=args.num_frames,
             num_hdr_frames=args.num_hdr_frames,
             time_division_factor=4,
             time_division_remainder=1,
+            exp_gap=exp_gap,
+            bracket_mode=bracket_mode,
+            predict_gamma=predict_gamma,
         ),
         mode = "hdr_and_brackets",
         split = "val"
@@ -260,6 +276,8 @@ if __name__ == "__main__":
         min_timestep_boundary=args.min_timestep_boundary,
         encoder_decoder_mode=args.encode_decoder_mode,
         ablation=getattr(args, "ablation", None),
+        ratio_loss_weight=getattr(args, "ratio_loss_weight", 0.1),
+        loss_type=getattr(args, "loss_type", "l2"),
     )
     model_logger = ModelLogger(
         Path(args.output_path) / "checkpoints",

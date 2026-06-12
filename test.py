@@ -1,3 +1,4 @@
+import os
 import torch
 from tqdm import tqdm
 from accelerate import Accelerator
@@ -47,11 +48,20 @@ def validate(val_dataloader, model, accelerator, dataset, args):
             if dataset.load_from_cache:
                 loss = model({}, inputs=data)
             else:
+                out_path = str(data.get("out_path", ""))
+                # Skip certain Stuttgart subsets based on path tokens.
+                # `VideoDataset` builds `out_path` from the source folder relpath, so this is the only
+                # stable place these subset names show up.
+                skip_tokens = {"normal", "over20", "under5"}
+                if any(tok in out_path.split(os.sep) for tok in skip_tokens):
+                    continue
+
                 condition_video = data["input_video"]
                 unwrapped_model = accelerator.unwrap_model(model)
                 import numpy as np
                 input_exposures = data["exposures"]
-                generate_exposures = (-7, 0, 7)
+                exp_gap = int(getattr(args, "exp_gap", 7))
+                generate_exposures = (-exp_gap, 0, exp_gap)
 
                 outputs = unwrapped_model.pipe(
                     prompt=data["prompt"],
@@ -66,6 +76,7 @@ def validate(val_dataloader, model, accelerator, dataset, args):
                     exposures = input_exposures,
                     generate_exposures = generate_exposures,
                     use_vae_ea=unwrapped_model.use_vae_ea,
+                    exp_gap=exp_gap,
                 )
                 out_hdr_video = rearrange(outputs["hdr_video"], 'b c t h w -> b t c h w')
                 output_frames(out_hdr_video[0], data["out_path"], mode="hdr", channel_order="NCHW")
@@ -80,14 +91,17 @@ if __name__ == "__main__":
     args = set_load_paths(args)
 
 
+    exp_gap = int(getattr(args, "exp_gap", 7))
+
     val_dataset = VideoDataset(
         base_path="/data2/saikiran.tedla/hdrvideo/diff/evaluations/stuttgart",
-        out_path = "/data2/saikiran.tedla/hdrvideo/diff/evaluations/oursmay24_stuttgart",
+        out_path = "/data2/saikiran.tedla/hdrvideo/diff/evaluations/oursmay31_stuttgart",
         main_data_operator=VideoDataset.default_video_operator(
             num_frames=17,
             max_pixels=args.max_pixels,
             height=args.height,
             width=args.width,
+            exp_gap=exp_gap,
         )
     )
 
@@ -105,6 +119,7 @@ if __name__ == "__main__":
         min_timestep_boundary=args.min_timestep_boundary,
         encoder_decoder_mode=args.encode_decoder_mode,
         use_vae_ea=getattr(args, "use_vae_ea", False),
+        ea_num_heads=getattr(args, "ea_num_heads", 4),
     )
 
     launch_test_task(

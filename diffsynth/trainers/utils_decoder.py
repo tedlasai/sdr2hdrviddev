@@ -738,7 +738,7 @@ def launch_training_task(
                 # Compute loss
                 loss_dict = {}
                 if loss_type == "hdr_l1":
-                    eps = 1e-6
+                    eps = 1e-9
                     scale = inputs["hdr_video"].max()
                     hdr_loss = torch.nn.functional.l1_loss(torch.log(inputs["hdr_video"]/scale + eps), torch.log(outputs["hdr_video"]/scale + eps))
                     loss = hdr_loss

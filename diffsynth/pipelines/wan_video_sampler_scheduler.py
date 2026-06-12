@@ -4,7 +4,6 @@ import torch
 
 DEPENDENCY = {+8: +4, -8: -4, -12: -8, 12: +8, 0: 0, -16: -12, +16: +12}  # others have no dependency
 BASE_EXPOSURE = (0,)  # model generates -4, 0, +4 together; e=0 drives chunk scheduling
-FIRST_CHUNK = 1 # latent frames
 NEXT_CHUNK = 3 # latent frames
 TEMPORAL_STRIDE = 4
 PREV_LATENT_FRAMES = 2 # frames of autoregressive context
@@ -12,12 +11,18 @@ PREV_LATENT_FRAMES = 2 # frames of autoregressive context
 def frames_to_latent_idx(f): return 0 if f == 0 else ((f - 1) // TEMPORAL_STRIDE) + 1
 def latent_to_frame_idx(l):  return 0 if l == 0 else 1 + (l - 1) * TEMPORAL_STRIDE
 
+def hdr_pixel_frames_to_latent_count(num_hdr_frames: int) -> int:
+    """Map HDR pixel-frame count (4n+1 style) to Wan VAE latent-frame count."""
+    return frames_to_latent_idx(num_hdr_frames - 1) + 1
+
 PREV_FRAMES = latent_to_frame_idx(PREV_LATENT_FRAMES)
 
 
 class ValScheduler:
-    def __init__(self, condition_video, exposures, pipe, encoder_decoder_mode, tiled, tile_size, tile_stride, use_vae_ea=False):
+    def __init__(self, condition_video, exposures, pipe, encoder_decoder_mode, tiled, tile_size, tile_stride, use_vae_ea=False, num_hdr_frames=17, exp_gap=7, predict_gamma=True):
 
+        self.num_hdr_frames = num_hdr_frames  # pixel frames in the conditioning stream
+        self.first_chunk_latents = hdr_pixel_frames_to_latent_count(num_hdr_frames)
         self.special_padding = False
 
         if self.special_padding:
@@ -25,7 +30,7 @@ class ValScheduler:
             i, T = 0, condition_video.shape[0]
 
             while i < T:
-                j = min(i + (17 if i == 0 else 8), T)
+                j = min(i + (self.num_hdr_frames if i == 0 else 8), T)
                 full_padded_video += list(condition_video[i:j])
                 full_padded_video += [condition_video[j-1]] * 4
                 self.pad_idx += list(range(len(full_padded_video)-4, len(full_padded_video)))
@@ -40,9 +45,9 @@ class ValScheduler:
         num_latents = frames_to_latent_idx(num_frames - 1) + 1
 
         # ===================== PAD VIDEO TO MATCH LATENT SCHEDULE =====================
-        # ensure at least FIRST_CHUNK latents, then round up to FIRST_CHUNK + k*NEXT_CHUNK
-        num_latents = max(num_latents, FIRST_CHUNK)
-        num_latents = FIRST_CHUNK + ((num_latents - FIRST_CHUNK + NEXT_CHUNK - 1) // NEXT_CHUNK) * NEXT_CHUNK
+        # ensure at least first_chunk_latents, then round up to first_chunk_latents + k*NEXT_CHUNK
+        num_latents = max(num_latents, self.first_chunk_latents)
+        num_latents = self.first_chunk_latents + ((num_latents - self.first_chunk_latents + NEXT_CHUNK - 1) // NEXT_CHUNK) * NEXT_CHUNK
 
         # latent length L corresponds to frame length T = 4*(L-1)+1
         target_frames = TEMPORAL_STRIDE * (num_latents - 1) + 1
@@ -64,6 +69,7 @@ class ValScheduler:
         self.exposures = exposures
         self.num_frames = num_frames
         self.num_latents = num_latents
+        self.condition_latents = None
         
         self.videos = None#create empty videos dict with correct shape once we know it from the first decoded latents 
         self.latents = None
@@ -77,6 +83,8 @@ class ValScheduler:
         self.tile_size = tile_size
         self.tile_stride = tile_stride
         self.use_vae_ea = use_vae_ea
+        self.exp_gap = int(exp_gap)
+        self.predict_gamma = predict_gamma
 
         self.latent_condition=True
 
@@ -92,7 +100,7 @@ class ValScheduler:
 
     def next_chunk_size_latents(self, e):
         if self.done_latents[e] == 0:
-            return FIRST_CHUNK
+            return self.first_chunk_latents
         return NEXT_CHUNK
 
     def pick_exposure(self):
@@ -139,8 +147,17 @@ class ValScheduler:
         
         if self.latent_condition:
             if cond_exposure == 0:
-                video_latents =  self.pipe.vae.encode(self.pipe.preprocess_video(self.condition_video), device=self.pipe.device, tiled=self.tiled, tile_size=self.tile_size, tile_stride=self.tile_stride).to(dtype=self.pipe.torch_dtype, device=self.pipe.device)
-                video_latents = video_latents[:, :, max(0, l_start - PREV_LATENT_FRAMES): l_end]
+                if self.condition_latents is None:
+                    encoded = self.pipe.vae.encode(
+                        self.pipe.preprocess_video(self.condition_video),
+                        device=self.pipe.device,
+                        tiled=self.tiled,
+                        tile_size=self.tile_size,
+                        tile_stride=self.tile_stride,
+                    ).to(dtype=self.pipe.torch_dtype, device=self.pipe.device)
+                    self.condition_latents = encoded
+                # Chunk-aligned conditioning (matches noise temporal length for this job).
+                video_latents = self.condition_latents[:, :, l_start:l_end]
             else:
                 print(f"cond_exposure: {cond_exposure}")
                 video_latents = self.latents[cond_exposure][:, max(0, l_start - PREV_LATENT_FRAMES): l_end]
@@ -203,11 +220,11 @@ class ValScheduler:
         self.create_videos(self.condition_video.shape, self.exposures, new_latents.device, new_latents.dtype)
     
 
-        EXPOSURE_GAP = 7
-        if self.instruction["cond_exposure"]-EXPOSURE_GAP in self.instruction["generating_exposures"]:
-            self.latents[self.instruction["cond_exposure"]-EXPOSURE_GAP][:, self.instruction["l_start"]:self.instruction["l_end"]] = low_video[:,:,-(self.instruction["l_end"]-self.instruction["l_start"]):]
-            self.done_latents[self.instruction["cond_exposure"]-EXPOSURE_GAP] = self.instruction["l_end"]
-            self.videos[self.instruction["cond_exposure"]-EXPOSURE_GAP][:, :, self.instruction["f_start"]:self.instruction["f_end"]] = self.decode_latents(low_video)[:, :, - (self.instruction["f_end"]-self.instruction["f_start"]):]
+        g = self.exp_gap
+        if self.instruction["cond_exposure"]-g in self.instruction["generating_exposures"]:
+            self.latents[self.instruction["cond_exposure"]-g][:, self.instruction["l_start"]:self.instruction["l_end"]] = low_video[:,:,-(self.instruction["l_end"]-self.instruction["l_start"]):]
+            self.done_latents[self.instruction["cond_exposure"]-g] = self.instruction["l_end"]
+            self.videos[self.instruction["cond_exposure"]-g][:, :, self.instruction["f_start"]:self.instruction["f_end"]] = self.decode_latents(low_video)[:, :, - (self.instruction["f_end"]-self.instruction["f_start"]):]
 
 
 
@@ -218,10 +235,10 @@ class ValScheduler:
 
 
 
-        if self.instruction["cond_exposure"]+EXPOSURE_GAP in self.instruction["generating_exposures"]:
-            self.latents[self.instruction["cond_exposure"]+EXPOSURE_GAP][:, self.instruction["l_start"]:self.instruction["l_end"]] = high_video[:,:,-(self.instruction["l_end"]-self.instruction["l_start"]):]
-            self.done_latents[self.instruction["cond_exposure"]+EXPOSURE_GAP] = self.instruction["l_end"]
-            self.videos[self.instruction["cond_exposure"]+EXPOSURE_GAP][:, :, self.instruction["f_start"]:self.instruction["f_end"]] = self.decode_latents(high_video)[:, :, - (self.instruction["f_end"]-self.instruction["f_start"]):]
+        if self.instruction["cond_exposure"]+g in self.instruction["generating_exposures"]:
+            self.latents[self.instruction["cond_exposure"]+g][:, self.instruction["l_start"]:self.instruction["l_end"]] = high_video[:,:,-(self.instruction["l_end"]-self.instruction["l_start"]):]
+            self.done_latents[self.instruction["cond_exposure"]+g] = self.instruction["l_end"]
+            self.videos[self.instruction["cond_exposure"]+g][:, :, self.instruction["f_start"]:self.instruction["f_end"]] = self.decode_latents(high_video)[:, :, - (self.instruction["f_end"]-self.instruction["f_start"]):]
 
     def create_latents(self, latents_shape, device, dtype):
         if self.latents is None:
@@ -280,8 +297,8 @@ class ValScheduler:
             videos_tensor = videos_tensor[:, :, :, keep]
                 
         print("Merging videos with encoder-decoder mode:", self.encoder_decoder_mode)    
-        hdr_video = self.pipe.merge_decoder(videos_tensor, exposures, self.encoder_decoder_mode, mem_efficient=True)
-        combined_video = torch.cat([self.videos[-7], self.videos[0], self.videos[7]], dim=2)
+        hdr_video = self.pipe.merge_decoder(videos_tensor, exposures, self.encoder_decoder_mode, mem_efficient=True, predict_gamma=self.predict_gamma)
+        combined_video = torch.cat([self.videos[-self.exp_gap], self.videos[0], self.videos[self.exp_gap]], dim=2)
         torch.cuda.empty_cache()
 
         outputs = {
@@ -295,6 +312,7 @@ class ValScheduler:
 
     def clean_up(self):
         del self.condition_video
+        del self.condition_latents
         del self.latents 
         del self.instruction
         del self.videos

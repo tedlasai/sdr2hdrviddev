@@ -98,6 +98,7 @@ class WanVideoVAEMergeDecoder(nn.Module):
         encoder_decoder_mode,
         mem_efficient: bool = False,
         chunk_pixels: int = 131072,  # used when mem_efficient=True
+        predict_gamma: bool = True,
     ) -> torch.Tensor:
 
         vids = self._stack_inputs(videos)  # (B,E,3,T,H,W)
@@ -108,12 +109,10 @@ class WanVideoVAEMergeDecoder(nn.Module):
             exposures = torch.tensor(exposures, device=vids.device, dtype=vids.dtype)
         exposures = exposures.to(device=vids.device, dtype=vids.dtype).view(1, E, 1, 1, 1, 1)
 
-        # LDR inputs
-        print("Ungamma in model")
-        ldr = vids ** (2.2)  # (B,E,3,T,H,W)
+        # LDR inputs (gamma-decode VAE outputs when training/inference used gamma-encoded brackets)
+        ldr = vids ** (2.2) if predict_gamma else vids  # (B,E,3,T,H,W)
 
         # Radiance scaling (matches your convention: radiance = ldr * 2**(-EV))
-        print(f"exposures: {exposures}")
         radiance = ldr * (2.0 ** (-exposures))  # broadcast over B,C,T,H,W
 
         # exposure scalar channel for tokens
@@ -127,9 +126,9 @@ class WanVideoVAEMergeDecoder(nn.Module):
         if encoder_decoder_mode == "seperate_debevec":
             # keep your merge_hdr behavior (expects normal/low/high), but only valid if E==3
             assert E == 3, "seperate_debevec expects exactly 3 exposures"
-            low_idx = (exposures == -7).nonzero(as_tuple=True)[1].item()
-            normal_idx = (exposures == 0).nonzero(as_tuple=True)[1].item()
-            high_idx = (exposures == 7).nonzero(as_tuple=True)[1].item()
+            low_idx = exposures.argmin().item()
+            normal_idx = (exposures == 0).nonzero(as_tuple=True)[0].item()
+            high_idx = exposures.argmax().item()
             normal, low, high = vids[:, normal_idx], vids[:, low_idx], vids[:, high_idx]
             normal_r, low_r, high_r = radiance[:, normal_idx], radiance[:, low_idx], radiance[:, high_idx]
 
@@ -149,6 +148,7 @@ class WanVideoVAEMergeDecoder(nn.Module):
             x = self.attn_blocks(x)         # (N,E,d_model)
             logits = self.weight_head(x)    # (N,E,3) or (N,E,1)
 
+            print("Predicting per channel: ", self.predict_per_channel)
             if self.predict_per_channel:
                 # softmax over exposures for each channel independently
                 weights = torch.softmax(logits, dim=1)  # (N,E,3)

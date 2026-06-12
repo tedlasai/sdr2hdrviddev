@@ -10,6 +10,7 @@ width: 768
 crop_size_w: 256
 crop_size_h: 256
 num_frames: 15
+exp_gap: 7
 data_file_keys: "image,video"
 dataset_repeat: 10
 model_paths: null #"[\"/data2/saikiran.tedla/hdrvideo/diff/models/train/Wan2.2-TI2V-5B_full/epoch-0.safetensors\"]" # Paths to load models. In JSON format.

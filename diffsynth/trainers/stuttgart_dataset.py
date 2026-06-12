@@ -242,18 +242,23 @@ def exposure_scale(frame, p, mode, lo=0.0, hi=1.0, eps=1e-8):
     raise ValueError("mode must be 'over' or 'under'")
 
 
-def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_aug=None, predict_mode="default"):
+def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_aug=None, predict_mode="default", include_crf_in_brackets=True, exp_gap=7, bracket_mode="flex_brackets", predict_gamma=True):
     """
     Given a list of HDR image paths, generate exposure-bracketed LDR images.
 
     Args:
         hdr_paths (list[str]): Paths to HDR images.
         exposures (tuple[int|float]): EV values to apply for exposure scaling.
+        bracket_mode (str): "flex_brackets" scales HDR so the sequence global max
+            maps to the darkest bracket peak (MAP_MAX); "fixed_brackets" uses
+            (-exp_gap, 0, +exp_gap) EV relative to crf_radiance without that scaling.
 
     Returns:
         list[list[np.ndarray]]: For each HDR path, a list of LDR images
                                 (same order as exposures).
     """
+    if bracket_mode not in ("flex_brackets", "fixed_brackets"):
+        raise ValueError(f"bracket_mode must be 'flex_brackets' or 'fixed_brackets', got {bracket_mode!r}")
 
     if crf_aug == "random":
         modes = ["crf"]
@@ -261,37 +266,22 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
     else:
         input_type = "crf"
 
-    # --- Pass 1: load all raw frames (border crop only) to get global max ---
+    # --- Pass 1: load all raw frames (border crop only) ---
     raw_frames = []
     for hdr_path in hdr_paths:
         hdr_in = cv2.imread(hdr_path, cv2.IMREAD_ANYDEPTH | cv2.IMREAD_COLOR)[:, :, ::-1].copy()
         hdr_in = hdr_in[10:-10, 10:-10, :]  # remove 10 pixel black border
         raw_frames.append(hdr_in)
 
-    global_max = max(f.max() for f in raw_frames)
+    g = int(exp_gap)
+    exposures = [-g, 0, g]
 
-    # --- Compute sequence-level parameters from frame 0 ---
-    hdr_0 = raw_frames[0]
-    min_exposure = np.log2(exposure_scale(hdr_0, 0.3, "under"))
-    #max_exposure = min_exposure
-    max_exposure = np.log2(exposure_scale(hdr_0, 0.3, "over"))
-    max_in_exposure = np.log2(0.7 / hdr_0.mean())
-
-    if crf_aug == "random":
-        if min_exposure < max_exposure:
-            center = np.random.uniform(min_exposure, max_exposure)
-        else:
-            center = (min_exposure + max_exposure) / 2.0
+    if bracket_mode == "flex_brackets":
+        global_max = max(f.max() for f in raw_frames)
+        MAP_MAX = 0.8
+        fit_scale = MAP_MAX / (global_max * 2**exposures[0])  # global max → darkest bracket peaks at MAP_MAX
     else:
-        center = min_exposure
-
-    exposure_gap = 7
-    exposures = [-exposure_gap, 0, exposure_gap]
-
-    random_scale = center
-
-    MAP_MAX = 0.8
-    fit_scale = MAP_MAX / (global_max * 2**exposures[0])  # global max → darkest bracket peaks at MAP_MAX
+        fit_scale = 1.0
 
     if crf_aug == "random":
         n = np.random.normal(0.9, 0.1)
@@ -312,31 +302,49 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
 
     for i, hdr_in in enumerate(raw_frames):
         hdr_in = frame_processor(hdr_in)
+        hdr_in = hdr_in * fit_scale
         hdr_images.append(hdr_in)
 
+        # --- Compute sequence-level parameters from frame 0 ---
+        if i == 0:
+            min_exposure = np.log2(exposure_scale(hdr_in, 0.3, "under"))
+            max_exposure = np.log2(exposure_scale(hdr_in, 0.3, "over"))
+            max_in_exposure = np.log2(0.7 / hdr_in.mean())
+
+            if crf_aug == "random":
+                if min_exposure < max_exposure:
+                    center = np.random.uniform(min_exposure, max_exposure)
+                else:
+                    center = (min_exposure + max_exposure) / 2.0
+            else:
+                center = max_in_exposure
+
+        crf_radiance = hdr_in * 2**center
+
+        radiance_ref = crf_radiance if bracket_mode == "fixed_brackets" else hdr_in
         ldr_images = []
         for ev in exposures:
-            ldr = np.clip(hdr_in * fit_scale * (2.0 ** ev), 0.0, 1.0)
-            ldr = ldr ** (1/2.2)
+            ldr = np.clip(radiance_ref * (2.0 ** ev), 0.0, 1.0)
+            if predict_gamma:
+                ldr = ldr ** (1/2.2)
             ldr = (ldr * 255.0)
             ldr_images.append(ldr)
         all_brackets.append(ldr_images)
 
-        radiance = np.clip(hdr_in * 2**random_scale, 0.0, 1.0)
-
+        crf_radiance_clipped = np.clip(crf_radiance, 0.0, 1.0)
         if crf_aug == "random":
-            noise_std = np.sqrt((sigma_s**2) * radiance + (sigma_r ** 2))
-            u_t = np.random.normal(0.0, 1.0, radiance.shape)
+            noise_std = np.sqrt((sigma_s**2) * crf_radiance_clipped + (sigma_r ** 2))
+            u_t = np.random.normal(0.0, 1.0, crf_radiance_clipped.shape)
             if prev_noise is None:
                 epsilon_t = u_t
             else:
                 rho = 0.5
                 epsilon_t = rho * prev_noise + np.sqrt(1 - rho ** 2) * u_t
             prev_noise = epsilon_t
-            radiance = radiance + epsilon_t * noise_std
-            radiance = np.clip(radiance, 0.0, 1.0)
+            crf_radiance_clipped = crf_radiance_clipped + epsilon_t * noise_std
+            crf_radiance_clipped = np.clip(crf_radiance_clipped, 0.0, 1.0)
 
-        Hn = np.power(radiance, n)
+        Hn = np.power(crf_radiance_clipped, n)
         ldr_w_crf = (1 + sigma) * Hn / (Hn + sigma)
 
         ldr_w_crf = np.clip(ldr_w_crf, 0.0, 1.0)
@@ -353,24 +361,29 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
     all_brackets = np.array(all_brackets)  # shape (N, len(exposures), H, W, 3)
     all_brackets = all_brackets.transpose(1,0,2,3,4)  # shape (len(exposures), N, H, W, 3)
 
-    #add crf_video as first bracket
-    all_brackets = np.concatenate([ldr_w_crf_images[None, ...], all_brackets], axis=0)  # shape (len(exposures)+1, N, H, W, 3)
+    exposures = np.array(exposures)
+    if include_crf_in_brackets:
+        all_brackets = np.concatenate([ldr_w_crf_images[None, ...], all_brackets], axis=0)  # shape (len(exposures)+1, N, H, W, 3)
+        exposures = np.concatenate(([0], exposures))
 
-    exposures = np.array(exposures) 
-    exposures = np.concatenate(([0], exposures))
-
-
-    #extend versions are wrong, but this will work for now...
     if input_type in ["crf", "crf_extend"]:
-        input_video = all_brackets[0]  # use the crf_video as input
+        input_video = ldr_w_crf_images if not include_crf_in_brackets else all_brackets[0]
     elif input_type in ["nocrf", "nocrf_extend"]:
-        input_video = all_brackets[1]  # use the first exposure bracket as input
-        
-    data = {"hdr_video": hdr_images, "bracket_video": all_brackets, "input_video": input_video, "exposures": exposures, "input_type": input_type}
+        input_video = all_brackets[0]
+
+    data = {
+        "hdr_video": hdr_images,
+        "bracket_video": all_brackets,
+        "input_video": input_video,
+        "exposures": exposures,
+        "input_type": input_type,
+        "include_crf_in_brackets": include_crf_in_brackets,
+        "bracket_mode": bracket_mode,
+    }
     return data
 
 class LoadHDRVideo(DataProcessingOperator):
-    def __init__(self, num_frames=49, num_hdr_frames=17, time_division_factor=4, time_division_remainder=1, frame_processor=lambda x: x, crf_aug=None, predict_mode="default"):
+    def __init__(self, num_frames=49, num_hdr_frames=17, time_division_factor=4, time_division_remainder=1, frame_processor=lambda x: x, crf_aug=None, predict_mode="default", include_crf_in_brackets=True, exp_gap=7, bracket_mode="flex_brackets", predict_gamma=True):
         self.num_frames = num_frames
         self.num_hdr_frames = num_hdr_frames
         self.time_division_factor = time_division_factor
@@ -379,6 +392,10 @@ class LoadHDRVideo(DataProcessingOperator):
         self.frame_processor = frame_processor
         self.crf_aug = crf_aug
         self.predict_mode = predict_mode
+        self.include_crf_in_brackets = include_crf_in_brackets
+        self.exp_gap = int(exp_gap)
+        self.bracket_mode = bracket_mode
+        self.predict_gamma = predict_gamma
         self.cache = {}
 
     # def get_num_frames(self, reader):
@@ -402,7 +419,16 @@ class LoadHDRVideo(DataProcessingOperator):
             if len(hdr_paths) < num_hdr_frames:
                 hdr_paths = [hdr_paths[0]] * num_hdr_frames
 
-        data = make_exposure_brackets(hdr_paths, self.frame_processor, crf_aug=self.crf_aug, predict_mode=self.predict_mode)
+        data = make_exposure_brackets(
+            hdr_paths,
+            self.frame_processor,
+            crf_aug=self.crf_aug,
+            predict_mode=self.predict_mode,
+            include_crf_in_brackets=self.include_crf_in_brackets,
+            exp_gap=self.exp_gap,
+            bracket_mode=self.bracket_mode,
+            predict_gamma=self.predict_gamma,
+        )
         data["bracket_video"] = data["bracket_video"].reshape(-1, *data["bracket_video"].shape[2:])  # shape (num_frames, H, W, 3)
 
 
@@ -598,6 +624,10 @@ class StuttgartDataset(torch.utils.data.Dataset):
         crop_size_h=None, crop_size_w=None,
         crf_aug=None,
         predict_mode="default",
+        include_crf_in_brackets=True,
+        exp_gap=7,
+        bracket_mode="flex_brackets",
+        predict_gamma=True,
     ):
         return RouteByType(operator_map=[(str, ToAbsolutePath(base_path) >> RouteByExtensionName(operator_map=[
                 (("hdr", "exr"), LoadHDRVideo(
@@ -605,6 +635,10 @@ class StuttgartDataset(torch.utils.data.Dataset):
                     frame_processor=ImageCropAndResize(height, width, max_pixels, height_division_factor, width_division_factor, crop_size_h=crop_size_h, crop_size_w=crop_size_w),
                     crf_aug=crf_aug,
                     predict_mode=predict_mode,
+                    include_crf_in_brackets=include_crf_in_brackets,
+                    exp_gap=exp_gap,
+                    bracket_mode=bracket_mode,
+                    predict_gamma=predict_gamma,
                 )),
             ]))
         ])
@@ -640,6 +674,7 @@ class StuttgartDataset(torch.utils.data.Dataset):
 
         n = len(self.cached_data) if self.load_from_cache else len(self.data)
         if self.split == "train":
+            return int(n * self.repeat)//3
             return int(n * self.repeat)
         return n
         
@@ -653,6 +688,20 @@ class StuttgartDataset(torch.utils.data.Dataset):
                         if isinstance(loader, LoadHDRVideo):
                             loader.predict_mode = mode
                             return
+
+    def set_resolution(self, height, width):
+        self.cached_data = {}
+        op = self.main_data_operator
+        for _, pipeline in op.operator_map:
+            ops = pipeline.operators if isinstance(pipeline, DataProcessingPipeline) else [pipeline]
+            for o in ops:
+                if isinstance(o, RouteByExtensionName):
+                    for _, loader in o.operator_map:
+                        if isinstance(loader, LoadHDRVideo):
+                            loader.frame_processor.height = height
+                            loader.frame_processor.width = width
+                            return
+        raise RuntimeError("Could not find ImageCropAndResize in main_data_operator")
 
     def check_data_equal(self, data1, data2):
         # Debug only

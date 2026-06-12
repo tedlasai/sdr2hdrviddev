@@ -70,7 +70,39 @@ class WanVideoPipeline(BasePipeline):
         lora = load_state_dict(path, torch_dtype=self.torch_dtype, device=self.device)
         loader.load(module, lora, alpha=alpha)
 
-        
+    def _flow_match_sigmas(self, timesteps, device, dtype):
+        """Per-latent-frame sigma matching FlowMatchScheduler.add_noise."""
+        timesteps = torch.as_tensor(timesteps, device=self.scheduler.timesteps.device)
+        idx = torch.argmin((self.scheduler.timesteps.unsqueeze(0) - timesteps.unsqueeze(1)).abs(), dim=1)
+        return self.scheduler.sigmas[idx].to(device=device, dtype=dtype).view(1, 1, -1, 1, 1)
+
+    def _latent_exposure_ratio_maps(self, latents, num_exposures, low_slot=1, mid_slot=2, high_slot=3, eps=1e-4):
+        """
+        Per-element |z_slot| / |z_mid|. Slots: 0=CRF, 1=low (-exp_gap), 2=mid (0), 3=high (+exp_gap).
+        """
+        latents = latents.float()
+        n = latents.shape[2] // num_exposures
+
+        def slot_tensor(slot_idx):
+            start, end = slot_idx * n, (slot_idx + 1) * n
+            return latents[:, :, start:end]
+
+        mid_abs = slot_tensor(mid_slot).abs() + eps
+        r_low = slot_tensor(low_slot).abs() / mid_abs
+        r_high = slot_tensor(high_slot).abs() / mid_abs
+        return r_low, r_high
+
+    def _latent_exposure_ratio_loss(self, pred_latents, gt_latents, num_exposures, eps=1e-4):
+        r_low_gt, r_high_gt = self._latent_exposure_ratio_maps(gt_latents, num_exposures, eps=eps)
+        r_low_pred, r_high_pred = self._latent_exposure_ratio_maps(pred_latents, num_exposures, eps=eps)
+        loss = (r_low_pred - r_low_gt).abs().mean() + (r_high_pred - r_high_gt).abs().mean()
+        return torch.nan_to_num(loss, nan=0.0, posinf=1e4, neginf=1e4)
+
+    def _flow_match_denoised_latents(self, noisy_latents, noise_pred, timesteps):
+        """Recover x0 from x_t and predicted flow velocity v = noise - x0."""
+        sigma = self._flow_match_sigmas(timesteps, noisy_latents.device, noisy_latents.dtype)
+        return noisy_latents - sigma * noise_pred
+
     def training_loss(self, **inputs):
         max_timestep_boundary = int(inputs.get("max_timestep_boundary", 1) * self.scheduler.num_train_timesteps)
         min_timestep_boundary = int(inputs.get("min_timestep_boundary", 0) * self.scheduler.num_train_timesteps)
@@ -117,17 +149,36 @@ class WanVideoPipeline(BasePipeline):
         #loss = torch.nn.functional.mse_loss(noise_pred.float(), training_target.float())
         #loss = loss * self.scheduler.training_weight(timesteps) #haven't updated
         #diffusion forcing loss
-        loss_type = "l2"
+        loss_type = inputs.get("loss_type", "l2")
         if loss_type == "l1":
-            loss = torch.abs(noise_pred.float() - training_target.float()).mean(dim=[0,1,3,4])
-            loss = torch.mean(loss * self.scheduler.training_weight(timesteps).to(loss.device))
+            denoising_loss = torch.abs(noise_pred.float() - training_target.float()).mean(dim=[0,1,3,4])
+            denoising_loss = torch.mean(
+                denoising_loss * self.scheduler.training_weight(timesteps).to(denoising_loss.device)
+            )
         elif loss_type == "l2":
-            loss = (noise_pred.float() - training_target.float()).pow(2).mean(dim=[0,1,3,4])
-            loss = torch.mean(loss * self.scheduler.training_weight(timesteps).to(loss.device))
+            denoising_loss = (noise_pred.float() - training_target.float()).pow(2).mean(dim=[0,1,3,4])
+            denoising_loss = torch.mean(
+                denoising_loss * self.scheduler.training_weight(timesteps).to(denoising_loss.device)
+            )
         else:
-            exit("loss_type must be either 'l1' or 'l2'")
+            raise ValueError(f"loss_type must be either 'l1' or 'l2', got {loss_type!r}")
 
-        return loss
+        # ratio_loss_weight = float(inputs.get("ratio_loss_weight", 0.1))
+        # num_exposures = len(inputs["exposures"])
+        # x0_pred = self._flow_match_denoised_latents(
+        #     inputs["latents"], noise_pred.float(), timesteps
+        # )
+        # x0_pred = torch.nan_to_num(x0_pred.float(), nan=0.0, posinf=1e4, neginf=-1e4)
+        # ratio_loss = self._latent_exposure_ratio_loss(
+        #     x0_pred, inputs["input_latents"].detach(), num_exposures
+        # ) * ratio_loss_weight
+        loss = denoising_loss #+ ratio_loss
+
+        return {
+            "loss": loss,
+            "denoising_loss": denoising_loss,
+            #"ratio_loss": ratio_loss,
+        }
 
 
     def enable_vram_management(self, num_persistent_param_in_dit=None, vram_limit=None, vram_buffer=0.5):
@@ -455,6 +506,9 @@ class WanVideoPipeline(BasePipeline):
         tea_cache_l1_thresh: Optional[float] = None,
         tea_cache_model_id: Optional[str] = "",
         use_vae_ea: Optional[bool] = False,
+        num_hdr_frames: Optional[int] = None,
+        exp_gap: Optional[int] = 7,
+        predict_gamma: Optional[bool] = True,
     ):
 
         # Inputs
@@ -467,18 +521,27 @@ class WanVideoPipeline(BasePipeline):
             "tea_cache_l1_thresh": tea_cache_l1_thresh, "tea_cache_model_id": tea_cache_model_id, "num_inference_steps": num_inference_steps,
         }
 
-        from .wan_video_sampler_scheduler import ValScheduler
+        from .wan_video_sampler_scheduler import ValScheduler, latent_to_frame_idx
 
-       
-        val_scheduler = ValScheduler(condition_video, generate_exposures, self, encoder_decoder_mode, tiled, tile_size, tile_stride, use_vae_ea=use_vae_ea)
+        if num_hdr_frames is None:
+            num_hdr_frames = len(condition_video) if condition_video is not None else 17
+
+        val_scheduler = ValScheduler(
+            condition_video, generate_exposures, self, encoder_decoder_mode,
+            tiled, tile_size, tile_stride, use_vae_ea=use_vae_ea, num_hdr_frames=num_hdr_frames,
+            exp_gap=exp_gap, predict_gamma=predict_gamma,
+        )
 
         while True:
             job = val_scheduler.generate_next()
             if job is None:
                 break
 
+            chunk_latents = job["l_end"] - job["l_start"]
+            num_frames_per_exposure = latent_to_frame_idx(chunk_latents) if chunk_latents > 0 else 1
             inputs_shared = {
                 "condition_video": job["video_segment"],
+                "num_frames": num_frames_per_exposure * len(exposures),
                 "video_latents": job.get("video_latents", None),
                 "prev_frames_base": job.get("prev_frames_base", None),
                 "prev_frames_up": job.get("prev_frames_up", None),
@@ -559,8 +622,7 @@ class WanVideoPipeline(BasePipeline):
             # Timestep
             timestep = timestep.unsqueeze(0).to(dtype=self.torch_dtype, device=self.device)
             
-            # Inference
-            inputs_shared['input_type'] = "crf"
+            # Inference (input_type comes from ValScheduler job: crf / crf_extend / nocrf / ...)
             noise_pred_video = self.model_fn(**models, **inputs_shared, **inputs_posi, timestep=timestep)
             inputs_shared["cfg_scale"] = 1.0
             if inputs_shared["cfg_scale"] != 1.0 and inputs_shared["prev_frames_base"] is not None:
@@ -595,7 +657,7 @@ class WanVideoPipeline(BasePipeline):
         return inputs_shared
 
     
-    def decode_latents_hdr_merge(self, latents, encoder_decoder_mode, exposures, tiled=True, tile_size=(30, 52), tile_stride=(15, 26), device="cpu"):
+    def decode_latents_hdr_merge(self, latents, encoder_decoder_mode, exposures, tiled=True, tile_size=(30, 52), tile_stride=(15, 26), device="cpu", predict_gamma=True):
         num_latents = latents.shape[1]
         assert num_latents % len(exposures) == 0, f"num_latents {num_latents} must be divisible by exposures {len(exposures)}"
 
@@ -605,7 +667,7 @@ class WanVideoPipeline(BasePipeline):
             video = self.vae.decode(latents[:,i], device=self.device, tiled=tiled, tile_size=tile_size, tile_stride=tile_stride).to(dtype=torch.float32, device=device)
             videos.append(self.vae_output_to_video(video, mode="tensor"))
 
-        hdr_video = self.merge_decoder(videos, exposures, encoder_decoder_mode, mem_efficient=True)
+        hdr_video = self.merge_decoder(videos, exposures, encoder_decoder_mode, mem_efficient=True, predict_gamma=predict_gamma)
         combined_video = torch.cat(videos, dim=2)
         outputs = {"hdr_video": hdr_video}
 
@@ -698,7 +760,13 @@ class WanVideoUnit_ShapeChecker(PipelineUnit):
 
     def process(self, pipe: WanVideoPipeline, condition_video, height, width, num_frames, exposures, test):
         if num_frames is None:
-            num_frames = condition_video.shape[0] * 4
+            from .wan_video_sampler_scheduler import hdr_pixel_frames_to_latent_count
+            if test:
+                # Single exposure conditioning stream; num_frames is total latent slots (× exposure heads).
+                latents_per_stream = hdr_pixel_frames_to_latent_count(condition_video.shape[0])
+                num_frames = latents_per_stream * len(exposures)
+            else:
+                num_frames = condition_video.shape[0] * len(exposures)
         
         exposures = torch.tensor(exposures, dtype=torch.float32, device=pipe.device)
         height, width, num_frames = pipe.custom_check_resize_height_width(height, width, num_frames, exposures)
