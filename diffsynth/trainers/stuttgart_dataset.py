@@ -596,7 +596,7 @@ class StuttgartDataset(torch.utils.data.Dataset):
         if self.split == "val":
             return min(5, len(self.data))  # Use only last 20 samples for validation
         if self.split == "train":
-            return int(len(self.data)/4)
+            return int(len(self.data)/2)
         else:
             return len(self.data)
 

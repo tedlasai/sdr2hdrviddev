@@ -32,4 +32,4 @@ find_unused_parameters: false
 save_steps: null
 dataset_num_workers: 15
 weight_decay: 0.01
-ablation: "no_rope_add"
+ablation: "none"
