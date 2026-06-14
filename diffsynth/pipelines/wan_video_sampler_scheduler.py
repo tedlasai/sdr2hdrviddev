@@ -4,7 +4,7 @@ import torch
 
 DEPENDENCY = {+8: +4, -8: -4, -12: -8, 12: +8, 0: 0, -16: -12, +16: +12}  # others have no dependency
 BASE_EXPOSURE = (0,-4,+4) #also will generate +4 and -4 as base exposures
-FIRST_CHUNK = 5 # latent frames
+FIRST_CHUNK = 2 # latent frames
 NEXT_CHUNK = 3 # latent frames
 TEMPORAL_STRIDE = 4
 PREV_LATENT_FRAMES = 2 # frames of autoregressive context

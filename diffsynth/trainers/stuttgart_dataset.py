@@ -428,11 +428,7 @@ class LoadHDRVideo(DataProcessingOperator):
         assert (self.num_frames) % 3 == 0, "num_frames must be 3n"
         num_hdr_frames = (self.num_frames) // 3
         import random
-        if self.crf_aug == "random":
-            num_hdr_frames = 17#7 # random.choice(num_frames_train)  #try 17 (5 latent frames per)
-
-        else:
-            num_hdr_frames = 17#7
+        num_hdr_frames = 5#7
 
         #num_hdr_frames += 4 #handle extend cases
 
