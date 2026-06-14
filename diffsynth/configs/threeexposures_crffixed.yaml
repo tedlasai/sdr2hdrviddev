@@ -21,7 +21,7 @@ height: 512
 width: 768
 height_full: 704
 width_full: 1280
-resolution_warmup_epochs: 10
+resolution_warmup_epochs: 30
 num_hdr_frames: 17
 exp_gap: 4  # three-bracket EV spacing: (-exp_gap, 0, +exp_gap)
 bracket_mode: fixed_brackets  # flex_brackets: scale global_max to darkest bracket; fixed_brackets: (-exp_gap, 0, +exp_gap) relative to crf_radiance

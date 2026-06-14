@@ -216,7 +216,7 @@ def model_fn_wan_video(
 
 
     is_crf = torch.cat([torch.ones(NUM_LATENTS_PER_EXPOSURE), torch.zeros(f - NUM_LATENTS_PER_EXPOSURE)], dim=0).to(x.device)-0.5
-    exposure_info = exposures.repeat_interleave(NUM_LATENTS_PER_EXPOSURE) / 7.0
+    exposure_info = exposures.repeat_interleave(NUM_LATENTS_PER_EXPOSURE) / 4.0
     relative_frame_idx = (torch.arange(len(exposures))/len(exposures)).repeat(NUM_LATENTS_PER_EXPOSURE).to(x.device) - 0.5
     
 

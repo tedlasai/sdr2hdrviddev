@@ -260,11 +260,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
     if bracket_mode not in ("flex_brackets", "fixed_brackets"):
         raise ValueError(f"bracket_mode must be 'flex_brackets' or 'fixed_brackets', got {bracket_mode!r}")
 
-    if crf_aug == "random":
-        modes = ["crf"]
-        input_type = np.random.choice(modes)
-    else:
-        input_type = "crf"
+    input_type = "crf"
 
     # --- Pass 1: load all raw frames (border crop only) ---
     raw_frames = []
