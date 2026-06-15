@@ -273,7 +273,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], spli
         
 
         if i == 0:
-            exposures = [0, -4, 4]
+            exposures = [-4, 0, 4]
             #choose random number between 3 and 5
             if split == "train":
                 num_exposures =3
@@ -292,8 +292,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], spli
                     exposures.append(-8)
                     exposures.append(8)
             else:
-                print("IN VAL")
-                exposures = [0, -4, 4]
+                exposures = [-4, 0, 4]
                 center = min_in_exposure
 
 

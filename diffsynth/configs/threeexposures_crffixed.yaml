@@ -25,7 +25,7 @@ lora_checkpoint: null
 extra_inputs: "condition_video"
 use_gradient_checkpointing_offload: false
 use_gradient_checkpointing: true
-gradient_accumulation_steps: 8
+gradient_accumulation_steps: 7
 max_timestep_boundary: 1.0
 min_timestep_boundary: 0.0
 find_unused_parameters: false

@@ -178,7 +178,7 @@ class ValScheduler:
             "video_segment": self.condition_video[f_start-PREV_FRAMES:f_end] if temporal_mode == "_extend" else self.condition_video[f_start:f_end],
             "video_latents": video_latents,
             "cond_exposure": cond_exposure,
-            "generating_exposures": (e, e-4, e+4) if cond_exposure == 0 else (e,),
+            "generating_exposures": (e-4, e, e+4) if cond_exposure == 0 else (e,),
             "f_start": f_start,
             "f_end": f_end,
             "l_start": l_start,
@@ -194,8 +194,8 @@ class ValScheduler:
         # new_latents must have length (end-start)
         num_latents_per_exposure = new_latents.shape[2] // 4
         crf_video = new_latents[:,:,0:num_latents_per_exposure]
-        base_video = new_latents[:,:,1*num_latents_per_exposure:2*num_latents_per_exposure]
-        low_video = new_latents[:,:,2*num_latents_per_exposure:3*num_latents_per_exposure]
+        low_video = new_latents[:,:,1*num_latents_per_exposure:2*num_latents_per_exposure]
+        base_video = new_latents[:,:,2*num_latents_per_exposure:3*num_latents_per_exposure]
         high_video = new_latents[:,:,3*num_latents_per_exposure:4*num_latents_per_exposure]
 
         self.create_latents(new_latents.shape[1:], new_latents.device, new_latents.dtype)
@@ -276,7 +276,7 @@ class ValScheduler:
                 
         print("Merging videos with encoder-decoder mode:", self.encoder_decoder_mode)    
         hdr_video = self.pipe.merge_decoder(videos_tensor, exposures, self.encoder_decoder_mode, mem_efficient=True)
-        combined_video = torch.cat([self.videos[0], self.videos[-4], self.videos[4]], dim=2)
+        combined_video = torch.cat([self.videos[-4], self.videos[0], self.videos[4]], dim=2)
         torch.cuda.empty_cache()
 
         outputs = {

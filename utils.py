@@ -247,20 +247,20 @@ def merge_hdr(normal_exposure, low_exposure, high_exposure, normal_radiance, low
     hdr_image = numerator / denominator
     return hdr_image
 
-def process_bracketed_video(video):
-    #assert that video has 12 frames
-    assert video.shape[0] == 15, "Video must have 15 frames for bracketed HDR processing"
-    normal_exposure = video[0:5] #EV 0
-    low_exposure = video[5:10] #EV -4
-    high_exposure = video[10:15] #EV +4
+# def process_bracketed_video(video):
+#     #assert that video has 12 frames
+#     assert video.shape[0] == 15, "Video must have 15 frames for bracketed HDR processing"
+#     normal_exposure = video[0:5] #EV 0
+#     low_exposure = video[5:10] #EV -4
+#     high_exposure = video[10:15] #EV +4
 
-    normal_radiance = normal_exposure
-    low_radiance = low_exposure * (2 ** 4)  # EV -4
-    high_radiance = high_exposure * (2 ** -4)  # EV +4
+#     normal_radiance = normal_exposure
+#     low_radiance = low_exposure * (2 ** 4)  # EV -4
+#     high_radiance = high_exposure * (2 ** -4)  # EV +4
 
-    hdr_video = merge_hdr(normal_exposure,low_exposure,high_exposure, normal_radiance, low_radiance,high_radiance)
+#     hdr_video = merge_hdr(normal_exposure,low_exposure,high_exposure, normal_radiance, low_radiance,high_radiance)
 
-    return hdr_video
+#     return hdr_video
 
 def output_hdr_video(hdr_video, out_folder):
     os.makedirs(out_folder, exist_ok=True)

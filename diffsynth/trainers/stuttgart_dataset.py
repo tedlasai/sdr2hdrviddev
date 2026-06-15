@@ -303,13 +303,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
 
 
             # now pick offsets that still fit
-            neg = -4
-            pos =  4
-
-            
-            exposures[1] = neg
-            exposures[2] = pos
-            
+            exposures = [-4, 0, 4]
             random_scale = center
 
         hdr_in = hdr_in * 2**(random_scale)
@@ -343,7 +337,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
                 n = 0.9
                 sigma = 0.6
                 
-        mid_exposure = exposures[0]
+        mid_exposure = 0
         radiance = np.clip((hdr_in * (2.0 ** mid_exposure)), 0.0, 1.0)
 
         if crf_aug == "random":
