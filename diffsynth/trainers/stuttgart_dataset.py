@@ -670,7 +670,7 @@ class StuttgartDataset(torch.utils.data.Dataset):
 
         n = len(self.cached_data) if self.load_from_cache else len(self.data)
         if self.split == "train":
-            return int(n * self.repeat)//3
+            return int(n * self.repeat)
             return int(n * self.repeat)
         return n
         
