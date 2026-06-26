@@ -103,6 +103,47 @@ class WanVideoPipeline(BasePipeline):
         sigma = self._flow_match_sigmas(timesteps, noisy_latents.device, noisy_latents.dtype)
         return noisy_latents - sigma * noise_pred
 
+    def _brightness_weight(self, inputs, target_shape):
+        """
+        Compute a per-latent-cell importance weight from input bracket pixels.
+        Weight = 1 / (linear_brightness + eps), giving stronger gradient signal
+        to darker pixels for roughly uniform log-space importance.
+        Returns float32 tensor of shape (1, 1, T_lat, H_lat, W_lat), mean = 1.
+        Temporal alignment: VAE compresses 4:1 after the first frame, so we
+        sample pixel frames at indices [0, 4, 8, ...] (every 4th).
+        """
+        input_video = inputs.get("input_video")
+        if input_video is None:
+            return None
+        predict_gamma = inputs.get("predict_gamma", True)
+
+        _, _, T_lat, H_lat, W_lat = target_shape
+
+        # input_video: numpy (T_pix, H, W, C) in [0, 255]
+        pixels = torch.from_numpy(np.asarray(input_video)).float() / 255.0  # (T_pix, H, W, C)
+        pixels = pixels.permute(3, 0, 1, 2).unsqueeze(0)  # (1, C, T_pix, H, W)
+
+        # Sample every 4th pixel frame to align with latent temporal positions
+        pixels = pixels[:, :, ::4, :, :]  # (1, C, T_lat, H_pix, W_pix)
+
+        if predict_gamma:
+            pixels_linear = pixels.clamp(0, 1) ** 2.2
+        else:
+            pixels_linear = pixels.clamp(0, 1)
+
+        w = 1.0 / (pixels_linear.mean(dim=1, keepdim=True) + 1e-3)  # (1, 1, T_lat, H_pix, W_pix)
+
+        # Spatially downsample to latent grid: flatten T into batch for interpolate
+        w_2d = w.squeeze(0).permute(1, 0, 2, 3)  # (T_lat, 1, H_pix, W_pix)
+        w_2d = torch.nn.functional.interpolate(
+            w_2d, size=(H_lat, W_lat), mode='bilinear', align_corners=False
+        )  # (T_lat, 1, H_lat, W_lat)
+        w = w_2d.permute(1, 0, 2, 3).unsqueeze(0)  # (1, 1, T_lat, H_lat, W_lat)
+
+        w = w.to(device=inputs["input_latents"].device, dtype=torch.float32)
+        w = w / w.mean()  # normalize so overall loss scale is unchanged
+        return w
+
     def training_loss(self, **inputs):
         max_timestep_boundary = int(inputs.get("max_timestep_boundary", 1) * self.scheduler.num_train_timesteps)
         min_timestep_boundary = int(inputs.get("min_timestep_boundary", 0) * self.scheduler.num_train_timesteps)
@@ -160,8 +201,20 @@ class WanVideoPipeline(BasePipeline):
             denoising_loss = torch.mean(
                 denoising_loss * self.scheduler.training_weight(timesteps).to(denoising_loss.device)
             )
+        elif loss_type in ("l1_reweight", "l2_reweight"):
+            w = self._brightness_weight(inputs, training_target.shape)
+            residual = noise_pred.float() - training_target.float()
+            if w is not None:
+                residual = w * residual
+            if loss_type == "l1_reweight":
+                denoising_loss = residual.abs().mean(dim=[0,1,3,4])
+            else:
+                denoising_loss = residual.pow(2).mean(dim=[0,1,3,4])
+            denoising_loss = torch.mean(
+                denoising_loss * self.scheduler.training_weight(timesteps).to(denoising_loss.device)
+            )
         else:
-            raise ValueError(f"loss_type must be either 'l1' or 'l2', got {loss_type!r}")
+            raise ValueError(f"loss_type must be 'l1', 'l2', 'l1_reweight', or 'l2_reweight', got {loss_type!r}")
 
         # ratio_loss_weight = float(inputs.get("ratio_loss_weight", 0.1))
         # num_exposures = len(inputs["exposures"])

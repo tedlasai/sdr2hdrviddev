@@ -98,6 +98,7 @@ class DiffusionTrainingModule(torch.nn.Module):
         pipe,
         trainable_models,
         lora_base_model, lora_target_modules, lora_rank, lora_checkpoint=None,
+        lora_extra_trainable_params=None,
         enable_fp8_training=False,
     ):
         # Scheduler
@@ -154,6 +155,13 @@ class DiffusionTrainingModule(torch.nn.Module):
                 if len(load_result[1]) > 0:
                     print(f"Warning, LoRA key mismatch! Unexpected keys in LoRA checkpoint: {load_result[1]}")
             setattr(pipe, lora_base_model, model)
+            # Re-unfreeze custom parameters that should remain fully trainable alongside LoRA
+            if lora_extra_trainable_params is not None:
+                patterns = [p.strip() for p in lora_extra_trainable_params.split(",")]
+                for name, param in model.named_parameters():
+                    if any(pat in name for pat in patterns):
+                        param.requires_grad_(True)
+                        param.data = param.to(pipe.torch_dtype)
 
 
 class ModelLogger:

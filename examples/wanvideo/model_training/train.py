@@ -22,6 +22,7 @@ class WanTrainingModule(DiffusionTrainingModule):
         model_paths=None, model_id_with_origin_paths=None,
         trainable_models=None,
         lora_base_model=None, lora_target_modules="q,k,v,o,ffn.0,ffn.2", lora_rank=32, lora_checkpoint=None,
+        lora_extra_trainable_params=None,
         use_gradient_checkpointing=True,
         use_gradient_checkpointing_offload=False,
         extra_inputs=None,
@@ -33,6 +34,7 @@ class WanTrainingModule(DiffusionTrainingModule):
         ea_num_heads=4,
         ratio_loss_weight=0.1,
         loss_type="l2",
+        predict_gamma=True,
     ):
         super().__init__()
         # Load models
@@ -75,6 +77,7 @@ class WanTrainingModule(DiffusionTrainingModule):
         self.switch_pipe_to_training_mode(
             self.pipe, trainable_models,
             lora_base_model, lora_target_modules, lora_rank, lora_checkpoint=lora_checkpoint,
+            lora_extra_trainable_params=lora_extra_trainable_params,
             enable_fp8_training=False,
         )
         
@@ -88,6 +91,7 @@ class WanTrainingModule(DiffusionTrainingModule):
         self.use_vae_ea = use_vae_ea
         self.ratio_loss_weight = float(ratio_loss_weight)
         self.loss_type = loss_type
+        self.predict_gamma = predict_gamma
         
         
     def forward_preprocess(self, data):
@@ -121,6 +125,7 @@ class WanTrainingModule(DiffusionTrainingModule):
             "test": False, #train
             "ratio_loss_weight": self.ratio_loss_weight,
             "loss_type": self.loss_type,
+            "predict_gamma": self.predict_gamma,
         }
         
         # Extra inputs
@@ -210,6 +215,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args = load_yaml_config(args, args.config)
     args = set_load_paths(args)
+    if hasattr(args, 'use_lora'):
+        args.lora_base_model = "dit" if args.use_lora else None
     exp_gap = int(getattr(args, "exp_gap", 7))
     bracket_mode = getattr(args, "bracket_mode", "flex_brackets")
     predict_gamma = getattr(args, "predict_gamma", True)
@@ -270,6 +277,7 @@ if __name__ == "__main__":
         lora_target_modules=args.lora_target_modules,
         lora_rank=args.lora_rank,
         lora_checkpoint=args.lora_checkpoint,
+        lora_extra_trainable_params=getattr(args, "lora_extra_trainable_params", None),
         use_gradient_checkpointing_offload=args.use_gradient_checkpointing_offload,
         extra_inputs=args.extra_inputs,
         max_timestep_boundary=args.max_timestep_boundary,
@@ -278,6 +286,7 @@ if __name__ == "__main__":
         ablation=getattr(args, "ablation", None),
         ratio_loss_weight=getattr(args, "ratio_loss_weight", 0.1),
         loss_type=getattr(args, "loss_type", "l2"),
+        predict_gamma=getattr(args, "predict_gamma", True),
     )
     model_logger = ModelLogger(
         Path(args.output_path) / "checkpoints",

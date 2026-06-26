@@ -256,6 +256,9 @@ class ValScheduler:
     def decode_latents(self,latents):
         video = self.pipe.vae.decode(latents, device=latents.device, tiled=self.tiled, tile_size=self.tile_size, tile_stride=self.tile_stride).to(dtype=torch.float32, device=latents.device)
         video = self.pipe.vae_output_to_video(video, mode="tensor")
+
+        #print the min and max of the video
+        print(f"Video min: {video.min()}, Video max: {video.max()}")
         return video
 
     def _decode_latents_ea(self):

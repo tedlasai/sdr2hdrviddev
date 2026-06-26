@@ -61,6 +61,8 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
         loss_type="hdr_log",
         use_vae_ea=False,
         ea_num_heads=4,
+        ea_start_epoch=None,
+        ea_trainable_models=None,
         predict_gamma=True,
     ):
         super().__init__()
@@ -76,8 +78,10 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
         if model_paths is not None:
             load_models_from_paths(model_paths, self.pipe)
 
-        # Swap the inner VAE model for an EA version before setting training mode
-        if use_vae_ea:
+        # Swap the inner VAE model for an EA version before setting training mode.
+        # Also pre-init EA architecture when ea_start_epoch is set so the model is ready
+        # to switch at that epoch without rebuilding under DDP.
+        if use_vae_ea or ea_start_epoch is not None:
             from diffsynth.models.wan_video_vae import VideoVAE38_
             from diffsynth.models.wan_video_vae_with_ea import VideoVAEWithEA_, VideoVAE38_WithEA
             old = self.pipe.vae.model
@@ -90,7 +94,7 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
                 attn_scales=old.attn_scales,
                 temperal_downsample=old.temperal_downsample,
                 ea_num_heads=ea_num_heads,
-                use_ea=use_vae_ea,
+                use_ea=True,
             ).to(dtype=torch.bfloat16)
             ea_model.load_state_dict(old.state_dict(), strict=False)
             self.pipe.vae.model = ea_model
@@ -120,6 +124,13 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
         torch.cuda.empty_cache()
 
         self.use_vae_ea = use_vae_ea
+        self.ea_start_epoch = ea_start_epoch
+        self.ea_trainable_models = ea_trainable_models
+        self.ea_num_heads = ea_num_heads
+        # Store lora params so enable_ea_stage can call switch_pipe_to_training_mode
+        self._lora_base_model = lora_base_model
+        self._lora_target_modules = lora_target_modules
+        self._lora_rank = lora_rank
 
         # Store other configs
         self.use_gradient_checkpointing = use_gradient_checkpointing
@@ -230,6 +241,23 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
 
         return inputs_data, outputs
 
+    def enable_ea_stage(self):
+        """Transition from stage 1 (no EA) to stage 2 (EA active).
+        Unfreezes vae.model.decoder, enables EA forward path.
+        Returns the newly trainable params to add to the optimizer."""
+        print("[EA Stage] Enabling cross-exposure attention...")
+        old_trainable_ids = {id(p) for p in self.parameters() if p.requires_grad}
+        self.use_vae_ea = True
+        self.switch_pipe_to_training_mode(
+            self.pipe, self.ea_trainable_models,
+            self._lora_base_model, self._lora_target_modules, self._lora_rank,
+            enable_fp8_training=False,
+        )
+        new_params = [p for p in self.parameters() if p.requires_grad and id(p) not in old_trainable_ids]
+        print(f"[EA Stage] {len(new_params)} new trainable params added (vae.decoder).")
+        return new_params
+
+
 def load_yaml_config(args, config_path):
     with open(config_path, "r") as f:
         config_args = yaml.safe_load(f) or {}
@@ -292,6 +320,15 @@ if __name__ == "__main__":
     exp_gap = int(getattr(args, "exp_gap", 7))
     bracket_mode = getattr(args, "bracket_mode", "flex_brackets")
     predict_gamma = getattr(args, "predict_gamma", True)
+
+    # If resuming past ea_start_epoch, init directly in EA mode (no mid-run transition needed)
+    ea_start_epoch = getattr(args, "ea_start_epoch", None)
+    ea_trainable_models = getattr(args, "ea_trainable_models", None)
+    if ea_start_epoch is not None and args.epochs_done >= ea_start_epoch:
+        print(f"[EA Stage] Resuming past ea_start_epoch={ea_start_epoch}; initializing in EA mode.")
+        args.use_vae_ea = True
+        args.trainable_models = ea_trainable_models or args.trainable_models
+        ea_start_epoch = None  # transition already happened; no mid-run switch needed
 
     dataset = StuttgartDataset(
         base_path=args.dataset_base_path,
@@ -361,6 +398,8 @@ if __name__ == "__main__":
         loss_type=args.loss_type,
         use_vae_ea=getattr(args, "use_vae_ea", False),
         ea_num_heads=getattr(args, "ea_num_heads", 4),
+        ea_start_epoch=ea_start_epoch,
+        ea_trainable_models=ea_trainable_models,
         predict_gamma=predict_gamma,
     )
     model_logger = ModelLogger(

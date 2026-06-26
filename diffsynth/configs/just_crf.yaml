@@ -17,10 +17,12 @@ learning_rate: 0.00003
 num_epochs: 201
 remove_prefix_in_ckpt: "pipe."
 trainable_models: "dit"
-lora_base_model: null #"dit"
+use_lora: true
+lora_base_model: null
 lora_target_modules: "q,k,v,o,ffn.0,ffn.2"
 lora_rank: 32
 lora_checkpoint: null
+lora_extra_trainable_params: "all_info_embedding"
 extra_inputs: "condition_video"
 use_gradient_checkpointing_offload: false
 use_gradient_checkpointing: true
