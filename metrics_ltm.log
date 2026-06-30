@@ -3834,81 +3834,36 @@ Updating FID/FVD accumulators for video: GirlbyTable
 Frames [bistro_03]:  41%|████      | 7/17 [01:19<01:52, 11.25s/frame][A
 Frames [Hallway]:  35%|███▌      | 6/17 [01:08<02:05, 11.42s/frame][A
 Frames [Hallway]:  41%|████      | 7/17 [01:18<01:51, 11.16s/frame][A
-Frames [bistro_03]:  47%|████▋     | 8/17 [01:25<01:35, 10.62s/frame][Aax of gt_crfal: 1000.0
-max of pref_crfal: 1315.9996
-99 Percentiles of gt_crfal: [378.33905334 999.98626141]
-99 Percentiles of pref_crfal: [281.24450989 483.05170261]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 721.639
-99 Percentiles of gt_al: [379.12352875 999.89482422]
-99 Percentiles of pred_al: [140.87532471 168.5367924 ]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1342.9252
-99 Percentiles of gt_crfal: [379.12352875 999.89482422]
-99 Percentiles of pref_crfal: [282.97079285 490.92919342]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 686.66943
-99 Percentiles of gt_al: [378.22484985 999.99804987]
-99 Percentiles of pred_al: [140.14219849 167.41167274]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1323.9346
-99 Percentiles of gt_crfal: [378.22484985 999.99804987]
-99 Percentiles of pref_crfal: [281.25030579 487.43274982]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 709.57245
-99 Percentiles of gt_al: [378.54505615 999.99311975]
-99 Percentiles of pred_al: [140.68476624 168.07728737]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1341.8529
-99 Percentiles of gt_crfal: [378.54505615 999.99311975]
-99 Percentiles of pref_crfal: [283.36816406 492.67256439]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 716.08154
-99 Percentiles of gt_al: [379.58986145 999.98527539]
-99 Percentiles of pred_al: [140.51923859 167.7603309 ]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1343.4783
-99 Percentiles of gt_crfal: [379.58986145 999.98527539]
-99 Percentiles of pref_crfal: [284.18164948 493.88253839]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 700.36194
-99 Percentiles of gt_al: [378.70775085 999.92940076]
-99 Percentiles of pred_al: [140.63820541 166.985714  ]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1321.2673
-99 Percentiles of gt_crfal: [378.70775085 999.92940076]
-99 Percentiles of pref_crfal: [282.74402985 483.73642267]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 699.10077
-99 Percentiles of gt_al: [378.90928345 999.99410577]
-99 Percentiles of pred_al: [140.41872025 167.13423773]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1312.4915
-99 Percentiles of gt_crfal: [378.90928345 999.99410577]
+Frames [bistro_03]:  47%|████▋     | 8/17 [01:25<01:35, 10.62s/frame][A
+Frames [Hallway]:  41%|████      | 7/17 [01:17<01:49, 10.95s/frame][A
+Frames [bistro_03]:  47%|████▋     | 8/17 [01:29<01:39, 11.07s/frame][A
+Frames [Hallway]:  41%|████      | 7/17 [01:19<01:53, 11.34s/frame][A
+Frames [bistro_03]:  47%|████▋     | 8/17 [01:28<01:39, 11.11s/frame][A
+Frames [Hallway]:  41%|████      | 7/17 [01:19<01:53, 11.36s/frame][A
+Frames [Hallway]:  47%|████▋     | 8/17 [01:29<01:40, 11.18s/frame][A
+Frames [bistro_03]:  47%|████▋     | 8/17 [01:31<01:43, 11.47s/frame][A
+Frames [bistro_03]:  53%|█████▎    | 9/17 [01:35<01:24, 10.55s/frame][A
+Frames [Hallway]:  47%|████▋     | 8/17 [01:28<01:38, 10.95s/frame][A
+Frames [bistro_03]:  53%|█████▎    | 9/17 [01:40<01:27, 10.96s/frame][A
+Frames [Hallway]:  47%|████▋     | 8/17 [01:31<01:42, 11.42s/frame][A
+Frames [bistro_03]:  53%|█████▎    | 9/17 [01:39<01:28, 11.08s/frame][A
+Frames [Hallway]:  47%|████▋     | 8/17 [01:30<01:41, 11.24s/frame][A
+Frames [Hallway]:  53%|█████▎    | 9/17 [01:40<01:29, 11.18s/frame][A
+Frames [bistro_03]:  53%|█████▎    | 9/17 [01:42<01:32, 11.52s/frame][A
+Frames [bistro_03]:  59%|█████▉    | 10/17 [01:46<01:14, 10.58s/frame][A
+Frames [Hallway]:  53%|█████▎    | 9/17 [01:39<01:28, 11.10s/frame][A[shutdown] Skipping (gpu 2): stuttgart / lumividltm / ltm
+[shutdown] Skipping (gpu 2): ubc / lumividltm / ltm
+Failed (gpu 2): stuttgart / hdrcnnltm / ltm
+Failed (gpu 3): ubc / hdrcnnltm / ltm
+Failed (gpu 6): stuttgart / x2hdrltm / ltm
+Failed (gpu 0): stuttgart / oursltm / ltm
+Failed (gpu 1): ubc / oursltm / ltm
+Failed (gpu 5): ubc / lediffltm / ltm
+Failed (gpu 4): stuttgart / lediffltm / ltm
+Failed (gpu 7): ubc / x2hdrltm / ltm
+Some tasks failed (will retry next round): [('stuttgart', 'hdrcnnltm', 'ltm'), ('ubc', 'hdrcnnltm', 'ltm'), ('stuttgart', 'x2hdrltm', 'ltm'), ('stuttgart', 'oursltm', 'ltm'), ('ubc', 'oursltm', 'ltm'), ('ubc', 'lediffltm', 'ltm'), ('stuttgart', 'lediffltm', 'ltm'), ('ubc', 'x2hdrltm', 'ltm')]
+[shutdown] Exiting after round — re-submit to continue.
+7]
 99 Percentiles of pref_crfal: [282.46893158 486.41684573]
 ################
 
@@ -4225,3 +4180,33 @@ Updating FID/FVD accumulators for video: GirlbyTable
 Frames [bistro_03]:  47%|████▋     | 8/17 [01:26<01:38, 10.98s/frame][A
 Frames [Hallway]:  41%|████      | 7/17 [01:13<01:45, 10.55s/frame][A
 Frames [bistro_03]:  47%|████▋     | 8/17 [01:28<01:40, 11.17s/frame][A
+Frames [Hallway]:  47%|████▋     | 8/17 [01:27<01:39, 11.01s/frame][A
+Frames [bistro_03]:  47%|████▋     | 8/17 [01:30<01:41, 11.27s/frame][A
+Frames [Hallway]:  47%|████▋     | 8/17 [01:27<01:37, 10.88s/frame][A
+Frames [Hallway]:  47%|████▋     | 8/17 [01:28<01:40, 11.15s/frame][A
+Frames [bistro_03]:  53%|█████▎    | 9/17 [01:39<01:29, 11.17s/frame][A
+Frames [Hallway]:  47%|████▋     | 8/17 [01:24<01:36, 10.76s/frame][A
+Frames [bistro_03]:  53%|█████▎    | 9/17 [01:40<01:29, 11.19s/frame][A
+Frames [bistro_03]:  53%|█████▎    | 9/17 [01:38<01:30, 11.27s/frame][A
+Frames [Hallway]:  53%|█████▎    | 9/17 [01:38<01:28, 11.09s/frame][A
+Frames [bistro_03]:  53%|█████▎    | 9/17 [01:41<01:29, 11.25s/frame][A
+Frames [Hallway]:  53%|█████▎    | 9/17 [01:38<01:27, 10.93s/frame][A
+Frames [Hallway]:  53%|█████▎    | 9/17 [01:39<01:28, 11.10s/frame][A
+Frames [bistro_03]:  59%|█████▉    | 10/17 [01:50<01:18, 11.20s/frame][A
+Frames [Hallway]:  53%|█████▎    | 9/17 [01:35<01:25, 10.71s/frame][A
+Frames [bistro_03]:  59%|█████▉    | 10/17 [01:49<01:18, 11.24s/frame][A
+Frames [bistro_03]:  59%|█████▉    | 10/17 [01:51<01:18, 11.25s/frame][A
+Frames [Hallway]:  59%|█████▉    | 10/17 [01:49<01:18, 11.24s/frame][A
+Frames [bistro_03]:  59%|█████▉    | 10/17 [01:52<01:19, 11.32s/frame][A
+Frames [Hallway]:  59%|█████▉    | 10/17 [01:49<01:16, 10.96s/frame][A[shutdown] Skipping (gpu 3): stuttgart / lumividltm / ltm
+[shutdown] Skipping (gpu 3): ubc / lumividltm / ltm
+Failed (gpu 3): ubc / hdrcnnltm / ltm
+Failed (gpu 2): stuttgart / hdrcnnltm / ltm
+Failed (gpu 7): ubc / x2hdrltm / ltm
+Failed (gpu 5): ubc / lediffltm / ltm
+Failed (gpu 0): stuttgart / oursltm / ltm
+Failed (gpu 6): stuttgart / x2hdrltm / ltm
+Failed (gpu 4): stuttgart / lediffltm / ltm
+Failed (gpu 1): ubc / oursltm / ltm
+Some tasks failed (will retry next round): [('ubc', 'hdrcnnltm', 'ltm'), ('stuttgart', 'hdrcnnltm', 'ltm'), ('ubc', 'x2hdrltm', 'ltm'), ('ubc', 'lediffltm', 'ltm'), ('stuttgart', 'oursltm', 'ltm'), ('stuttgart', 'x2hdrltm', 'ltm'), ('stuttgart', 'lediffltm', 'ltm'), ('ubc', 'oursltm', 'ltm')]
+[shutdown] Exiting after round — re-submit to continue.
