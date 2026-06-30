@@ -224,6 +224,10 @@ def model_fn_wan_video(
     all_info = torch.cat([sinusoidal_embedding_1d(all_info_freq_dim, is_crf), sinusoidal_embedding_1d(all_info_freq_dim, exposure_info), sinusoidal_embedding_1d(all_info_freq_dim, relative_frame_idx)], dim=-1)
     all_info = all_info.view(f,1,1,-1).expand(f, h, w, -1).reshape(f * h * w, 1, -1)
 
+    if dit.has_all_info_patch_embedding:
+        patch_emb = dit.all_info_patch_embedding(all_info.squeeze(1).to(dit.all_info_patch_embedding.weight.dtype))  # (f*h*w, dim)
+        x = x + patch_emb.unsqueeze(0)  # broadcast over batch dim
+
     # TeaCache
     if tea_cache is not None:
         tea_cache_update = tea_cache.check(dit, x, t_mod)

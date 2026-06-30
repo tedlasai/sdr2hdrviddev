@@ -242,7 +242,7 @@ def exposure_scale(frame, p, mode, lo=0.0, hi=1.0, eps=1e-8):
     raise ValueError("mode must be 'over' or 'under'")
 
 
-def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_aug=None, predict_mode="default", include_crf_in_brackets=True, exp_gap=7, bracket_mode="flex_brackets", predict_gamma=True):
+def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_aug=None, predict_mode="default", include_crf_in_brackets=True, exp_gap=7, bracket_mode="flex_brackets", predict_gamma=True, fixed_exposures=None):
     """
     Given a list of HDR image paths, generate exposure-bracketed LDR images.
 
@@ -251,14 +251,17 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
         exposures (tuple[int|float]): EV values to apply for exposure scaling.
         bracket_mode (str): "flex_brackets" scales HDR so the sequence global max
             maps to the darkest bracket peak (MAP_MAX); "fixed_brackets" uses
-            (-exp_gap, 0, +exp_gap) EV relative to crf_radiance without that scaling.
+            (-exp_gap, 0, +exp_gap) EV relative to crf_radiance without that scaling;
+            "fixed_brackets_3" randomly trains with (-4,0,4), (0,4,8), or (-8,-4,0).
+        fixed_exposures (tuple|None): when set, overrides bracket offsets explicitly
+            (used for per-mode validation with fixed_brackets_3).
 
     Returns:
         list[list[np.ndarray]]: For each HDR path, a list of LDR images
                                 (same order as exposures).
     """
-    if bracket_mode not in ("flex_brackets", "fixed_brackets"):
-        raise ValueError(f"bracket_mode must be 'flex_brackets' or 'fixed_brackets', got {bracket_mode!r}")
+    if bracket_mode not in ("flex_brackets", "fixed_brackets", "fixed_brackets_3"):
+        raise ValueError(f"bracket_mode must be 'flex_brackets', 'fixed_brackets', or 'fixed_brackets_3', got {bracket_mode!r}")
 
     input_type = "crf"
 
@@ -269,11 +272,18 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
         hdr_in = hdr_in[10:-10, 10:-10, :]  # remove 10 pixel black border
         raw_frames.append(hdr_in)
 
-    g = int(exp_gap)
-    exposures = [-g, 0, g]
+    if fixed_exposures is not None:
+        exposures = list(fixed_exposures)
+    elif bracket_mode == "fixed_brackets_3":
+        g = int(exp_gap)
+        _FIXED_3_SETS = [(-g, 0, g), (0, g, 2*g), (-2*g, -g, 0)]
+        exposures = list(_FIXED_3_SETS[np.random.randint(len(_FIXED_3_SETS))])
+    else:
+        g = int(exp_gap)
+        exposures = [-g, 0, g]
 
     if bracket_mode == "flex_brackets":
-        global_max = max(np.percentile(f, 99.9) for f in raw_frames)
+        global_max = max(np.percentile(frame_processor(f), 99.9) for f in raw_frames)
         MAP_MAX = 0.9
         fit_scale = MAP_MAX / (global_max * 2**exposures[0])  # robust 99.9th percentile → darkest bracket peaks at MAP_MAX
     else:
@@ -317,7 +327,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
 
         crf_radiance = hdr_in * 2**center
 
-        radiance_ref = crf_radiance if bracket_mode == "fixed_brackets" else hdr_in
+        radiance_ref = crf_radiance if bracket_mode in ("fixed_brackets", "fixed_brackets_3") else hdr_in
         ldr_images = []
         for ev in exposures:
             ldr = np.clip(radiance_ref * (2.0 ** ev), 0.0, 1.0)
@@ -379,7 +389,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
     return data
 
 class LoadHDRVideo(DataProcessingOperator):
-    def __init__(self, num_frames=49, num_hdr_frames=17, time_division_factor=4, time_division_remainder=1, frame_processor=lambda x: x, crf_aug=None, predict_mode="default", include_crf_in_brackets=True, exp_gap=7, bracket_mode="flex_brackets", predict_gamma=True):
+    def __init__(self, num_frames=49, num_hdr_frames=17, time_division_factor=4, time_division_remainder=1, frame_processor=lambda x: x, crf_aug=None, predict_mode="default", include_crf_in_brackets=True, exp_gap=7, bracket_mode="flex_brackets", predict_gamma=True, fixed_exposures=None):
         self.num_frames = num_frames
         self.num_hdr_frames = num_hdr_frames
         self.time_division_factor = time_division_factor
@@ -392,6 +402,7 @@ class LoadHDRVideo(DataProcessingOperator):
         self.exp_gap = int(exp_gap)
         self.bracket_mode = bracket_mode
         self.predict_gamma = predict_gamma
+        self.fixed_exposures = fixed_exposures
         self.cache = {}
 
     # def get_num_frames(self, reader):
@@ -424,6 +435,7 @@ class LoadHDRVideo(DataProcessingOperator):
             exp_gap=self.exp_gap,
             bracket_mode=self.bracket_mode,
             predict_gamma=self.predict_gamma,
+            fixed_exposures=self.fixed_exposures,
         )
         data["bracket_video"] = data["bracket_video"].reshape(-1, *data["bracket_video"].shape[2:])  # shape (num_frames, H, W, 3)
 
@@ -624,6 +636,7 @@ class StuttgartDataset(torch.utils.data.Dataset):
         exp_gap=7,
         bracket_mode="flex_brackets",
         predict_gamma=True,
+        fixed_exposures=None,
     ):
         return RouteByType(operator_map=[(str, ToAbsolutePath(base_path) >> RouteByExtensionName(operator_map=[
                 (("hdr", "exr"), LoadHDRVideo(
@@ -635,6 +648,7 @@ class StuttgartDataset(torch.utils.data.Dataset):
                     exp_gap=exp_gap,
                     bracket_mode=bracket_mode,
                     predict_gamma=predict_gamma,
+                    fixed_exposures=fixed_exposures,
                 )),
             ]))
         ])

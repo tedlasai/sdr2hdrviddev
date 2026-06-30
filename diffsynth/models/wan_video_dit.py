@@ -324,6 +324,7 @@ class WanModel(torch.nn.Module):
         require_vae_embedding: bool = True,
         require_clip_embedding: bool = True,
         fuse_vae_embedding_in_latents: bool = False,
+        has_all_info_patch_embedding: bool = False,
     ):
         super().__init__()
         self.dim = dim
@@ -335,6 +336,7 @@ class WanModel(torch.nn.Module):
         self.require_vae_embedding = require_vae_embedding
         self.require_clip_embedding = require_clip_embedding
         self.fuse_vae_embedding_in_latents = fuse_vae_embedding_in_latents
+        self.has_all_info_patch_embedding = has_all_info_patch_embedding
 
         self.patch_embedding = nn.Conv3d(
             in_dim, dim, kernel_size=patch_size, stride=patch_size)
@@ -368,6 +370,8 @@ class WanModel(torch.nn.Module):
             self.control_adapter = SimpleAdapter(in_dim_control_adapter, dim, kernel_size=patch_size[1:], stride=patch_size[1:])
         else:
             self.control_adapter = None
+        if has_all_info_patch_embedding:
+            self.all_info_patch_embedding = nn.Linear(48, dim)
 
     def patchify(self, x: torch.Tensor, exposure_embed):
         x = self.patch_embedding(x)

@@ -280,7 +280,7 @@ class ModelLogger:
             path = os.path.join(self.output_path, file_name)
             accelerator.save(state_dict, path, safe_serialization=True)
 
-def validate(val_dataloader, model, model_logger, epoch_id, accelerator, dataset, args, val_group=None):
+def validate(val_dataloader, model, model_logger, epoch_id, accelerator, dataset, args, val_group=None, mode_val_dataloaders=None):
     skip_val = args.skip_val #debugging thing
     max_value = 16.0
     combined_psnr = None
@@ -291,18 +291,26 @@ def validate(val_dataloader, model, model_logger, epoch_id, accelerator, dataset
     use_subgroup = dist.is_available() and dist.is_initialized() and len(val_ranks) > 1
     val_inference_steps = int(getattr(args, "val_inference_steps", 50))
 
-    eval_modes = [
-        ("default",  (-4, 0, 4)),
-        #("darken",   (-8, -4, 0)),
-        #("brighten", (0, 4, 8)),
-    ]
+    bracket_mode = getattr(args, "bracket_mode", "flex_brackets")
+    g = int(getattr(args, "exp_gap", 7))
+    if bracket_mode == "fixed_brackets_3":
+        eval_modes = [
+            ("default",  (-g, 0, g)),
+            ("brighten", (0, g, 2*g)),
+            ("darken",   (-2*g, -g, 0)),
+        ]
+    else:
+        eval_modes = [
+            ("default",  (-g, 0, g)),
+        ]
 
     for eval_mode, viz_exposures in eval_modes:
         out_metrics, data_gathered, outputs_gathered = None, None, None
         saves = 0
 
+        current_val_dataloader = (mode_val_dataloaders or {}).get(eval_mode, val_dataloader)
         accelerator.wait_for_everyone()
-        for step, data in enumerate(tqdm(val_dataloader, desc=f"Validation [{eval_mode}]", disable=not (accelerator.is_local_main_process and is_val_rank))):
+        for step, data in enumerate(tqdm(current_val_dataloader, desc=f"Validation [{eval_mode}]", disable=not (accelerator.is_local_main_process and is_val_rank))):
             if skip_val:
                 break
             if not is_val_rank:
@@ -490,6 +498,7 @@ def launch_training_task(
     gradient_accumulation_steps: int = 1,
     find_unused_parameters: bool = False,
     args = None,
+    mode_val_datasets: dict = None,
 ):
     if args is not None:
         learning_rate = args.learning_rate
@@ -511,6 +520,9 @@ def launch_training_task(
     def make_val_dataloader():
         return torch.utils.data.DataLoader(val_dataset, shuffle=False, collate_fn=lambda x: x[0], num_workers=num_workers)
 
+    def make_mode_val_dataloader(ds):
+        return torch.utils.data.DataLoader(ds, shuffle=False, collate_fn=lambda x: x[0], num_workers=num_workers)
+
     dataloader = make_train_dataloader()
     val_dataloader = make_val_dataloader()
     accelerator = Accelerator(
@@ -528,6 +540,12 @@ def launch_training_task(
     )
 
     model, optimizer, dataloader, val_dataloader, scheduler = accelerator.prepare(model, optimizer, dataloader, val_dataloader, scheduler)
+    mode_val_dataloaders = None
+    if mode_val_datasets is not None:
+        mode_val_dataloaders = {
+            mode: accelerator.prepare(make_mode_val_dataloader(ds))
+            for mode, ds in mode_val_datasets.items()
+        }
     from accelerate.utils import broadcast_object_list
 
     if len(args.optimizer_paths) > 0:
@@ -546,7 +564,7 @@ def launch_training_task(
     current_height, current_width = None, None
 
     def maybe_update_resolution(epoch_id):
-        nonlocal current_height, current_width, dataloader, val_dataloader
+        nonlocal current_height, current_width, dataloader, val_dataloader, mode_val_dataloaders
         if args is None:
             return
         height, width = resolve_training_resolution(epoch_id, args)
@@ -554,6 +572,9 @@ def launch_training_task(
             return
         dataset.set_resolution(height, width)
         val_dataset.set_resolution(height, width)
+        if mode_val_datasets is not None:
+            for ds in mode_val_datasets.values():
+                ds.set_resolution(height, width)
         args.height = height
         args.width = width
         current_height, current_width = height, width
@@ -562,6 +583,11 @@ def launch_training_task(
         torch.cuda.empty_cache()
         dataloader = accelerator.prepare(make_train_dataloader())
         val_dataloader = accelerator.prepare(make_val_dataloader())
+        if mode_val_datasets is not None:
+            mode_val_dataloaders = {
+                mode: accelerator.prepare(make_mode_val_dataloader(ds))
+                for mode, ds in mode_val_datasets.items()
+            }
         accelerator.print(f"Epoch {epoch_id + 1}: using resolution {height}x{width}")
 
     val_ranks = list(range(min(5, accelerator.num_processes)))
@@ -573,7 +599,7 @@ def launch_training_task(
         val_combined_psnr = None
         if epoch_id == epochs_done:
             with torch.no_grad():
-                val_combined_psnr = validate(val_dataloader, model, model_logger, epoch_id, accelerator, val_dataset, args, val_group=val_group)
+                val_combined_psnr = validate(val_dataloader, model, model_logger, epoch_id, accelerator, val_dataset, args, val_group=val_group, mode_val_dataloaders=mode_val_dataloaders)
             if save_steps is None:
                 model_logger.on_epoch_end(accelerator, model, optimizer, scheduler, epoch_id, val_combined_psnr=val_combined_psnr)
  
@@ -618,7 +644,7 @@ def launch_training_task(
         torch.cuda.empty_cache()
 
         with torch.no_grad():
-            val_combined_psnr = validate(val_dataloader, model, model_logger, epoch_id, accelerator, val_dataset, args, val_group=val_group)
+            val_combined_psnr = validate(val_dataloader, model, model_logger, epoch_id, accelerator, val_dataset, args, val_group=val_group, mode_val_dataloaders=mode_val_dataloaders)
         gc.collect()
         torch.cuda.empty_cache()
 

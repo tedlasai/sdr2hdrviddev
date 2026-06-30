@@ -35,6 +35,7 @@ class WanTrainingModule(DiffusionTrainingModule):
         ratio_loss_weight=0.1,
         loss_type="l2",
         predict_gamma=True,
+        has_all_info_patch_embedding=False,
     ):
         super().__init__()
         # Load models
@@ -45,6 +46,13 @@ class WanTrainingModule(DiffusionTrainingModule):
 
         self.pipe = WanVideoPipeline.from_pretrained(torch_dtype=torch.bfloat16, device="cpu", model_configs=model_configs)
         self.pipe.dit.require_vae_embedding = False  # Enable image VAE embeddings
+
+        if has_all_info_patch_embedding and not self.pipe.dit.has_all_info_patch_embedding:
+            dit = self.pipe.dit
+            dit.has_all_info_patch_embedding = True
+            dit.all_info_patch_embedding = torch.nn.Linear(48, dit.dim).to(dtype=torch.bfloat16)
+            torch.nn.init.zeros_(dit.all_info_patch_embedding.weight)
+            torch.nn.init.zeros_(dit.all_info_patch_embedding.bias)
 
         if ablation == "no_rope_add":
             from diffsynth.models.wan_video_dit import SelfAttention
@@ -269,6 +277,41 @@ if __name__ == "__main__":
         mode = "hdr_and_brackets",
         split = "val"
     )
+    mode_val_datasets = None
+    if bracket_mode == "fixed_brackets_3":
+        _FB3_BRACKET_SETS = {
+            "default":  (-exp_gap, 0, exp_gap),
+            "brighten": (0, exp_gap, 2*exp_gap),
+            "darken":   (-2*exp_gap, -exp_gap, 0),
+        }
+        mode_val_datasets = {
+            mode_name: StuttgartDataset(
+                base_path=args.dataset_base_path,
+                repeat=args.dataset_repeat,
+                datasets=getattr(args, "datasets_val", getattr(args, "datasets", None)),
+                invert_pipeline_path=getattr(args, "invert_pipeline_path", None),
+                rawhdr_path=getattr(args, "rawhdr_path", None),
+                hdrps_raws_path=getattr(args, "hdrps_raws_path", None),
+                main_data_operator=StuttgartDataset.default_video_operator(
+                    base_path=args.dataset_base_path,
+                    max_pixels=args.max_pixels,
+                    height=args.height,
+                    width=args.width,
+                    height_division_factor=16,
+                    width_division_factor=16,
+                    num_hdr_frames=args.num_hdr_frames,
+                    time_division_factor=4,
+                    time_division_remainder=1,
+                    exp_gap=exp_gap,
+                    bracket_mode="fixed_brackets_3",
+                    fixed_exposures=offsets,
+                    predict_gamma=predict_gamma,
+                ),
+                mode="hdr_and_brackets",
+                split="val",
+            )
+            for mode_name, offsets in _FB3_BRACKET_SETS.items()
+        }
     model = WanTrainingModule(
         model_paths=args.model_paths,
         model_id_with_origin_paths=args.model_id_with_origin_paths,
@@ -287,9 +330,10 @@ if __name__ == "__main__":
         ratio_loss_weight=getattr(args, "ratio_loss_weight", 0.1),
         loss_type=getattr(args, "loss_type", "l2"),
         predict_gamma=getattr(args, "predict_gamma", True),
+        has_all_info_patch_embedding=getattr(args, "has_all_info_patch_embedding", False),
     )
     model_logger = ModelLogger(
         Path(args.output_path) / "checkpoints",
         remove_prefix_in_ckpt=args.remove_prefix_in_ckpt
     )
-    launch_training_task(dataset, val_dataset, model, model_logger, args=args)
+    launch_training_task(dataset, val_dataset, model, model_logger, args=args, mode_val_datasets=mode_val_datasets)
