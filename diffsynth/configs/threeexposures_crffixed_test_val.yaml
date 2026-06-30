@@ -17,7 +17,7 @@ model_id_with_origin_paths: "Wan-AI/Wan2.2-TI2V-5B:models_t5_umt5-xxl-enc-bf16.p
 decoder_path: "/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_mergeragain/checkpoints/epoch-2.safetensors" #"/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_justmerger/checkpoints/epoch-199.safetensors"
 use_vae_ea: true
 ea_num_heads: 4
-exp_gap: 7  # three-bracket EV spacing: (-exp_gap, 0, +exp_gap), e.g. 7 -> -7,0,7 or 6 -> -6,0,6
+exp_gap: 4  # three-bracket EV spacing: (-exp_gap, 0, +exp_gap), e.g. 7 -> -7,0,7 or 6 -> -6,0,6
 bracket_mode: flex_brackets  # flex_brackets: scale global_max to darkest bracket; fixed_brackets: (-exp_gap, 0, +exp_gap) relative to crf_radiance
 learning_rate: 0.00003
 num_epochs: 201

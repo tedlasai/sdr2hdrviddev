@@ -1,0 +1,188 @@
+
+============================================================
+Running hdrcnn on stuttgart
+============================================================
+[hdrcnn] model loaded — 9/9 videos to process
+[ERROR] hdrcnn failed: OpenCV(4.10.0) /io/opencv/modules/imgproc/src/color.cpp:196: error: (-215:Assertion failed) !_src.empty() in function 'cvtColor'
+
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/run_ltm_eval.py", line 362, in main
+    method_fns[key]()
+  File "/data2/saikiran.tedla/hdrvideo/diff/run_ltm_eval.py", line 349, in <lambda>
+    'hdrcnn':  lambda: run_hdrcnn(args.dataset),
+  File "/data2/saikiran.tedla/hdrvideo/diff/run_ltm_eval.py", line 99, in run_hdrcnn
+    ds = DatasetSDR(i_d, device, True)
+  File "/data2/saikiran.tedla/hdrvideo/hdrcnn/dataset_sdr.py", line 62, in __init__
+    pred_invcrf, pred_invcrf_cpu = computeCRF(folder, 'out.txt')
+  File "/data2/saikiran.tedla/hdrvideo/hdrcnn/linearization_net.py", line 296, in computeCRF
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+cv2.error: OpenCV(4.10.0) /io/opencv/modules/imgproc/src/color.cpp:196: error: (-215:Assertion failed) !_src.empty() in function 'cvtColor'
+
+
+============================================================
+Running lediff on stuttgart
+============================================================
+Loading pipeline components...:   0%|          | 0/7 [00:00<?, ?it/s]Loading pipeline components...:  29%|██▊       | 2/7 [00:00<00:00, 19.73it/s]`torch_dtype` is deprecated! Use `dtype` instead!
+Loading pipeline components...:  57%|█████▋    | 4/7 [00:00<00:00,  9.59it/s]Loading pipeline components...:  86%|████████▌ | 6/7 [00:00<00:00,  9.99it/s]Loading pipeline components...: 100%|██████████| 7/7 [00:01<00:00,  6.00it/s]
+Loading pipeline components...:   0%|          | 0/7 [00:00<?, ?it/s]Loading pipeline components...:  57%|█████▋    | 4/7 [00:00<00:00, 21.61it/s]Loading pipeline components...: 100%|██████████| 7/7 [00:00<00:00, 19.52it/s]Loading pipeline components...: 100%|██████████| 7/7 [00:00<00:00, 19.83it/s]
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+Loading pipeline components...:   0%|          | 0/7 [00:00<?, ?it/s]Loading pipeline components...:  57%|█████▋    | 4/7 [00:00<00:00, 21.96it/s]Loading pipeline components...: 100%|██████████| 7/7 [00:00<00:00, 19.50it/s]Loading pipeline components...: 100%|██████████| 7/7 [00:00<00:00, 19.87it/s]
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+NMae split src.diffusers.pipelines.pipeline_loading_utils
+[lediff] models loaded — 9 videos
+[ERROR] lediff failed: cannot identify image file '/data2/saikiran.tedla/hdrvideo/diff/evaluations/stuttgart/ltm/bistro_01/._frame_0000.png'
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/run_ltm_eval.py", line 362, in main
+    method_fns[key]()
+  File "/data2/saikiran.tedla/hdrvideo/diff/run_ltm_eval.py", line 350, in <lambda>
+    'lediff':  lambda: run_lediff(args.dataset),
+  File "/data2/saikiran.tedla/hdrvideo/diff/run_ltm_eval.py", line 160, in run_lediff
+    img = Image.open(os.path.join(i_d, png))
+  File "/data2/saikiran.tedla/p310/lib/python3.10/site-packages/PIL/Image.py", line 3580, in open
+    raise UnidentifiedImageError(msg)
+PIL.UnidentifiedImageError: cannot identify image file '/data2/saikiran.tedla/hdrvideo/diff/evaluations/stuttgart/ltm/bistro_01/._frame_0000.png'
+
+============================================================
+Running x2hdr on stuttgart
+============================================================
+[ERROR] x2hdr failed: No module named 'src.pipeline'
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/run_ltm_eval.py", line 362, in main
+    method_fns[key]()
+  File "/data2/saikiran.tedla/hdrvideo/diff/run_ltm_eval.py", line 351, in <lambda>
+    'x2hdr':   lambda: run_x2hdr(args.dataset),
+  File "/data2/saikiran.tedla/hdrvideo/diff/run_ltm_eval.py", line 189, in run_x2hdr
+    from src.pipeline import FluxPipeline
+ModuleNotFoundError: No module named 'src.pipeline'
+
+============================================================
+Running lumivid on stuttgart
+============================================================
+[lumivid] model loaded — 9 videos
+[ERROR] lumivid failed: cannot identify image file '/data2/saikiran.tedla/hdrvideo/diff/evaluations/stuttgart/ltm/bistro_01/._frame_0000.png'
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/run_ltm_eval.py", line 362, in main
+    method_fns[key]()
+  File "/data2/saikiran.tedla/hdrvideo/diff/run_ltm_eval.py", line 352, in <lambda>
+    'lumivid': lambda: run_lumivid(args.dataset),
+  File "/data2/saikiran.tedla/hdrvideo/diff/run_ltm_eval.py", line 279, in run_lumivid
+    meta = get_png_dir_metadata(i_d, fps=float(FPS))
+  File "/data2/saikiran.tedla/hdrvideo/LTX-2/packages/ltx-pipelines/src/ltx_pipelines/utils/media_io.py", line 561, in get_png_dir_metadata
+    img = Image.open(png_files[0])
+  File "/data2/saikiran.tedla/p310/lib/python3.10/site-packages/PIL/Image.py", line 3580, in open
+    raise UnidentifiedImageError(msg)
+PIL.UnidentifiedImageError: cannot identify image file '/data2/saikiran.tedla/hdrvideo/diff/evaluations/stuttgart/ltm/bistro_01/._frame_0000.png'
+
+============================================================
+Running ours on stuttgart
+============================================================
+[ours] launching subprocess for 9 videos...
+Looking for checkpoints in: models/train/three_exposures_crfchanging_multimode_17_val/checkpoints
+Found 1 checkpoint files.
+Warning: No matching optimizer checkpoint found.
+Resuming from checkpoint: models/train/three_exposures_crfchanging_multimode_17_val/checkpoints/epoch-69.safetensors
+Loaded decoder from: /data2/saikiran.tedla/hdrvideo/diff/models/train/three_exposures_crfchanging_multimode_17_val/checkpoints_final/mergedeocderwieghts.safetensors
+Loading models from: models/train/three_exposures_crfchanging_multimode_17_val/checkpoints/epoch-69.safetensors
+    We cannot detect the model type. No models are loaded.
+Loading models from: /data2/saikiran.tedla/hdrvideo/diff/models/train/three_exposures_crfchanging_multimode_17_val/checkpoints_final/mergedeocderwieghts.safetensors
+    We cannot detect the model type. No models are loaded.
+Loading models from: ./models/Wan-AI/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth
+    model_name: wan_video_text_encoder model_class: WanTextEncoder
+    The following models are loaded: ['wan_video_text_encoder'].
+Loading models from: ['./models/Wan-AI/Wan2.2-TI2V-5B/diffusion_pytorch_model-00001-of-00003-bf16.safetensors', './models/Wan-AI/Wan2.2-TI2V-5B/diffusion_pytorch_model-00002-of-00003-bf16.safetensors', './models/Wan-AI/Wan2.2-TI2V-5B/diffusion_pytorch_model-00003-of-00003-bf16.safetensors']
+    model_name: wan_video_dit model_class: WanModel
+        This model is initialized with extra kwargs: {'has_image_input': False, 'patch_size': [1, 2, 2], 'in_dim': 48, 'dim': 3072, 'ffn_dim': 14336, 'freq_dim': 256, 'text_dim': 4096, 'out_dim': 48, 'num_heads': 24, 'num_layers': 30, 'eps': 1e-06, 'seperated_timestep': True, 'require_clip_embedding': False, 'require_vae_embedding': False, 'fuse_vae_embedding_in_latents': True}
+Initializing missing parameter: blocks.0.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.0.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.0.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.1.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.1.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.1.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.2.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.2.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.2.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.3.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.3.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.3.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.4.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.4.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.4.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.5.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.5.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.5.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.6.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.6.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.6.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.7.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.7.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.7.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.8.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.8.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.8.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.9.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.9.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.9.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.10.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.10.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.10.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.11.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.11.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.11.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.12.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.12.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.12.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.13.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.13.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.13.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.14.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.14.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.14.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.15.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.15.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.15.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.16.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.16.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.16.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.17.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.17.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.17.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.18.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.18.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.18.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.19.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.19.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.19.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.20.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.20.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.20.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.21.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.21.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.21.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.22.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.22.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.22.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.23.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.23.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.23.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.24.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.24.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.24.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.25.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.25.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.25.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.26.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.26.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.26.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.27.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.27.self_attn.all_info_embedding.weight

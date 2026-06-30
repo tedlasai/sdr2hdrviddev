@@ -226,7 +226,7 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
         else:
             outputs = self.pipe.decode_latents_hdr_merge(encoded_latents, self.encoder_decoder_mode, data["exposures"], tiled=inputs["tiled"], device=self.pipe.device, predict_gamma=self.predict_gamma)
         decoded_hdr_video = outputs["hdr_video"].to(torch.bfloat16)
-        
+
         min_value = 0
         hdr_video_gt = torch.clamp(hdr_video, min=min_value)
         outputs["hdr_video"] = torch.clamp(decoded_hdr_video, min=min_value)

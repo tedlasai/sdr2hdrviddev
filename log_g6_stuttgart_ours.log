@@ -1,0 +1,666 @@
+
+============================================================
+Running ours on stuttgart
+============================================================
+[ours] launching subprocess for 9 videos...
+Looking for checkpoints in: models/train/three_exposures_crfchanging_multimode_17_val/checkpoints
+Found 1 checkpoint files.
+Warning: No matching optimizer checkpoint found.
+Resuming from checkpoint: models/train/three_exposures_crfchanging_multimode_17_val/checkpoints/epoch-69.safetensors
+Loaded decoder from: /data2/saikiran.tedla/hdrvideo/diff/models/train/three_exposures_crfchanging_multimode_17_val/checkpoints_final/mergedeocderwieghts.safetensors
+Loading models from: models/train/three_exposures_crfchanging_multimode_17_val/checkpoints/epoch-69.safetensors
+    We cannot detect the model type. No models are loaded.
+Loading models from: /data2/saikiran.tedla/hdrvideo/diff/models/train/three_exposures_crfchanging_multimode_17_val/checkpoints_final/mergedeocderwieghts.safetensors
+    We cannot detect the model type. No models are loaded.
+Loading models from: ./models/Wan-AI/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth
+    model_name: wan_video_text_encoder model_class: WanTextEncoder
+    The following models are loaded: ['wan_video_text_encoder'].
+Loading models from: ['./models/Wan-AI/Wan2.2-TI2V-5B/diffusion_pytorch_model-00001-of-00003-bf16.safetensors', './models/Wan-AI/Wan2.2-TI2V-5B/diffusion_pytorch_model-00002-of-00003-bf16.safetensors', './models/Wan-AI/Wan2.2-TI2V-5B/diffusion_pytorch_model-00003-of-00003-bf16.safetensors']
+    model_name: wan_video_dit model_class: WanModel
+        This model is initialized with extra kwargs: {'has_image_input': False, 'patch_size': [1, 2, 2], 'in_dim': 48, 'dim': 3072, 'ffn_dim': 14336, 'freq_dim': 256, 'text_dim': 4096, 'out_dim': 48, 'num_heads': 24, 'num_layers': 30, 'eps': 1e-06, 'seperated_timestep': True, 'require_clip_embedding': False, 'require_vae_embedding': False, 'fuse_vae_embedding_in_latents': True}
+Initializing missing parameter: blocks.0.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.0.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.0.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.1.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.1.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.1.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.2.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.2.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.2.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.3.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.3.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.3.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.4.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.4.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.4.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.5.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.5.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.5.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.6.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.6.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.6.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.7.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.7.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.7.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.8.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.8.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.8.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.9.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.9.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.9.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.10.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.10.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.10.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.11.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.11.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.11.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.12.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.12.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.12.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.13.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.13.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.13.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.14.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.14.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.14.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.15.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.15.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.15.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.16.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.16.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.16.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.17.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.17.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.17.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.18.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.18.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.18.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.19.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.19.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.19.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.20.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.20.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.20.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.21.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.21.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.21.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.22.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.22.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.22.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.23.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.23.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.23.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.24.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.24.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.24.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.25.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.25.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.25.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.26.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.26.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.26.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.27.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.27.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.27.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.28.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.28.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.28.self_attn.all_info_embedding.bias
+Initializing missing parameter: blocks.29.self_attn.all_info_embedding_gate
+Initializing missing parameter: blocks.29.self_attn.all_info_embedding.weight
+Initializing missing parameter: blocks.29.self_attn.all_info_embedding.bias
+    The following models are loaded: ['wan_video_dit'].
+Loading models from: ./models/Wan-AI/Wan2.2-TI2V-5B/Wan2.2_VAE.pth
+    model_name: wan_video_vae model_class: WanVideoVAE38
+    The following models are loaded: ['wan_video_vae'].
+Using wan_video_text_encoder from ./models/Wan-AI/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth.
+Using wan_video_dit from ['./models/Wan-AI/Wan2.2-TI2V-5B/diffusion_pytorch_model-00001-of-00003-bf16.safetensors', './models/Wan-AI/Wan2.2-TI2V-5B/diffusion_pytorch_model-00002-of-00003-bf16.safetensors', './models/Wan-AI/Wan2.2-TI2V-5B/diffusion_pytorch_model-00003-of-00003-bf16.safetensors'].
+Using wan_video_vae from ./models/Wan-AI/Wan2.2-TI2V-5B/Wan2.2_VAE.pth.
+No wan_video_image_encoder models available.
+No wan_video_motion_controller models available.
+No wan_video_vace models available.
+No wans2v_audio_encoder models available.
+No wan_video_vae_merge_decoder models available.
+Loading finetuned checkpoints for  {'dit', 'merge_decoder'}
+[ours] model loaded
+[ours] bistro_01 → /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/bistro_01
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+  2%|▏         | 1/50 [00:00<00:42,  1.16it/s]
+  4%|▍         | 2/50 [00:01<00:30,  1.55it/s]
+  6%|▌         | 3/50 [00:02<00:33,  1.40it/s]
+  8%|▊         | 4/50 [00:02<00:34,  1.34it/s]
+ 10%|█         | 5/50 [00:03<00:34,  1.30it/s]
+ 12%|█▏        | 6/50 [00:04<00:34,  1.29it/s]
+ 14%|█▍        | 7/50 [00:05<00:33,  1.27it/s]
+ 16%|█▌        | 8/50 [00:06<00:33,  1.26it/s]
+ 18%|█▊        | 9/50 [00:06<00:32,  1.26it/s]
+ 20%|██        | 10/50 [00:07<00:31,  1.26it/s]
+ 22%|██▏       | 11/50 [00:08<00:31,  1.26it/s]
+ 24%|██▍       | 12/50 [00:09<00:30,  1.25it/s]
+ 26%|██▌       | 13/50 [00:10<00:29,  1.25it/s]
+ 28%|██▊       | 14/50 [00:10<00:28,  1.25it/s]
+ 30%|███       | 15/50 [00:11<00:27,  1.25it/s]
+ 32%|███▏      | 16/50 [00:12<00:27,  1.25it/s]
+ 34%|███▍      | 17/50 [00:13<00:26,  1.25it/s]
+ 36%|███▌      | 18/50 [00:14<00:25,  1.24it/s]
+ 38%|███▊      | 19/50 [00:15<00:25,  1.22it/s]
+ 40%|████      | 20/50 [00:15<00:24,  1.23it/s]
+ 42%|████▏     | 21/50 [00:16<00:23,  1.23it/s]
+ 44%|████▍     | 22/50 [00:17<00:22,  1.24it/s]
+ 46%|████▌     | 23/50 [00:18<00:21,  1.24it/s]
+ 48%|████▊     | 24/50 [00:19<00:20,  1.24it/s]
+ 50%|█████     | 25/50 [00:19<00:20,  1.24it/s]
+ 52%|█████▏    | 26/50 [00:20<00:19,  1.24it/s]
+ 54%|█████▍    | 27/50 [00:21<00:18,  1.24it/s]
+ 56%|█████▌    | 28/50 [00:22<00:17,  1.24it/s]
+ 58%|█████▊    | 29/50 [00:23<00:17,  1.23it/s]
+ 60%|██████    | 30/50 [00:23<00:16,  1.23it/s]
+ 62%|██████▏   | 31/50 [00:24<00:15,  1.24it/s]
+ 64%|██████▍   | 32/50 [00:25<00:14,  1.24it/s]
+ 66%|██████▌   | 33/50 [00:26<00:13,  1.24it/s]
+ 68%|██████▊   | 34/50 [00:27<00:12,  1.24it/s]
+ 70%|███████   | 35/50 [00:27<00:12,  1.24it/s]
+ 72%|███████▏  | 36/50 [00:28<00:11,  1.23it/s]
+ 74%|███████▍  | 37/50 [00:29<00:10,  1.23it/s]
+ 76%|███████▌  | 38/50 [00:30<00:09,  1.23it/s]
+ 78%|███████▊  | 39/50 [00:31<00:08,  1.24it/s]
+ 80%|████████  | 40/50 [00:31<00:08,  1.24it/s]
+ 82%|████████▏ | 41/50 [00:32<00:07,  1.24it/s]
+ 84%|████████▍ | 42/50 [00:33<00:06,  1.24it/s]
+ 86%|████████▌ | 43/50 [00:34<00:05,  1.24it/s]
+ 88%|████████▊ | 44/50 [00:35<00:04,  1.24it/s]
+ 90%|█████████ | 45/50 [00:36<00:04,  1.24it/s]
+ 92%|█████████▏| 46/50 [00:36<00:03,  1.24it/s]
+ 94%|█████████▍| 47/50 [00:37<00:02,  1.24it/s]
+ 96%|█████████▌| 48/50 [00:38<00:01,  1.24it/s]
+ 98%|█████████▊| 49/50 [00:39<00:00,  1.24it/s]
+100%|██████████| 50/50 [00:40<00:00,  1.24it/s]
+100%|██████████| 50/50 [00:40<00:00,  1.25it/s]
+Creating latents with shape torch.Size([48, 20, 44, 80]) for exposures (-4, 0, 4)
+Video min: 0.0, Video max: 1.0
+Video min: 0.0, Video max: 0.287109375
+Video min: 0.0, Video max: 1.0
+Merging videos with encoder-decoder mode: seperate
+[ours] done: /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/bistro_01
+[ours] bistro_02 → /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/bistro_02
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+  2%|▏         | 1/50 [00:00<00:23,  2.05it/s]
+  4%|▍         | 2/50 [00:01<00:32,  1.47it/s]
+  6%|▌         | 3/50 [00:02<00:34,  1.35it/s]
+  8%|▊         | 4/50 [00:02<00:35,  1.31it/s]
+ 10%|█         | 5/50 [00:03<00:34,  1.29it/s]
+ 12%|█▏        | 6/50 [00:04<00:34,  1.26it/s]
+ 14%|█▍        | 7/50 [00:05<00:34,  1.25it/s]
+ 16%|█▌        | 8/50 [00:06<00:33,  1.25it/s]
+ 18%|█▊        | 9/50 [00:06<00:32,  1.25it/s]
+ 20%|██        | 10/50 [00:07<00:32,  1.25it/s]
+ 22%|██▏       | 11/50 [00:08<00:31,  1.25it/s]
+ 24%|██▍       | 12/50 [00:09<00:30,  1.25it/s]
+ 26%|██▌       | 13/50 [00:10<00:29,  1.25it/s]
+ 28%|██▊       | 14/50 [00:10<00:28,  1.25it/s]
+ 30%|███       | 15/50 [00:11<00:28,  1.24it/s]
+ 32%|███▏      | 16/50 [00:12<00:27,  1.25it/s]
+ 34%|███▍      | 17/50 [00:13<00:26,  1.25it/s]
+ 36%|███▌      | 18/50 [00:14<00:25,  1.25it/s]
+ 38%|███▊      | 19/50 [00:14<00:24,  1.25it/s]
+ 40%|████      | 20/50 [00:15<00:24,  1.25it/s]
+ 42%|████▏     | 21/50 [00:16<00:23,  1.25it/s]
+ 44%|████▍     | 22/50 [00:17<00:22,  1.25it/s]
+ 46%|████▌     | 23/50 [00:18<00:21,  1.24it/s]
+ 48%|████▊     | 24/50 [00:19<00:21,  1.24it/s]
+ 50%|█████     | 25/50 [00:19<00:20,  1.23it/s]
+ 52%|█████▏    | 26/50 [00:20<00:19,  1.24it/s]
+ 54%|█████▍    | 27/50 [00:21<00:18,  1.24it/s]
+ 56%|█████▌    | 28/50 [00:22<00:17,  1.24it/s]
+ 58%|█████▊    | 29/50 [00:23<00:16,  1.24it/s]
+ 60%|██████    | 30/50 [00:23<00:16,  1.24it/s]
+ 62%|██████▏   | 31/50 [00:24<00:15,  1.24it/s]
+ 64%|██████▍   | 32/50 [00:25<00:14,  1.24it/s]
+ 66%|██████▌   | 33/50 [00:26<00:13,  1.24it/s]
+ 68%|██████▊   | 34/50 [00:27<00:12,  1.24it/s]
+ 70%|███████   | 35/50 [00:27<00:12,  1.24it/s]
+ 72%|███████▏  | 36/50 [00:28<00:11,  1.24it/s]
+ 74%|███████▍  | 37/50 [00:29<00:10,  1.23it/s]
+ 76%|███████▌  | 38/50 [00:30<00:09,  1.24it/s]
+ 78%|███████▊  | 39/50 [00:31<00:08,  1.24it/s]
+ 80%|████████  | 40/50 [00:31<00:08,  1.24it/s]
+ 82%|████████▏ | 41/50 [00:32<00:07,  1.24it/s]
+ 84%|████████▍ | 42/50 [00:33<00:06,  1.23it/s]
+ 86%|████████▌ | 43/50 [00:34<00:05,  1.23it/s]
+ 88%|████████▊ | 44/50 [00:35<00:04,  1.24it/s]
+ 90%|█████████ | 45/50 [00:35<00:04,  1.24it/s]
+ 92%|█████████▏| 46/50 [00:36<00:03,  1.24it/s]
+ 94%|█████████▍| 47/50 [00:37<00:02,  1.24it/s]
+ 96%|█████████▌| 48/50 [00:38<00:01,  1.24it/s]
+ 98%|█████████▊| 49/50 [00:39<00:00,  1.24it/s]
+100%|██████████| 50/50 [00:40<00:00,  1.24it/s]
+100%|██████████| 50/50 [00:40<00:00,  1.25it/s]
+Creating latents with shape torch.Size([48, 20, 44, 80]) for exposures (-4, 0, 4)
+Video min: 0.0, Video max: 1.0
+Video min: 0.0, Video max: 0.380859375
+Video min: 0.0, Video max: 1.0
+Merging videos with encoder-decoder mode: seperate
+[ours] done: /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/bistro_02
+[ours] bistro_03 → /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/bistro_03
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+  2%|▏         | 1/50 [00:00<00:23,  2.06it/s]
+  4%|▍         | 2/50 [00:01<00:32,  1.49it/s]
+  6%|▌         | 3/50 [00:02<00:34,  1.38it/s]
+  8%|▊         | 4/50 [00:02<00:34,  1.32it/s]
+ 10%|█         | 5/50 [00:03<00:34,  1.29it/s]
+ 12%|█▏        | 6/50 [00:04<00:34,  1.28it/s]
+ 14%|█▍        | 7/50 [00:05<00:33,  1.27it/s]
+ 16%|█▌        | 8/50 [00:06<00:33,  1.26it/s]
+ 18%|█▊        | 9/50 [00:06<00:32,  1.26it/s]
+ 20%|██        | 10/50 [00:07<00:31,  1.26it/s]
+ 22%|██▏       | 11/50 [00:08<00:31,  1.25it/s]
+ 24%|██▍       | 12/50 [00:09<00:30,  1.25it/s]
+ 26%|██▌       | 13/50 [00:10<00:29,  1.25it/s]
+ 28%|██▊       | 14/50 [00:10<00:28,  1.25it/s]
+ 30%|███       | 15/50 [00:11<00:27,  1.25it/s]
+ 32%|███▏      | 16/50 [00:12<00:27,  1.25it/s]
+ 34%|███▍      | 17/50 [00:13<00:26,  1.25it/s]
+ 36%|███▌      | 18/50 [00:14<00:25,  1.25it/s]
+ 38%|███▊      | 19/50 [00:14<00:24,  1.25it/s]
+ 40%|████      | 20/50 [00:15<00:24,  1.25it/s]
+ 42%|████▏     | 21/50 [00:16<00:23,  1.25it/s]
+ 44%|████▍     | 22/50 [00:17<00:22,  1.25it/s]
+ 46%|████▌     | 23/50 [00:18<00:21,  1.24it/s]
+ 48%|████▊     | 24/50 [00:18<00:20,  1.24it/s]
+ 50%|█████     | 25/50 [00:19<00:20,  1.24it/s]
+ 52%|█████▏    | 26/50 [00:20<00:19,  1.24it/s]
+ 54%|█████▍    | 27/50 [00:21<00:18,  1.24it/s]
+ 56%|█████▌    | 28/50 [00:22<00:17,  1.25it/s]
+ 58%|█████▊    | 29/50 [00:22<00:16,  1.25it/s]
+ 60%|██████    | 30/50 [00:23<00:16,  1.24it/s]
+ 62%|██████▏   | 31/50 [00:24<00:15,  1.24it/s]
+ 64%|██████▍   | 32/50 [00:25<00:14,  1.24it/s]
+ 66%|██████▌   | 33/50 [00:26<00:13,  1.25it/s]
+ 68%|██████▊   | 34/50 [00:26<00:12,  1.24it/s]
+ 70%|███████   | 35/50 [00:27<00:12,  1.25it/s]
+ 72%|███████▏  | 36/50 [00:28<00:11,  1.25it/s]
+ 74%|███████▍  | 37/50 [00:29<00:10,  1.24it/s]
+ 76%|███████▌  | 38/50 [00:30<00:09,  1.24it/s]
+ 78%|███████▊  | 39/50 [00:30<00:08,  1.24it/s]
+ 80%|████████  | 40/50 [00:31<00:08,  1.24it/s]
+ 82%|████████▏ | 41/50 [00:32<00:07,  1.24it/s]
+ 84%|████████▍ | 42/50 [00:33<00:06,  1.24it/s]
+ 86%|████████▌ | 43/50 [00:34<00:05,  1.24it/s]
+ 88%|████████▊ | 44/50 [00:35<00:04,  1.24it/s]
+ 90%|█████████ | 45/50 [00:35<00:04,  1.24it/s]
+ 92%|█████████▏| 46/50 [00:36<00:03,  1.24it/s]
+ 94%|█████████▍| 47/50 [00:37<00:02,  1.24it/s]
+ 96%|█████████▌| 48/50 [00:38<00:01,  1.24it/s]
+ 98%|█████████▊| 49/50 [00:39<00:00,  1.24it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.24it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.26it/s]
+Creating latents with shape torch.Size([48, 20, 44, 80]) for exposures (-4, 0, 4)
+Video min: 0.0, Video max: 1.0
+Video min: 0.0, Video max: 0.181640625
+Video min: 0.01953125, Video max: 1.0
+Merging videos with encoder-decoder mode: seperate
+[ours] done: /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/bistro_03
+[ours] carousel_fireworks_02 → /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/carousel_fireworks_02
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+  2%|▏         | 1/50 [00:00<00:24,  1.99it/s]
+  4%|▍         | 2/50 [00:01<00:32,  1.48it/s]
+  6%|▌         | 3/50 [00:02<00:34,  1.36it/s]
+  8%|▊         | 4/50 [00:02<00:34,  1.32it/s]
+ 10%|█         | 5/50 [00:03<00:34,  1.29it/s]
+ 12%|█▏        | 6/50 [00:04<00:34,  1.27it/s]
+ 14%|█▍        | 7/50 [00:05<00:33,  1.27it/s]
+ 16%|█▌        | 8/50 [00:06<00:33,  1.26it/s]
+ 18%|█▊        | 9/50 [00:06<00:32,  1.25it/s]
+ 20%|██        | 10/50 [00:07<00:31,  1.25it/s]
+ 22%|██▏       | 11/50 [00:08<00:31,  1.25it/s]
+ 24%|██▍       | 12/50 [00:09<00:30,  1.25it/s]
+ 26%|██▌       | 13/50 [00:10<00:29,  1.25it/s]
+ 28%|██▊       | 14/50 [00:10<00:28,  1.25it/s]
+ 30%|███       | 15/50 [00:11<00:27,  1.25it/s]
+ 32%|███▏      | 16/50 [00:12<00:27,  1.25it/s]
+ 34%|███▍      | 17/50 [00:13<00:26,  1.25it/s]
+ 36%|███▌      | 18/50 [00:14<00:25,  1.25it/s]
+ 38%|███▊      | 19/50 [00:14<00:24,  1.25it/s]
+ 40%|████      | 20/50 [00:15<00:24,  1.25it/s]
+ 42%|████▏     | 21/50 [00:16<00:23,  1.25it/s]
+ 44%|████▍     | 22/50 [00:17<00:22,  1.25it/s]
+ 46%|████▌     | 23/50 [00:18<00:21,  1.25it/s]
+ 48%|████▊     | 24/50 [00:18<00:20,  1.24it/s]
+ 50%|█████     | 25/50 [00:19<00:20,  1.24it/s]
+ 52%|█████▏    | 26/50 [00:20<00:19,  1.24it/s]
+ 54%|█████▍    | 27/50 [00:21<00:18,  1.24it/s]
+ 56%|█████▌    | 28/50 [00:22<00:17,  1.24it/s]
+ 58%|█████▊    | 29/50 [00:22<00:17,  1.23it/s]
+ 60%|██████    | 30/50 [00:23<00:16,  1.24it/s]
+ 62%|██████▏   | 31/50 [00:24<00:15,  1.24it/s]
+ 64%|██████▍   | 32/50 [00:25<00:14,  1.24it/s]
+ 66%|██████▌   | 33/50 [00:26<00:13,  1.24it/s]
+ 68%|██████▊   | 34/50 [00:26<00:12,  1.24it/s]
+ 70%|███████   | 35/50 [00:27<00:12,  1.25it/s]
+ 72%|███████▏  | 36/50 [00:28<00:11,  1.25it/s]
+ 74%|███████▍  | 37/50 [00:29<00:10,  1.24it/s]
+ 76%|███████▌  | 38/50 [00:30<00:09,  1.25it/s]
+ 78%|███████▊  | 39/50 [00:31<00:08,  1.25it/s]
+ 80%|████████  | 40/50 [00:31<00:08,  1.25it/s]
+ 82%|████████▏ | 41/50 [00:32<00:07,  1.25it/s]
+ 84%|████████▍ | 42/50 [00:33<00:06,  1.24it/s]
+ 86%|████████▌ | 43/50 [00:34<00:05,  1.25it/s]
+ 88%|████████▊ | 44/50 [00:35<00:04,  1.25it/s]
+ 90%|█████████ | 45/50 [00:35<00:04,  1.25it/s]
+ 92%|█████████▏| 46/50 [00:36<00:03,  1.25it/s]
+ 94%|█████████▍| 47/50 [00:37<00:02,  1.25it/s]
+ 96%|█████████▌| 48/50 [00:38<00:01,  1.25it/s]
+ 98%|█████████▊| 49/50 [00:39<00:00,  1.25it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.25it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.26it/s]
+Creating latents with shape torch.Size([48, 20, 44, 80]) for exposures (-4, 0, 4)
+Video min: 0.0, Video max: 1.0
+Video min: 0.0, Video max: 1.0
+Video min: 0.0, Video max: 1.0
+Merging videos with encoder-decoder mode: seperate
+[ours] done: /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/carousel_fireworks_02
+[ours] fireplace_01 → /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/fireplace_01
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+  2%|▏         | 1/50 [00:00<00:23,  2.06it/s]
+  4%|▍         | 2/50 [00:01<00:32,  1.49it/s]
+  6%|▌         | 3/50 [00:02<00:34,  1.37it/s]
+  8%|▊         | 4/50 [00:02<00:34,  1.32it/s]
+ 10%|█         | 5/50 [00:03<00:34,  1.30it/s]
+ 12%|█▏        | 6/50 [00:04<00:34,  1.28it/s]
+ 14%|█▍        | 7/50 [00:05<00:33,  1.27it/s]
+ 16%|█▌        | 8/50 [00:06<00:33,  1.27it/s]
+ 18%|█▊        | 9/50 [00:06<00:32,  1.26it/s]
+ 20%|██        | 10/50 [00:07<00:31,  1.26it/s]
+ 22%|██▏       | 11/50 [00:08<00:31,  1.26it/s]
+ 24%|██▍       | 12/50 [00:09<00:30,  1.25it/s]
+ 26%|██▌       | 13/50 [00:10<00:29,  1.25it/s]
+ 28%|██▊       | 14/50 [00:10<00:28,  1.26it/s]
+ 30%|███       | 15/50 [00:11<00:27,  1.25it/s]
+ 32%|███▏      | 16/50 [00:12<00:27,  1.25it/s]
+ 34%|███▍      | 17/50 [00:13<00:26,  1.25it/s]
+ 36%|███▌      | 18/50 [00:14<00:25,  1.25it/s]
+ 38%|███▊      | 19/50 [00:14<00:24,  1.25it/s]
+ 40%|████      | 20/50 [00:15<00:23,  1.25it/s]
+ 42%|████▏     | 21/50 [00:16<00:23,  1.25it/s]
+ 44%|████▍     | 22/50 [00:17<00:22,  1.25it/s]
+ 46%|████▌     | 23/50 [00:18<00:21,  1.25it/s]
+ 48%|████▊     | 24/50 [00:18<00:20,  1.25it/s]
+ 50%|█████     | 25/50 [00:19<00:20,  1.25it/s]
+ 52%|█████▏    | 26/50 [00:20<00:19,  1.25it/s]
+ 54%|█████▍    | 27/50 [00:21<00:18,  1.25it/s]
+ 56%|█████▌    | 28/50 [00:22<00:17,  1.25it/s]
+ 58%|█████▊    | 29/50 [00:22<00:16,  1.25it/s]
+ 60%|██████    | 30/50 [00:23<00:16,  1.25it/s]
+ 62%|██████▏   | 31/50 [00:24<00:15,  1.25it/s]
+ 64%|██████▍   | 32/50 [00:25<00:14,  1.25it/s]
+ 66%|██████▌   | 33/50 [00:26<00:13,  1.25it/s]
+ 68%|██████▊   | 34/50 [00:26<00:12,  1.24it/s]
+ 70%|███████   | 35/50 [00:27<00:12,  1.24it/s]
+ 72%|███████▏  | 36/50 [00:28<00:11,  1.25it/s]
+ 74%|███████▍  | 37/50 [00:29<00:10,  1.25it/s]
+ 76%|███████▌  | 38/50 [00:30<00:09,  1.25it/s]
+ 78%|███████▊  | 39/50 [00:30<00:08,  1.25it/s]
+ 80%|████████  | 40/50 [00:31<00:08,  1.25it/s]
+ 82%|████████▏ | 41/50 [00:32<00:07,  1.25it/s]
+ 84%|████████▍ | 42/50 [00:33<00:06,  1.24it/s]
+ 86%|████████▌ | 43/50 [00:34<00:05,  1.24it/s]
+ 88%|████████▊ | 44/50 [00:34<00:04,  1.25it/s]
+ 90%|█████████ | 45/50 [00:35<00:04,  1.25it/s]
+ 92%|█████████▏| 46/50 [00:36<00:03,  1.25it/s]
+ 94%|█████████▍| 47/50 [00:37<00:02,  1.25it/s]
+ 96%|█████████▌| 48/50 [00:38<00:01,  1.25it/s]
+ 98%|█████████▊| 49/50 [00:38<00:00,  1.25it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.25it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.26it/s]
+Creating latents with shape torch.Size([48, 20, 44, 80]) for exposures (-4, 0, 4)
+Video min: 0.001953125, Video max: 0.4248046875
+Video min: 0.0, Video max: 0.0390625
+Video min: 0.0, Video max: 1.0
+Merging videos with encoder-decoder mode: seperate
+[ours] done: /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/fireplace_01
+[ours] hdr_testimage → /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/hdr_testimage
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+  2%|▏         | 1/50 [00:00<00:23,  2.07it/s]
+  4%|▍         | 2/50 [00:01<00:32,  1.49it/s]
+  6%|▌         | 3/50 [00:02<00:34,  1.37it/s]
+  8%|▊         | 4/50 [00:02<00:34,  1.32it/s]
+ 10%|█         | 5/50 [00:03<00:34,  1.29it/s]
+ 12%|█▏        | 6/50 [00:04<00:34,  1.28it/s]
+ 14%|█▍        | 7/50 [00:05<00:33,  1.27it/s]
+ 16%|█▌        | 8/50 [00:06<00:33,  1.26it/s]
+ 18%|█▊        | 9/50 [00:06<00:32,  1.26it/s]
+ 20%|██        | 10/50 [00:07<00:31,  1.25it/s]
+ 22%|██▏       | 11/50 [00:08<00:31,  1.25it/s]
+ 24%|██▍       | 12/50 [00:09<00:30,  1.25it/s]
+ 26%|██▌       | 13/50 [00:10<00:29,  1.25it/s]
+ 28%|██▊       | 14/50 [00:10<00:28,  1.25it/s]
+ 30%|███       | 15/50 [00:11<00:27,  1.25it/s]
+ 32%|███▏      | 16/50 [00:12<00:27,  1.25it/s]
+ 34%|███▍      | 17/50 [00:13<00:26,  1.25it/s]
+ 36%|███▌      | 18/50 [00:14<00:25,  1.25it/s]
+ 38%|███▊      | 19/50 [00:14<00:24,  1.25it/s]
+ 40%|████      | 20/50 [00:15<00:24,  1.25it/s]
+ 42%|████▏     | 21/50 [00:16<00:23,  1.25it/s]
+ 44%|████▍     | 22/50 [00:17<00:22,  1.25it/s]
+ 46%|████▌     | 23/50 [00:18<00:21,  1.25it/s]
+ 48%|████▊     | 24/50 [00:18<00:20,  1.25it/s]
+ 50%|█████     | 25/50 [00:19<00:20,  1.25it/s]
+ 52%|█████▏    | 26/50 [00:20<00:19,  1.24it/s]
+ 54%|█████▍    | 27/50 [00:21<00:18,  1.24it/s]
+ 56%|█████▌    | 28/50 [00:22<00:17,  1.25it/s]
+ 58%|█████▊    | 29/50 [00:22<00:16,  1.25it/s]
+ 60%|██████    | 30/50 [00:23<00:16,  1.25it/s]
+ 62%|██████▏   | 31/50 [00:24<00:15,  1.25it/s]
+ 64%|██████▍   | 32/50 [00:25<00:14,  1.24it/s]
+ 66%|██████▌   | 33/50 [00:26<00:13,  1.24it/s]
+ 68%|██████▊   | 34/50 [00:26<00:12,  1.24it/s]
+ 70%|███████   | 35/50 [00:27<00:12,  1.24it/s]
+ 72%|███████▏  | 36/50 [00:28<00:11,  1.25it/s]
+ 74%|███████▍  | 37/50 [00:29<00:10,  1.24it/s]
+ 76%|███████▌  | 38/50 [00:30<00:09,  1.24it/s]
+ 78%|███████▊  | 39/50 [00:30<00:08,  1.24it/s]
+ 80%|████████  | 40/50 [00:31<00:08,  1.24it/s]
+ 82%|████████▏ | 41/50 [00:32<00:07,  1.24it/s]
+ 84%|████████▍ | 42/50 [00:33<00:06,  1.24it/s]
+ 86%|████████▌ | 43/50 [00:34<00:05,  1.24it/s]
+ 88%|████████▊ | 44/50 [00:34<00:04,  1.25it/s]
+ 90%|█████████ | 45/50 [00:35<00:04,  1.25it/s]
+ 92%|█████████▏| 46/50 [00:36<00:03,  1.25it/s]
+ 94%|█████████▍| 47/50 [00:37<00:02,  1.25it/s]
+ 96%|█████████▌| 48/50 [00:38<00:01,  1.25it/s]
+ 98%|█████████▊| 49/50 [00:38<00:00,  1.25it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.25it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.26it/s]
+Creating latents with shape torch.Size([48, 20, 44, 80]) for exposures (-4, 0, 4)
+Video min: 0.0, Video max: 1.0
+Video min: 0.0, Video max: 0.125
+Video min: 0.0, Video max: 1.0
+Merging videos with encoder-decoder mode: seperate
+[ours] done: /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/hdr_testimage
+[ours] showgirl_01 → /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/showgirl_01
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+  2%|▏         | 1/50 [00:00<00:23,  2.05it/s]
+  4%|▍         | 2/50 [00:01<00:32,  1.50it/s]
+  6%|▌         | 3/50 [00:02<00:34,  1.36it/s]
+  8%|▊         | 4/50 [00:02<00:34,  1.32it/s]
+ 10%|█         | 5/50 [00:03<00:34,  1.29it/s]
+ 12%|█▏        | 6/50 [00:04<00:34,  1.28it/s]
+ 14%|█▍        | 7/50 [00:05<00:33,  1.27it/s]
+ 16%|█▌        | 8/50 [00:06<00:33,  1.25it/s]
+ 18%|█▊        | 9/50 [00:06<00:32,  1.25it/s]
+ 20%|██        | 10/50 [00:07<00:32,  1.25it/s]
+ 22%|██▏       | 11/50 [00:08<00:31,  1.24it/s]
+ 24%|██▍       | 12/50 [00:09<00:30,  1.24it/s]
+ 26%|██▌       | 13/50 [00:10<00:29,  1.25it/s]
+ 28%|██▊       | 14/50 [00:10<00:28,  1.25it/s]
+ 30%|███       | 15/50 [00:11<00:28,  1.24it/s]
+ 32%|███▏      | 16/50 [00:12<00:27,  1.24it/s]
+ 34%|███▍      | 17/50 [00:13<00:26,  1.24it/s]
+ 36%|███▌      | 18/50 [00:14<00:25,  1.24it/s]
+ 38%|███▊      | 19/50 [00:14<00:24,  1.24it/s]
+ 40%|████      | 20/50 [00:15<00:24,  1.24it/s]
+ 42%|████▏     | 21/50 [00:16<00:23,  1.24it/s]
+ 44%|████▍     | 22/50 [00:17<00:22,  1.24it/s]
+ 46%|████▌     | 23/50 [00:18<00:21,  1.24it/s]
+ 48%|████▊     | 24/50 [00:18<00:20,  1.24it/s]
+ 50%|█████     | 25/50 [00:19<00:20,  1.24it/s]
+ 52%|█████▏    | 26/50 [00:20<00:19,  1.24it/s]
+ 54%|█████▍    | 27/50 [00:21<00:18,  1.25it/s]
+ 56%|█████▌    | 28/50 [00:22<00:17,  1.25it/s]
+ 58%|█████▊    | 29/50 [00:22<00:16,  1.25it/s]
+ 60%|██████    | 30/50 [00:23<00:16,  1.25it/s]
+ 62%|██████▏   | 31/50 [00:24<00:15,  1.25it/s]
+ 64%|██████▍   | 32/50 [00:25<00:14,  1.25it/s]
+ 66%|██████▌   | 33/50 [00:26<00:13,  1.25it/s]
+ 68%|██████▊   | 34/50 [00:27<00:12,  1.25it/s]
+ 70%|███████   | 35/50 [00:27<00:12,  1.25it/s]
+ 72%|███████▏  | 36/50 [00:28<00:11,  1.25it/s]
+ 74%|███████▍  | 37/50 [00:29<00:10,  1.25it/s]
+ 76%|███████▌  | 38/50 [00:30<00:09,  1.25it/s]
+ 78%|███████▊  | 39/50 [00:31<00:08,  1.25it/s]
+ 80%|████████  | 40/50 [00:31<00:08,  1.25it/s]
+ 82%|████████▏ | 41/50 [00:32<00:07,  1.25it/s]
+ 84%|████████▍ | 42/50 [00:33<00:06,  1.25it/s]
+ 86%|████████▌ | 43/50 [00:34<00:05,  1.25it/s]
+ 88%|████████▊ | 44/50 [00:35<00:04,  1.25it/s]
+ 90%|█████████ | 45/50 [00:35<00:04,  1.25it/s]
+ 92%|█████████▏| 46/50 [00:36<00:03,  1.24it/s]
+ 94%|█████████▍| 47/50 [00:37<00:02,  1.24it/s]
+ 96%|█████████▌| 48/50 [00:38<00:01,  1.24it/s]
+ 98%|█████████▊| 49/50 [00:39<00:00,  1.24it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.25it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.25it/s]
+Creating latents with shape torch.Size([48, 20, 44, 80]) for exposures (-4, 0, 4)
+Video min: 0.0, Video max: 1.0
+Video min: 0.0, Video max: 0.3154296875
+Video min: 0.0, Video max: 1.0
+Merging videos with encoder-decoder mode: seperate
+[ours] done: /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/showgirl_01
+[ours] showgirl_02 → /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/showgirl_02
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+  2%|▏         | 1/50 [00:00<00:23,  2.06it/s]
+  4%|▍         | 2/50 [00:01<00:32,  1.47it/s]
+  6%|▌         | 3/50 [00:02<00:34,  1.35it/s]
+  8%|▊         | 4/50 [00:02<00:35,  1.31it/s]
+ 10%|█         | 5/50 [00:03<00:35,  1.29it/s]
+ 12%|█▏        | 6/50 [00:04<00:34,  1.27it/s]
+ 14%|█▍        | 7/50 [00:05<00:34,  1.26it/s]
+ 16%|█▌        | 8/50 [00:06<00:33,  1.26it/s]
+ 18%|█▊        | 9/50 [00:06<00:32,  1.25it/s]
+ 20%|██        | 10/50 [00:07<00:31,  1.25it/s]
+ 22%|██▏       | 11/50 [00:08<00:31,  1.25it/s]
+ 24%|██▍       | 12/50 [00:09<00:30,  1.25it/s]
+ 26%|██▌       | 13/50 [00:10<00:29,  1.25it/s]
+ 28%|██▊       | 14/50 [00:10<00:28,  1.25it/s]
+ 30%|███       | 15/50 [00:11<00:27,  1.25it/s]
+ 32%|███▏      | 16/50 [00:12<00:27,  1.25it/s]
+ 34%|███▍      | 17/50 [00:13<00:26,  1.25it/s]
+ 36%|███▌      | 18/50 [00:14<00:25,  1.25it/s]
+ 38%|███▊      | 19/50 [00:14<00:24,  1.25it/s]
+ 40%|████      | 20/50 [00:15<00:24,  1.25it/s]
+ 42%|████▏     | 21/50 [00:16<00:23,  1.25it/s]
+ 44%|████▍     | 22/50 [00:17<00:22,  1.25it/s]
+ 46%|████▌     | 23/50 [00:18<00:21,  1.25it/s]
+ 48%|████▊     | 24/50 [00:18<00:20,  1.25it/s]
+ 50%|█████     | 25/50 [00:19<00:20,  1.24it/s]
+ 52%|█████▏    | 26/50 [00:20<00:19,  1.25it/s]
+ 54%|█████▍    | 27/50 [00:21<00:18,  1.24it/s]
+ 56%|█████▌    | 28/50 [00:22<00:17,  1.24it/s]
+ 58%|█████▊    | 29/50 [00:22<00:16,  1.25it/s]
+ 60%|██████    | 30/50 [00:23<00:16,  1.24it/s]
+ 62%|██████▏   | 31/50 [00:24<00:15,  1.25it/s]
+ 64%|██████▍   | 32/50 [00:25<00:14,  1.24it/s]
+ 66%|██████▌   | 33/50 [00:26<00:13,  1.24it/s]
+ 68%|██████▊   | 34/50 [00:26<00:12,  1.24it/s]
+ 70%|███████   | 35/50 [00:27<00:12,  1.24it/s]
+ 72%|███████▏  | 36/50 [00:28<00:11,  1.24it/s]
+ 74%|███████▍  | 37/50 [00:29<00:10,  1.24it/s]
+ 76%|███████▌  | 38/50 [00:30<00:09,  1.24it/s]
+ 78%|███████▊  | 39/50 [00:31<00:08,  1.25it/s]
+ 80%|████████  | 40/50 [00:31<00:08,  1.24it/s]
+ 82%|████████▏ | 41/50 [00:32<00:07,  1.24it/s]
+ 84%|████████▍ | 42/50 [00:33<00:06,  1.24it/s]
+ 86%|████████▌ | 43/50 [00:34<00:05,  1.24it/s]
+ 88%|████████▊ | 44/50 [00:35<00:04,  1.25it/s]
+ 90%|█████████ | 45/50 [00:35<00:04,  1.25it/s]
+ 92%|█████████▏| 46/50 [00:36<00:03,  1.25it/s]
+ 94%|█████████▍| 47/50 [00:37<00:02,  1.25it/s]
+ 96%|█████████▌| 48/50 [00:38<00:01,  1.25it/s]
+ 98%|█████████▊| 49/50 [00:39<00:00,  1.24it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.24it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.25it/s]
+Creating latents with shape torch.Size([48, 20, 44, 80]) for exposures (-4, 0, 4)
+Video min: 0.0, Video max: 1.0
+Video min: 0.0, Video max: 0.6044921875
+Video min: 0.0, Video max: 1.0
+Merging videos with encoder-decoder mode: seperate
+[ours] done: /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/showgirl_02
+[ours] smith_welding → /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/smith_welding
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+  2%|▏         | 1/50 [00:00<00:24,  2.02it/s]
+  4%|▍         | 2/50 [00:01<00:32,  1.48it/s]
+  6%|▌         | 3/50 [00:02<00:34,  1.37it/s]
+  8%|▊         | 4/50 [00:02<00:34,  1.32it/s]
+ 10%|█         | 5/50 [00:03<00:34,  1.29it/s]
+ 12%|█▏        | 6/50 [00:04<00:34,  1.28it/s]
+ 14%|█▍        | 7/50 [00:05<00:33,  1.27it/s]
+ 16%|█▌        | 8/50 [00:06<00:33,  1.26it/s]
+ 18%|█▊        | 9/50 [00:06<00:32,  1.26it/s]
+ 20%|██        | 10/50 [00:07<00:31,  1.25it/s]
+ 22%|██▏       | 11/50 [00:08<00:31,  1.25it/s]
+ 24%|██▍       | 12/50 [00:09<00:30,  1.25it/s]
+ 26%|██▌       | 13/50 [00:10<00:29,  1.25it/s]
+ 28%|██▊       | 14/50 [00:10<00:28,  1.25it/s]
+ 30%|███       | 15/50 [00:11<00:27,  1.25it/s]
+ 32%|███▏      | 16/50 [00:12<00:27,  1.25it/s]
+ 34%|███▍      | 17/50 [00:13<00:26,  1.25it/s]
+ 36%|███▌      | 18/50 [00:14<00:25,  1.25it/s]
+ 38%|███▊      | 19/50 [00:14<00:24,  1.25it/s]
+ 40%|████      | 20/50 [00:15<00:24,  1.25it/s]
+ 42%|████▏     | 21/50 [00:16<00:23,  1.25it/s]
+ 44%|████▍     | 22/50 [00:17<00:22,  1.25it/s]
+ 46%|████▌     | 23/50 [00:18<00:21,  1.25it/s]
+ 48%|████▊     | 24/50 [00:18<00:20,  1.25it/s]
+ 50%|█████     | 25/50 [00:19<00:20,  1.25it/s]
+ 52%|█████▏    | 26/50 [00:20<00:19,  1.25it/s]
+ 54%|█████▍    | 27/50 [00:21<00:18,  1.25it/s]
+ 56%|█████▌    | 28/50 [00:22<00:17,  1.25it/s]
+ 58%|█████▊    | 29/50 [00:22<00:16,  1.25it/s]
+ 60%|██████    | 30/50 [00:23<00:16,  1.25it/s]
+ 62%|██████▏   | 31/50 [00:24<00:15,  1.25it/s]
+ 64%|██████▍   | 32/50 [00:25<00:14,  1.25it/s]
+ 66%|██████▌   | 33/50 [00:26<00:13,  1.25it/s]
+ 68%|██████▊   | 34/50 [00:26<00:12,  1.25it/s]
+ 70%|███████   | 35/50 [00:27<00:12,  1.25it/s]
+ 72%|███████▏  | 36/50 [00:28<00:11,  1.25it/s]
+ 74%|███████▍  | 37/50 [00:29<00:10,  1.24it/s]
+ 76%|███████▌  | 38/50 [00:30<00:09,  1.24it/s]
+ 78%|███████▊  | 39/50 [00:30<00:08,  1.24it/s]
+ 80%|████████  | 40/50 [00:31<00:08,  1.25it/s]
+ 82%|████████▏ | 41/50 [00:32<00:07,  1.25it/s]
+ 84%|████████▍ | 42/50 [00:33<00:06,  1.25it/s]
+ 86%|████████▌ | 43/50 [00:34<00:05,  1.25it/s]
+ 88%|████████▊ | 44/50 [00:34<00:04,  1.25it/s]
+ 90%|█████████ | 45/50 [00:35<00:04,  1.25it/s]
+ 92%|█████████▏| 46/50 [00:36<00:03,  1.25it/s]
+ 94%|█████████▍| 47/50 [00:37<00:02,  1.25it/s]
+ 96%|█████████▌| 48/50 [00:38<00:01,  1.25it/s]
+ 98%|█████████▊| 49/50 [00:38<00:00,  1.25it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.25it/s]
+100%|██████████| 50/50 [00:39<00:00,  1.26it/s]
+Creating latents with shape torch.Size([48, 20, 44, 80]) for exposures (-4, 0, 4)
+Video min: 0.0, Video max: 1.0
+Video min: 0.0, Video max: 0.3095703125
+Video min: 0.0, Video max: 1.0
+Merging videos with encoder-decoder mode: seperate
+[ours] done: /data2/saikiran.tedla/hdrvideo/diff/evaluations/oursltm_stuttgart/ltm/smith_welding
+OURS_INNER_DONE
+[ours] done

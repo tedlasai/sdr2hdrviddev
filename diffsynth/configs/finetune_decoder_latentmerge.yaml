@@ -1,12 +1,9 @@
-name: "finetune_decoder_mergeragain"
-encode_decoder_mode: "seperate_train"
-output_path: "/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_mergeragain"
+name: "finetune_decoder_latentmerge"
+encode_decoder_mode: "latent_merge"
+output_path: "/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_latentmerge"
 dataset_base_path: "/data2/saikiran.tedla/hdrvideo/diff/data/stuttgart" # Base path of the dataset
 datasets: null
 datasets_train:
-  # - rawhdr
-  # - invert_pipeline
-  # - hdrps_raws
   - stuttgart
 datasets_val:
   - stuttgart
@@ -25,13 +22,10 @@ data_file_keys: "image,video"
 dataset_repeat: 1
 model_paths: null
 model_id_with_origin_paths: "Wan-AI/Wan2.2-TI2V-5B:models_t5_umt5-xxl-enc-bf16.pth,Wan-AI/Wan2.2-TI2V-5B:diffusion_pytorch_model*.safetensors,Wan-AI/Wan2.2-TI2V-5B:Wan2.2_VAE.pth"
-learning_rate: 0.0001       # stage 1: merge_decoder only
-ea_learning_rate: 0.00001   # stage 2: after ea_start_epoch, applied to all param groups + new vae.decoder group
+learning_rate: 0.0001
 num_epochs: 200
 remove_prefix_in_ckpt: "pipe."
-trainable_models: "merge_decoder"                       # stage 1
-ea_start_epoch: 1                                       # transition to EA stage after this many epochs
-ea_trainable_models: "vae.model.decoder,merge_decoder"  # stage 2
+trainable_models: "vae.model.decoder,latent_merge_mlp"
 lora_base_model: null
 lora_target_modules: "q,k,v,o,ffn.0,ffn.2"
 lora_rank: 32
@@ -45,6 +39,6 @@ find_unused_parameters: false
 save_steps: null
 dataset_num_workers: 4
 weight_decay: 0.01
-loss_type: "hdr_l1"
-use_vae_ea: false   # stage 1 starts without EA; transitions at ea_start_epoch
+loss_type: "log_hdr_direct"
+use_vae_ea: false
 ea_num_heads: 4

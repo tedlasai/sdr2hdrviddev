@@ -233,11 +233,12 @@ def exposure_scale(frame, p, mode, lo=0.0, hi=1.0, eps=1e-8):
         return hi / (q + eps)
     if mode == "under":  # p pixels fall below 0.5/255 after gamma
         q = -10
-        while q < 0:
-            #do min over channels
-            x = frame.min(axis=2).ravel()
-            q = np.quantile(x, p)
-            p+=0.05
+        x = frame.min(axis=2).ravel()
+        while q < 0 and p <= 1.0:
+            q = np.quantile(x, min(p, 1.0))
+            p += 0.05
+        if q <= 0:
+            q = eps  # all pixels are zero/negative; avoid div-by-zero
         return ((0.5/ 255) ** 2.2)  / (q + eps)
     raise ValueError("mode must be 'over' or 'under'")
 

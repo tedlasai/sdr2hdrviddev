@@ -754,7 +754,17 @@ def launch_training_task(
 
                 # Compute loss
                 loss_dict = {}
-                if loss_type == "hdr_l1":
+                if loss_type == "log_hdr_direct":
+                    # Pipeline returns linear HDR (exp already applied).
+                    # Supervise in log space: L1(log(pred), log(gt)).
+                    eps = 1e-6
+                    hdr_loss = torch.nn.functional.l1_loss(
+                        torch.log(outputs["hdr_video"].float() + eps),
+                        torch.log(inputs["hdr_video"].float() + eps),
+                    )
+                    loss = hdr_loss
+                    loss_dict["hdr_loss"] = hdr_loss
+                elif loss_type == "hdr_l1":
                     eps = 1e-9
                     scale = inputs["hdr_video"].max()
                     hdr_loss = torch.nn.functional.l1_loss(torch.log(inputs["hdr_video"]/scale + eps), torch.log(outputs["hdr_video"]/scale + eps))

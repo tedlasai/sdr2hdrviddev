@@ -18,6 +18,7 @@ from ..models.wan_video_dit_s2v import rope_precompute
 from ..models.wan_video_text_encoder import WanTextEncoder, T5RelativeEmbedding, T5LayerNorm
 from ..models.wan_video_vae import WanVideoVAE, RMS_norm, CausalConv3d, Upsample
 from ..models.wan_video_vae_merge_decoder import WanVideoVAEMergeDecoder
+from ..models.wan_video_latent_merge_mlp import LatentMergeMLP
 from ..models.wan_video_image_encoder import WanImageEncoder
 from ..models.wan_video_vace import VaceWanModel
 from ..models.wan_video_motion_controller import WanMotionControllerModel
@@ -473,6 +474,7 @@ class WanVideoPipeline(BasePipeline):
             pipe.merge_decoder = (
                 WanVideoVAEMergeDecoder()
             )
+        pipe.latent_merge_mlp = LatentMergeMLP()
     
 
         # Size division factor
@@ -711,6 +713,20 @@ class WanVideoPipeline(BasePipeline):
 
     
     def decode_latents_hdr_merge(self, latents, encoder_decoder_mode, exposures, tiled=True, tile_size=(30, 52), tile_stride=(15, 26), device="cpu", predict_gamma=True):
+        # latent_merge: blend E latents in latent space, then decode once.
+        # The decoder is trained to output log-HDR; we apply exp() here so every
+        # caller (training loss, validation, test.py) receives linear HDR.
+        if encoder_decoder_mode == "latent_merge":
+            # latents: (B, E, C, T', H', W')
+            merged_latent = self.latent_merge_mlp(latents)  # (B, C, T', H', W')
+            # Bypass the VAE wrapper's [-1,1] clamp to get the raw log-space output.
+            log_hdr = self.vae.model.decode(
+                merged_latent.to(self.device), self.vae.scale
+            ).to(dtype=torch.float32, device=device)
+            # Invert log to linear HDR — consistent output for all downstream callers.
+            hdr_video = torch.exp(log_hdr)
+            return {"hdr_video": hdr_video, "combined_video": hdr_video}
+
         num_latents = latents.shape[1]
         assert num_latents % len(exposures) == 0, f"num_latents {num_latents} must be divisible by exposures {len(exposures)}"
 
@@ -867,7 +883,7 @@ class WanVideoUnit_InputVideoEmbedder(PipelineUnit):
 
             input_latents = torch.concat([crf_latents, normal_exposure_latents, short_exposure_latents, long_exposure_latents], dim=2)
 
-        elif encoder_decoder_mode == "seperate_train":
+        elif encoder_decoder_mode in ["seperate_train", "latent_merge"]:
             latent_segments = []
             for i in range(len(exposures)):
                 video_segment = input_video[:, :, i*num_frames_per_exposure:(i+1)*num_frames_per_exposure]
