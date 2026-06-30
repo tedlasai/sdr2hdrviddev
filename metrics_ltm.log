@@ -2047,311 +2047,851 @@ Updating FID/FVD accumulators for video: ChristmasTree
 Frames [bistro_02]:  94%|█████████▍| 16/17 [02:54<00:10, 10.86s/frame][A
 Frames [bistro_02]:  94%|█████████▍| 16/17 [02:56<00:11, 11.06s/frame][A
 Frames [GirlbyTable]:  94%|█████████▍| 16/17 [02:57<00:11, 11.22s/frame][A
-Frames [bistro_02]:  94%|█████████▍| 16/17 [02:55<00:10, 11.00s/frame][AMax of gt_al: 1000.0
-max of pred_al: 959.15656
-99 Percentiles of gt_al: [397.33014496 999.97697089]
-99 Percentiles of pred_al: [270.61001587 497.33399149]
+Frames [bistro_02]:  94%|█████████▍| 16/17 [02:55<00:10, 11.00s/frame][A
+Frames [GirlbyTable]:  94%|█████████▍| 16/17 [02:57<00:11, 11.10s/frame][A
+Frames [bistro_02]: 100%|██████████| 17/17 [03:08<00:00, 11.28s/frame][A
+                                                                      [A
+Frames [GirlbyTable]:  94%|█████████▍| 16/17 [02:59<00:11, 11.23s/frame][AMax of gt_al: 1000.0
+max of pred_al: 11.705414
+99 Percentiles of gt_al: [330.98263458 999.98952625]
+99 Percentiles of pred_al: [4.55471757 5.1033144 ]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2685.4194
-99 Percentiles of gt_crfal: [397.33014496 999.97697089]
-99 Percentiles of pref_crfal: [406.72063629 857.33331299]
+max of pref_crfal: 1633.3928
+99 Percentiles of gt_crfal: [330.98263458 999.98952625]
+99 Percentiles of pref_crfal: [263.34875336 789.87278827]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 959.24023
-99 Percentiles of gt_al: [393.53043762 999.96325421]
-99 Percentiles of pred_al: [271.64776611 505.37662186]
+max of pred_al: 13.348711
+99 Percentiles of gt_al: [331.77190247 999.97458252]
+99 Percentiles of pred_al: [4.5805773 5.1504085]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2645.8105
-99 Percentiles of gt_crfal: [393.53043762 999.96325421]
-99 Percentiles of pref_crfal: [400.47857666 846.71826172]
+max of pref_crfal: 1750.3801
+99 Percentiles of gt_crfal: [331.77190247 999.97458252]
+99 Percentiles of pref_crfal: [263.89229797 811.42256946]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 958.6906
-99 Percentiles of gt_al: [390.75552948 999.986612  ]
-99 Percentiles of pred_al: [273.05023193 506.67452954]
+max of pred_al: 13.931212
+99 Percentiles of gt_al: [330.22951782 999.98834302]
+99 Percentiles of pred_al: [4.59679281 5.16361208]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2635.4832
-99 Percentiles of gt_crfal: [390.75552948 999.986612  ]
-99 Percentiles of pref_crfal: [398.56112671 838.40679932]
+max of pref_crfal: 1776.8896
+99 Percentiles of gt_crfal: [330.22951782 999.98834302]
+99 Percentiles of pref_crfal: [264.10327515 802.9199071 ]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 958.6906
-99 Percentiles of gt_al: [390.75552948 999.986612  ]
-99 Percentiles of pred_al: [273.05023193 506.67452954]
+max of pred_al: 10.718561
+99 Percentiles of gt_al: [330.27872955 999.99474121]
+99 Percentiles of pred_al: [4.61000197 5.19155955]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2635.4832
-99 Percentiles of gt_crfal: [390.75552948 999.986612  ]
-99 Percentiles of pref_crfal: [398.56112671 838.40679932]
+max of pref_crfal: 1713.2972
+99 Percentiles of gt_crfal: [330.27872955 999.99474121]
+99 Percentiles of pref_crfal: [263.03153717 796.67037421]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 942.94464
-99 Percentiles of gt_al: [418.05973022 999.99088477]
-99 Percentiles of pred_al: [292.58532715 549.5148421 ]
+max of pred_al: 13.060049
+99 Percentiles of gt_al: [331.46110352 999.9996275 ]
+99 Percentiles of pred_al: [4.61173828 5.19611222]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2464.026
-99 Percentiles of gt_crfal: [418.05973022 999.99088477]
-99 Percentiles of pref_crfal: [426.57400513 875.37792969]
+max of pref_crfal: 1718.8876
+99 Percentiles of gt_crfal: [331.46110352 999.9996275 ]
+99 Percentiles of pref_crfal: [265.13062531 779.90135114]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 905.68414
-99 Percentiles of gt_al: [455.30621124 999.95865277]
-99 Percentiles of pred_al: [325.74230957 612.37378754]
+max of pred_al: 10.692918
+99 Percentiles of gt_al: [330.49027466 999.99496033]
+99 Percentiles of pred_al: [4.57463429 5.148751  ]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2213.5127
-99 Percentiles of gt_crfal: [455.30621124 999.95865277]
-99 Percentiles of pref_crfal: [468.37504364 915.14366815]
+max of pref_crfal: 1674.7682
+99 Percentiles of gt_crfal: [330.49027466 999.99496033]
+99 Percentiles of pref_crfal: [262.31092499 761.96737555]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 899.3115
-99 Percentiles of gt_al: [455.75944489 999.89846155]
-99 Percentiles of pred_al: [324.62832642 619.9013764 ]
+max of pred_al: 10.20142
+99 Percentiles of gt_al: [328.90799591 999.98115601]
+99 Percentiles of pred_al: [4.61476323 5.19744927]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2172.6082
-99 Percentiles of gt_crfal: [455.75944489 999.89846155]
-99 Percentiles of pref_crfal: [467.79280914 916.77365552]
+max of pref_crfal: 1647.3994
+99 Percentiles of gt_crfal: [328.90799591 999.98115601]
+99 Percentiles of pref_crfal: [261.99996735 796.48747882]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 902.8983
-99 Percentiles of gt_al: [454.04829468 999.90753296]
-99 Percentiles of pred_al: [326.78253174 624.11312207]
+max of pred_al: 10.741461
+99 Percentiles of gt_al: [328.25915314 999.99772119]
+99 Percentiles of pred_al: [4.60262731 5.18634213]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2157.6553
-99 Percentiles of gt_crfal: [454.04829468 999.90753296]
-99 Percentiles of pref_crfal: [464.61087036 914.2324516 ]
+max of pref_crfal: 1648.2183
+99 Percentiles of gt_crfal: [328.25915314 999.99772119]
+99 Percentiles of pref_crfal: [261.32191193 809.8416181 ]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 904.0334
-99 Percentiles of gt_al: [452.14222443 999.85163641]
-99 Percentiles of pred_al: [324.63598633 628.27157025]
+max of pred_al: 8.035896
+99 Percentiles of gt_al: [330.53768372 999.98139703]
+99 Percentiles of pred_al: [4.61667593 5.18750466]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2132.0762
-99 Percentiles of gt_crfal: [452.14222443 999.85163641]
-99 Percentiles of pref_crfal: [461.96716309 912.0669848 ]
+max of pref_crfal: 1640.2656
+99 Percentiles of gt_crfal: [330.53768372 999.98139703]
+99 Percentiles of pref_crfal: [262.06746552 775.37445032]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 898.85175
-99 Percentiles of gt_al: [448.95421234 999.87549817]
-99 Percentiles of pred_al: [324.75909424 628.29887421]
+max of pred_al: 10.370064
+99 Percentiles of gt_al: [331.34921448 999.99219946]
+99 Percentiles of pred_al: [4.59854013 5.17580241]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2116.7698
-99 Percentiles of gt_crfal: [448.95421234 999.87549817]
-99 Percentiles of pref_crfal: [458.99987793 908.79477112]
+max of pref_crfal: 1656.9012
+99 Percentiles of gt_crfal: [331.34921448 999.99219946]
+99 Percentiles of pref_crfal: [263.67796814 738.72754852]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 905.5145
-99 Percentiles of gt_al: [447.69359222 999.87963947]
-99 Percentiles of pred_al: [325.14685059 629.77112531]
+max of pred_al: 10.827105
+99 Percentiles of gt_al: [330.99929779 999.9986853 ]
+99 Percentiles of pred_al: [4.55166409 5.12414451]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2119.169
-99 Percentiles of gt_crfal: [447.69359222 999.87963947]
-99 Percentiles of pref_crfal: [456.7116394 907.4307251]
+max of pref_crfal: 1713.3042
+99 Percentiles of gt_crfal: [330.99929779 999.9986853 ]
+99 Percentiles of pref_crfal: [264.60077789 763.72293091]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 905.5145
-99 Percentiles of gt_al: [447.69359222 999.87963947]
-99 Percentiles of pred_al: [325.14685059 629.77112531]
+max of pred_al: 9.669303
+99 Percentiles of gt_al: [331.62933441 999.99412769]
+99 Percentiles of pred_al: [4.51228918 5.06918591]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2119.169
-99 Percentiles of gt_crfal: [447.69359222 999.87963947]
-99 Percentiles of pref_crfal: [456.7116394 907.4307251]
+max of pref_crfal: 1661.465
+99 Percentiles of gt_crfal: [331.62933441 999.99412769]
+99 Percentiles of pref_crfal: [264.99465729 765.93290399]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 915.66644
-99 Percentiles of gt_al: [443.26290344 999.94373096]
-99 Percentiles of pred_al: [324.45526123 627.6419986 ]
+max of pred_al: 10.0356
+99 Percentiles of gt_al: [330.82212158 999.98174762]
+99 Percentiles of pred_al: [4.50878317 5.06007111]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2129.2507
-99 Percentiles of gt_crfal: [443.26290344 999.94373096]
-99 Percentiles of pref_crfal: [450.31767426 897.43900262]
+max of pref_crfal: 1663.9043
+99 Percentiles of gt_crfal: [330.82212158 999.98174762]
+99 Percentiles of pref_crfal: [265.94575928 750.64635437]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 905.14703
-99 Percentiles of gt_al: [447.11874176 999.98571362]
-99 Percentiles of pred_al: [326.75387573 628.94982794]
+max of pred_al: 8.148197
+99 Percentiles of gt_al: [331.73476563 999.99577106]
+99 Percentiles of pred_al: [4.50607894 5.05898628]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 2064.8638
-99 Percentiles of gt_crfal: [447.11874176 999.98571362]
-99 Percentiles of pref_crfal: [453.53967072 896.35998859]
+max of pref_crfal: 1606.6316
+99 Percentiles of gt_crfal: [331.73476563 999.99577106]
+99 Percentiles of pref_crfal: [264.04418488 739.33198584]
 ################
 
 
-Computing CVVDP for video: ChristmasTree
+Max of gt_al: 1000.0
+max of pred_al: 10.840384
+99 Percentiles of gt_al: [329.84918396 999.98851831]
+99 Percentiles of pred_al: [4.5041363  5.05631661]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1598.7194
+99 Percentiles of gt_crfal: [329.84918396 999.98851831]
+99 Percentiles of pref_crfal: [263.62792664 760.53218445]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 9.984782
+99 Percentiles of gt_al: [331.46726013 999.98569171]
+99 Percentiles of pred_al: [4.50378801 5.04452033]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1615.19
+99 Percentiles of gt_crfal: [331.46726013 999.98569171]
+99 Percentiles of pref_crfal: [265.75413605 751.88887573]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 10.449728
+99 Percentiles of gt_al: [331.13127716 999.99783075]
+99 Percentiles of pred_al: [4.46136541 4.99970881]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1649.6416
+99 Percentiles of gt_crfal: [331.13127716 999.99783075]
+99 Percentiles of pref_crfal: [264.81619598 742.35723236]
+################
+
+
+Computing CVVDP for video: bistro_02
 
   0%|          | 0/1 [00:00<?, ?it/s][A
-Frames [bistro_02]:   6%|▌         | 1/17 [00:10<02:55, 10.96s/frame][A
-100%|██████████| 1/1 [00:00<00:00,  1.36it/s][A100%|██████████| 1/1 [00:00<00:00,  1.36it/s]
+Frames [GirlbyTable]:  94%|█████████▍| 16/17 [03:00<00:11, 11.46s/frame][A
+100%|██████████| 1/1 [00:00<00:00,  1.79it/s][A100%|██████████| 1/1 [00:00<00:00,  1.79it/s]
 
-Frames [bistro_02]:   6%|▌         | 1/17 [00:11<02:56, 11.00s/frame][A
-Frames [bistro_02]:   6%|▌         | 1/17 [00:11<03:10, 11.90s/frame][A
-Frames [bistro_02]:   6%|▌         | 1/17 [00:10<02:50, 10.65s/frame][AVideos:  10%|█         | 1/10 [03:32<31:51, 212.39s/video]
-Frames [GirlbyTable]:   6%|▌         | 1/17 [00:11<03:09, 11.84s/frame][ACVVDP Score: 9.231428146362305
-Wrote per-video: /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4_eval_output/results_hdrcnnltm_ubc_ltm_ChristmasTree_17_ds1.csv
-Updating FID/FVD accumulators for video: ChristmasTree
+Frames [bistro_02]: 100%|██████████| 17/17 [03:05<00:00, 11.09s/frame][A
+                                                                      [A
+Frames [bistro_02]: 100%|██████████| 17/17 [03:07<00:00, 11.20s/frame][A
+                                                                      [AMax of gt_al: 1000.0
+max of pred_al: 20.318583
+99 Percentiles of gt_al: [330.98263458 999.98952625]
+99 Percentiles of pred_al: [7.87631178 8.52022895]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1720.7178
+99 Percentiles of gt_crfal: [330.98263458 999.98952625]
+99 Percentiles of pref_crfal: [209.02919006 527.49888965]
+################
 
-Frames [GirlbyTable]:   0%|          | 0/17 [00:00<?, ?frame/s][A
-Frames [GirlbyTable]:   6%|▌         | 1/17 [00:10<02:49, 10.60s/frame][A
-Frames [GirlbyTable]:   6%|▌         | 1/17 [00:11<02:59, 11.22s/frame][A
-Frames [bistro_02]:  12%|█▏        | 2/17 [00:22<02:52, 11.49s/frame][A
-Frames [bistro_02]:  12%|█▏        | 2/17 [00:22<02:46, 11.09s/frame][A
-Frames [bistro_02]:  12%|█▏        | 2/17 [00:23<02:54, 11.66s/frame][A
-Frames [bistro_02]:  12%|█▏        | 2/17 [00:20<02:29,  9.99s/frame][A
-Frames [GirlbyTable]:   6%|▌         | 1/17 [00:09<02:36,  9.78s/frame][A
-Frames [GirlbyTable]:  12%|█▏        | 2/17 [00:20<02:31, 10.12s/frame][A
-Frames [GirlbyTable]:  12%|█▏        | 2/17 [00:23<02:52, 11.49s/frame][A
-Frames [GirlbyTable]:  12%|█▏        | 2/17 [00:22<02:45, 11.05s/frame][A
-Frames [bistro_02]:  18%|█▊        | 3/17 [00:33<02:34, 11.03s/frame][A
-Frames [bistro_02]:  18%|█▊        | 3/17 [00:34<02:41, 11.51s/frame][A
-Frames [bistro_02]:  18%|█▊        | 3/17 [00:30<02:23, 10.23s/frame][A
-Frames [bistro_02]:  18%|█▊        | 3/17 [00:35<02:44, 11.74s/frame][A
-Frames [GirlbyTable]:  12%|█▏        | 2/17 [00:19<02:28,  9.90s/frame][A
-Frames [GirlbyTable]:  18%|█▊        | 3/17 [00:30<02:22, 10.16s/frame][A
-Frames [GirlbyTable]:  18%|█▊        | 3/17 [00:34<02:37, 11.28s/frame][A
-Frames [GirlbyTable]:  18%|█▊        | 3/17 [00:33<02:35, 11.12s/frame][A
-Frames [bistro_02]:  24%|██▎       | 4/17 [00:45<02:26, 11.26s/frame][A
-Frames [bistro_02]:  24%|██▎       | 4/17 [00:44<02:24, 11.08s/frame][A
-Frames [GirlbyTable]:  18%|█▊        | 3/17 [00:30<02:21, 10.09s/frame][A
-Frames [bistro_02]:  24%|██▎       | 4/17 [00:46<02:28, 11.45s/frame][A
-Frames [bistro_02]:  24%|██▎       | 4/17 [00:41<02:18, 10.64s/frame][A
-Frames [GirlbyTable]:  24%|██▎       | 4/17 [00:41<02:14, 10.37s/frame][A
-Frames [GirlbyTable]:  24%|██▎       | 4/17 [00:44<02:24, 11.12s/frame][A
-Frames [GirlbyTable]:  24%|██▎       | 4/17 [00:44<02:23, 11.01s/frame][A
-Frames [bistro_02]:  29%|██▉       | 5/17 [00:54<02:10, 10.90s/frame][A
-Frames [bistro_02]:  29%|██▉       | 5/17 [00:56<02:13, 11.14s/frame][A
-Frames [GirlbyTable]:  24%|██▎       | 4/17 [00:40<02:13, 10.29s/frame][A
-Frames [bistro_02]:  29%|██▉       | 5/17 [00:53<02:10, 10.91s/frame][A
-Frames [GirlbyTable]:  29%|██▉       | 5/17 [00:52<02:07, 10.66s/frame][A
-Frames [bistro_02]:  29%|██▉       | 5/17 [00:58<02:18, 11.57s/frame][A
-Frames [GirlbyTable]:  29%|██▉       | 5/17 [00:56<02:14, 11.19s/frame][A
-Frames [GirlbyTable]:  29%|██▉       | 5/17 [00:55<02:12, 11.08s/frame][A
-Frames [bistro_02]:  35%|███▌      | 6/17 [01:06<01:59, 10.91s/frame][A
-Frames [bistro_02]:  35%|███▌      | 6/17 [01:06<02:01, 11.02s/frame][A
-Frames [GirlbyTable]:  29%|██▉       | 5/17 [00:51<02:04, 10.40s/frame][A
-Frames [bistro_02]:  35%|███▌      | 6/17 [01:04<02:01, 11.01s/frame][A
-Frames [bistro_02]:  35%|███▌      | 6/17 [01:09<02:05, 11.39s/frame][A
-Frames [GirlbyTable]:  35%|███▌      | 6/17 [01:03<02:00, 10.91s/frame][A
-Frames [GirlbyTable]:  35%|███▌      | 6/17 [01:07<02:01, 11.08s/frame][A
-Frames [GirlbyTable]:  35%|███▌      | 6/17 [01:06<02:02, 11.11s/frame][A
-Frames [bistro_02]:  41%|████      | 7/17 [01:17<01:50, 11.02s/frame][A
-Frames [bistro_02]:  41%|████      | 7/17 [01:16<01:49, 10.96s/frame][A
-Frames [GirlbyTable]:  35%|███▌      | 6/17 [01:02<01:56, 10.56s/frame][A
-Frames [bistro_02]:  41%|████      | 7/17 [01:20<01:52, 11.26s/frame][A
-Frames [bistro_02]:  41%|████      | 7/17 [01:15<01:51, 11.14s/frame][A
-Frames [GirlbyTable]:  41%|████      | 7/17 [01:15<01:50, 11.05s/frame][A
-Frames [GirlbyTable]:  41%|████      | 7/17 [01:17<01:49, 11.00s/frame][A
-Frames [GirlbyTable]:  41%|████      | 7/17 [01:17<01:49, 10.98s/frame][A
-Frames [bistro_02]:  47%|████▋     | 8/17 [01:27<01:37, 10.83s/frame][A
-Frames [bistro_02]:  47%|████▋     | 8/17 [01:29<01:40, 11.13s/frame][A
-Frames [GirlbyTable]:  41%|████      | 7/17 [01:12<01:45, 10.59s/frame][A
-Frames [bistro_02]:  47%|████▋     | 8/17 [01:31<01:40, 11.16s/frame][A
-Frames [bistro_02]:  47%|████▋     | 8/17 [01:26<01:39, 11.10s/frame][A
-Frames [GirlbyTable]:  47%|████▋     | 8/17 [01:26<01:40, 11.17s/frame][A
-Frames [GirlbyTable]:  47%|████▋     | 8/17 [01:29<01:40, 11.16s/frame][A
-Frames [GirlbyTable]:  47%|████▋     | 8/17 [01:28<01:38, 10.93s/frame][A
-Frames [bistro_02]:  53%|█████▎    | 9/17 [01:37<01:25, 10.70s/frame][A
-Frames [bistro_02]:  53%|█████▎    | 9/17 [01:40<01:28, 11.10s/frame][A
-Frames [GirlbyTable]:  47%|████▋     | 8/17 [01:23<01:35, 10.59s/frame][A
-Frames [bistro_02]:  53%|█████▎    | 9/17 [01:42<01:29, 11.17s/frame][A
-Frames [bistro_02]:  53%|█████▎    | 9/17 [01:38<01:29, 11.22s/frame][A
-Frames [GirlbyTable]:  53%|█████▎    | 9/17 [01:37<01:29, 11.16s/frame][A
-Frames [GirlbyTable]:  53%|█████▎    | 9/17 [01:40<01:28, 11.11s/frame][A
-Frames [GirlbyTable]:  53%|█████▎    | 9/17 [01:39<01:28, 11.05s/frame][A
-Frames [bistro_02]:  59%|█████▉    | 10/17 [01:48<01:14, 10.60s/frame][A
-Frames [bistro_02]:  59%|█████▉    | 10/17 [01:51<01:17, 11.08s/frame][A
-Frames [GirlbyTable]:  53%|█████▎    | 9/17 [01:34<01:26, 10.79s/frame][A
-Frames [bistro_02]:  59%|█████▉    | 10/17 [01:53<01:18, 11.18s/frame][A
-Frames [bistro_02]:  59%|█████▉    | 10/17 [01:49<01:18, 11.15s/frame][A
-Frames [GirlbyTable]:  59%|█████▉    | 10/17 [01:48<01:18, 11.17s/frame][A
-Frames [GirlbyTable]:  59%|█████▉    | 10/17 [01:51<01:17, 11.14s/frame][A
-Frames [GirlbyTable]:  59%|█████▉    | 10/17 [01:50<01:17, 11.01s/frame][A
-Frames [bistro_02]:  65%|██████▍   | 11/17 [01:59<01:04, 10.70s/frame][A
-Frames [bistro_02]:  65%|██████▍   | 11/17 [02:02<01:06, 11.01s/frame][A
-Frames [GirlbyTable]:  59%|█████▉    | 10/17 [01:45<01:15, 10.85s/frame][A
-Frames [bistro_02]:  65%|██████▍   | 11/17 [01:59<01:05, 10.93s/frame][A
-Frames [bistro_02]:  65%|██████▍   | 11/17 [02:04<01:06, 11.11s/frame][A
-Frames [GirlbyTable]:  65%|██████▍   | 11/17 [01:59<01:06, 11.07s/frame][A
-Frames [GirlbyTable]:  65%|██████▍   | 11/17 [02:02<01:06, 11.09s/frame][A
-Frames [GirlbyTable]:  65%|██████▍   | 11/17 [02:01<01:06, 11.03s/frame][A
-Frames [bistro_02]:  71%|███████   | 12/17 [02:10<00:54, 10.80s/frame][A
-Frames [bistro_02]:  71%|███████   | 12/17 [02:13<00:55, 11.08s/frame][A
-Frames [GirlbyTable]:  65%|██████▍   | 11/17 [01:56<01:05, 10.96s/frame][A
-Frames [bistro_02]:  71%|███████   | 12/17 [02:10<00:54, 10.86s/frame][A
-Frames [bistro_02]:  71%|███████   | 12/17 [02:15<00:55, 11.07s/frame][A
-Frames [GirlbyTable]:  71%|███████   | 12/17 [02:11<00:55, 11.16s/frame][A
-Frames [GirlbyTable]:  71%|███████   | 12/17 [02:13<00:55, 11.04s/frame][A
-Frames [GirlbyTable]:  71%|███████   | 12/17 [02:12<00:54, 10.91s/frame][A
-Frames [bistro_02]:  76%|███████▋  | 13/17 [02:21<00:43, 10.93s/frame][A
-Frames [bistro_02]:  76%|███████▋  | 13/17 [02:24<00:44, 11.13s/frame][A
-Frames [GirlbyTable]:  71%|███████   | 12/17 [02:07<00:54, 10.97s/frame][A
-Frames [bistro_02]:  76%|███████▋  | 13/17 [02:21<00:43, 10.84s/frame][A
-Frames [bistro_02]:  76%|███████▋  | 13/17 [02:26<00:44, 11.13s/frame][A
-Frames [GirlbyTable]:  76%|███████▋  | 13/17 [02:22<00:44, 11.12s/frame][A
-Frames [GirlbyTable]:  76%|███████▋  | 13/17 [02:24<00:43, 10.98s/frame][A
-Frames [GirlbyTable]:  76%|███████▋  | 13/17 [02:23<00:43, 10.92s/frame][A
-Frames [bistro_02]:  82%|████████▏ | 14/17 [02:32<00:32, 10.82s/frame][A
-Frames [bistro_02]:  82%|████████▏ | 14/17 [02:35<00:33, 11.08s/frame][A
-Frames [GirlbyTable]:  76%|███████▋  | 13/17 [02:19<00:44, 11.05s/frame][A
-Frames [bistro_02]:  82%|████████▏ | 14/17 [02:32<00:32, 10.82s/frame][A
-Frames [bistro_02]:  82%|████████▏ | 14/17 [02:37<00:33, 11.03s/frame][A
-Frames [GirlbyTable]:  82%|████████▏ | 14/17 [02:33<00:33, 11.10s/frame][A
-Frames [GirlbyTable]:  82%|████████▏ | 14/17 [02:35<00:33, 11.02s/frame][A
-Frames [GirlbyTable]:  82%|████████▏ | 14/17 [02:34<00:33, 11.03s/frame][A
-Frames [bistro_02]:  88%|████████▊ | 15/17 [02:42<00:21, 10.82s/frame][A
-Frames [bistro_02]:  88%|████████▊ | 15/17 [02:46<00:21, 10.97s/frame][A
-Frames [GirlbyTable]:  82%|████████▏ | 14/17 [02:30<00:33, 11.15s/frame][A
-Frames [bistro_02]:  88%|████████▊ | 15/17 [02:43<00:21, 10.84s/frame][A
-Frames [bistro_02]:  88%|████████▊ | 15/17 [02:48<00:22, 11.00s/frame][A
-Frames [GirlbyTable]:  88%|████████▊ | 15/17 [02:44<00:22, 11.16s/frame][A
-Frames [GirlbyTable]:  88%|████████▊ | 15/17 [02:46<00:22, 11.13s/frame][A
-Frames [GirlbyTable]:  88%|████████▊ | 15/17 [02:45<00:22, 11.01s/frame][A
-Frames [bistro_02]:  94%|█████████▍| 16/17 [02:53<00:10, 10.84s/frame][A
-Frames [bistro_02]:  94%|█████████▍| 16/17 [02:57<00:10, 10.99s/frame][A
-Frames [GirlbyTable]:  88%|████████▊ | 15/17 [02:42<00:22, 11.32s/frame][A
-Frames [bistro_02]:  94%|█████████▍| 16/17 [02:53<00:10, 10.85s/frame][A
-Frames [bistro_02]:  94%|█████████▍| 16/17 [02:59<00:11, 11.05s/frame][A
-Frames [GirlbyTable]:  94%|█████████▍| 16/17 [02:55<00:11, 11.16s/frame][A
-Frames [GirlbyTable]:  94%|█████████▍| 16/17 [02:58<00:11, 11.25s/frame][A
-Frames [GirlbyTable]:  94%|█████████▍| 16/17 [02:56<00:10, 10.95s/frame][A
-Frames [bistro_02]: 100%|██████████| 17/17 [03:04<00:00, 10.85s/frame][A
+
+Max of gt_al: 1000.0
+max of pred_al: 20.553234
+99 Percentiles of gt_al: [331.77190247 999.97458252]
+99 Percentiles of pred_al: [7.88733196 8.51984159]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1728.2645
+99 Percentiles of gt_crfal: [331.77190247 999.97458252]
+99 Percentiles of pref_crfal: [210.21905518 518.71171375]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 20.764776
+99 Percentiles of gt_al: [330.22951782 999.98834302]
+99 Percentiles of pred_al: [7.80247306 8.45352187]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1720.6873
+99 Percentiles of gt_crfal: [330.22951782 999.98834302]
+99 Percentiles of pref_crfal: [209.82962036 518.67880334]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 20.06611
+99 Percentiles of gt_al: [330.27872955 999.99474121]
+99 Percentiles of pred_al: [7.80184094 8.46545761]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1716.1517
+99 Percentiles of gt_crfal: [330.27872955 999.99474121]
+99 Percentiles of pref_crfal: [210.32756363 532.87051874]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 19.559025
+99 Percentiles of gt_al: [331.46110352 999.9996275 ]
+99 Percentiles of pred_al: [7.79317263 8.48500464]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1716.9106
+99 Percentiles of gt_crfal: [331.46110352 999.9996275 ]
+99 Percentiles of pref_crfal: [210.3147583 537.4224007]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 20.729721
+99 Percentiles of gt_al: [330.49027466 999.99496033]
+99 Percentiles of pred_al: [7.78056765 8.4689557 ]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1895.6581
+99 Percentiles of gt_crfal: [330.49027466 999.99496033]
+99 Percentiles of pref_crfal: [210.63769531 528.61531238]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 20.942152
+99 Percentiles of gt_al: [328.90799591 999.98115601]
+99 Percentiles of pred_al: [7.80250832 8.46362023]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1819.0956
+99 Percentiles of gt_crfal: [328.90799591 999.98115601]
+99 Percentiles of pref_crfal: [210.40939331 530.93041595]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 20.405388
+99 Percentiles of gt_al: [328.25915314 999.99772119]
+99 Percentiles of pred_al: [7.78898396 8.42875842]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1877.9803
+99 Percentiles of gt_crfal: [328.25915314 999.99772119]
+99 Percentiles of pref_crfal: [211.54862137 511.90374527]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 20.377522
+99 Percentiles of gt_al: [330.53768372 999.98139703]
+99 Percentiles of pred_al: [7.83252408 8.43902199]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1829.3552
+99 Percentiles of gt_crfal: [330.53768372 999.98139703]
+99 Percentiles of pref_crfal: [209.56926346 532.4526449 ]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 20.214767
+99 Percentiles of gt_al: [331.34921448 999.99219946]
+99 Percentiles of pred_al: [7.84899752 8.454814  ]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1832.1586
+99 Percentiles of gt_crfal: [331.34921448 999.99219946]
+99 Percentiles of pref_crfal: [208.93453979 539.86268933]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 20.152424
+99 Percentiles of gt_al: [330.99929779 999.9986853 ]
+99 Percentiles of pred_al: [7.82971382 8.44123456]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1822.4329
+99 Percentiles of gt_crfal: [330.99929779 999.9986853 ]
+99 Percentiles of pref_crfal: [210.52591034 514.06357391]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 20.410458
+99 Percentiles of gt_al: [331.62933441 999.99412769]
+99 Percentiles of pred_al: [7.79494429 8.43390239]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1836.0936
+99 Percentiles of gt_crfal: [331.62933441 999.99412769]
+99 Percentiles of pref_crfal: [210.48254395 518.5874826 ]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 20.467173
+99 Percentiles of gt_al: [330.82212158 999.98174762]
+99 Percentiles of pred_al: [7.76143311 8.38042678]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1824.7911
+99 Percentiles of gt_crfal: [330.82212158 999.98174762]
+99 Percentiles of pref_crfal: [209.48209686 528.14788855]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 20.189741
+99 Percentiles of gt_al: [331.73476563 999.99577106]
+99 Percentiles of pred_al: [7.74804545 8.37482479]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1822.2521
+99 Percentiles of gt_crfal: [331.73476563 999.99577106]
+99 Percentiles of pref_crfal: [208.51163422 546.81325946]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 19.82173
+99 Percentiles of gt_al: [329.84918396 999.98851831]
+99 Percentiles of pred_al: [7.74286509 8.38219823]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1830.2848
+99 Percentiles of gt_crfal: [329.84918396 999.98851831]
+99 Percentiles of pref_crfal: [209.18081665 548.69808319]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 20.003998
+99 Percentiles of gt_al: [331.46726013 999.98569171]
+99 Percentiles of pred_al: [7.79358467 8.4450708 ]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1866.8203
+99 Percentiles of gt_crfal: [331.46726013 999.98569171]
+99 Percentiles of pref_crfal: [209.85904907 537.74906189]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 19.08504
+99 Percentiles of gt_al: [331.13127716 999.99783075]
+99 Percentiles of pred_al: [7.81237316 8.4461889 ]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1717.0746
+99 Percentiles of gt_crfal: [331.13127716 999.99783075]
+99 Percentiles of pref_crfal: [209.92567474 516.9130545 ]
+################
+
+
+Computing CVVDP for video: bistro_02
+
+  0%|          | 0/1 [00:00<?, ?it/s][AMax of gt_al: 1000.0
+max of pred_al: 229.95175
+99 Percentiles of gt_al: [330.98263458 999.98952625]
+99 Percentiles of pred_al: [52.9972229  73.77502441]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2261.0642
+99 Percentiles of gt_crfal: [330.98263458 999.98952625]
+99 Percentiles of pref_crfal: [338.89773865 751.80571948]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 209.00049
+99 Percentiles of gt_al: [331.77190247 999.97458252]
+99 Percentiles of pred_al: [49.87461853 69.35093689]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2486.9045
+99 Percentiles of gt_crfal: [331.77190247 999.97458252]
+99 Percentiles of pref_crfal: [332.74233887 791.5501709 ]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 214.22714
+99 Percentiles of gt_al: [330.22951782 999.98834302]
+99 Percentiles of pred_al: [50.25646973 69.91262054]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2353.1404
+99 Percentiles of gt_crfal: [330.22951782 999.98834302]
+99 Percentiles of pref_crfal: [327.36890686 756.10351007]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 228.99886
+99 Percentiles of gt_al: [330.27872955 999.99474121]
+99 Percentiles of pred_al: [51.90213394 72.27219391]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2545.968
+99 Percentiles of gt_crfal: [330.27872955 999.99474121]
+99 Percentiles of pref_crfal: [334.16168213 780.97259521]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 211.68126
+99 Percentiles of gt_al: [331.46110352 999.9996275 ]
+99 Percentiles of pred_al: [49.66852951 70.22930908]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2696.1804
+99 Percentiles of gt_crfal: [331.46110352 999.9996275 ]
+99 Percentiles of pref_crfal: [340.05615814 764.62278845]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 210.70943
+99 Percentiles of gt_al: [330.49027466 999.99496033]
+99 Percentiles of pred_al: [49.44142532 68.77359009]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2600.508
+99 Percentiles of gt_crfal: [330.49027466 999.99496033]
+99 Percentiles of pref_crfal: [333.71798706 769.48662939]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 216.07777
+99 Percentiles of gt_al: [328.90799591 999.98115601]
+99 Percentiles of pred_al: [49.02371216 68.2386322 ]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2342.0671
+99 Percentiles of gt_crfal: [328.90799591 999.98115601]
+99 Percentiles of pref_crfal: [333.50747681 803.50999591]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 224.39998
+99 Percentiles of gt_al: [328.25915314 999.99772119]
+99 Percentiles of pred_al: [50.03822708 70.83911133]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2524.7703
+99 Percentiles of gt_crfal: [328.25915314 999.99772119]
+99 Percentiles of pref_crfal: [330.17791351 783.32843018]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 220.25273
+99 Percentiles of gt_al: [330.53768372 999.98139703]
+99 Percentiles of pred_al: [50.79045105 70.68852234]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2297.7947
+99 Percentiles of gt_crfal: [330.53768372 999.98139703]
+99 Percentiles of pref_crfal: [340.35131836 784.33630731]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 221.09557
+99 Percentiles of gt_al: [331.34921448 999.99219946]
+99 Percentiles of pred_al: [52.70975113 74.5281601 ]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2775.8562
+99 Percentiles of gt_crfal: [331.34921448 999.99219946]
+99 Percentiles of pref_crfal: [335.65439514 785.97784424]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 238.88002
+99 Percentiles of gt_al: [330.99929779 999.9986853 ]
+99 Percentiles of pred_al: [55.94231415 79.15865326]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2562.5715
+99 Percentiles of gt_crfal: [330.99929779 999.9986853 ]
+99 Percentiles of pref_crfal: [336.95089355 786.87839404]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 221.04509
+99 Percentiles of gt_al: [331.62933441 999.99412769]
+99 Percentiles of pred_al: [54.48126221 74.51261902]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2787.5334
+99 Percentiles of gt_crfal: [331.62933441 999.99412769]
+99 Percentiles of pref_crfal: [338.20546051 746.38739014]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 217.98257
+99 Percentiles of gt_al: [330.82212158 999.98174762]
+99 Percentiles of pred_al: [50.27461624 69.96669006]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2732.2192
+99 Percentiles of gt_crfal: [330.82212158 999.98174762]
+99 Percentiles of pref_crfal: [338.56687714 791.52686298]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 230.32193
+99 Percentiles of gt_al: [331.73476563 999.99577106]
+99 Percentiles of pred_al: [51.33058548 75.10705566]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2688.5437
+99 Percentiles of gt_crfal: [331.73476563 999.99577106]
+99 Percentiles of pref_crfal: [332.73547363 841.26421466]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 221.8361
+99 Percentiles of gt_al: [329.84918396 999.98851831]
+99 Percentiles of pred_al: [51.15181732 72.36917114]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2776.5164
+99 Percentiles of gt_crfal: [329.84918396 999.98851831]
+99 Percentiles of pref_crfal: [336.10201813 816.45916974]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 226.23528
+99 Percentiles of gt_al: [331.46726013 999.98569171]
+99 Percentiles of pred_al: [49.59841919 70.24425507]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2533.1938
+99 Percentiles of gt_crfal: [331.46726013 999.98569171]
+99 Percentiles of pref_crfal: [329.7433252 807.0737915]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 222.24518
+99 Percentiles of gt_al: [331.13127716 999.99783075]
+99 Percentiles of pred_al: [48.73986435 70.16168976]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2398.7573
+99 Percentiles of gt_crfal: [331.13127716 999.99783075]
+99 Percentiles of pref_crfal: [330.06634521 819.24073724]
+################
+
+
+Computing CVVDP for video: bistro_02
+
+  0%|          | 0/1 [00:00<?, ?it/s][A
+100%|██████████| 1/1 [00:00<00:00,  3.27it/s][A100%|██████████| 1/1 [00:00<00:00,  3.26it/s]
+
+100%|██████████| 1/1 [00:00<00:00,  3.60it/s][A100%|██████████| 1/1 [00:00<00:00,  3.59it/s]
+
+Frames [GirlbyTable]: 100%|██████████| 17/17 [03:09<00:00, 11.36s/frame][A
+                                                                        [AMax of gt_al: 1000.0
+max of pred_al: 948.7406
+99 Percentiles of gt_al: [374.77092926 999.89079248]
+99 Percentiles of pred_al: [948.74060059 948.74060059]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 616.3075
+99 Percentiles of gt_crfal: [374.77092926 999.89079248]
+99 Percentiles of pref_crfal: [484.19373322 616.30749512]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.485
+99 Percentiles of gt_al: [374.90839233 999.99016168]
+99 Percentiles of pred_al: [948.48498535 948.48498535]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 618.9262
+99 Percentiles of gt_crfal: [374.90839233 999.99016168]
+99 Percentiles of pref_crfal: [486.60296661 618.9262085 ]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 949.5175
+99 Percentiles of gt_al: [375.79379608 999.97541516]
+99 Percentiles of pred_al: [949.51751709 949.51751709]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 618.58234
+99 Percentiles of gt_crfal: [375.79379608 999.97541516]
+99 Percentiles of pref_crfal: [486.18109558 618.58233643]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 947.30035
+99 Percentiles of gt_al: [375.77005005 999.99901398]
+99 Percentiles of pred_al: [947.300354 947.300354]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 622.6167
+99 Percentiles of gt_crfal: [375.77005005 999.99901398]
+99 Percentiles of pref_crfal: [487.81335693 622.61669922]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 946.71094
+99 Percentiles of gt_al: [375.68888184 999.92653033]
+99 Percentiles of pred_al: [946.7109375 946.7109375]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 621.67755
+99 Percentiles of gt_crfal: [375.68888184 999.92653033]
+99 Percentiles of pref_crfal: [487.0038501  621.67755127]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.5586
+99 Percentiles of gt_al: [375.4086026  999.99412769]
+99 Percentiles of pred_al: [948.55859375 948.55859375]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 623.2587
+99 Percentiles of gt_crfal: [375.4086026  999.99412769]
+99 Percentiles of pref_crfal: [488.65642853 623.25872803]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 947.5876
+99 Percentiles of gt_al: [376.593396  999.9038299]
+99 Percentiles of pred_al: [947.58758545 947.58758545]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 626.0267
+99 Percentiles of gt_crfal: [376.593396  999.9038299]
+99 Percentiles of pref_crfal: [491.02384644 626.02667236]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 946.6159
+99 Percentiles of gt_al: [376.91365631 999.97451678]
+99 Percentiles of pred_al: [946.61590576 946.61590576]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 634.60156
+99 Percentiles of gt_crfal: [376.91365631 999.97451678]
+99 Percentiles of pref_crfal: [494.24265533 634.6015625 ]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 949.23346
+99 Percentiles of gt_al: [378.10475769 999.96954285]
+99 Percentiles of pred_al: [949.23345947 949.23345947]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 647.4234
+99 Percentiles of gt_crfal: [378.10475769 999.96954285]
+99 Percentiles of pref_crfal: [498.69856506 647.42340088]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 950.1462
+99 Percentiles of gt_al: [378.66088867 999.96954285]
+99 Percentiles of pred_al: [950.1461792 950.1461792]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 647.17615
+99 Percentiles of gt_crfal: [378.66088867 999.96954285]
+99 Percentiles of pref_crfal: [499.35403198 647.17614746]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.75037
+99 Percentiles of gt_al: [378.33905334 999.98626141]
+99 Percentiles of pred_al: [948.75036621 948.75036621]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 646.3775
+99 Percentiles of gt_crfal: [378.33905334 999.98626141]
+99 Percentiles of pref_crfal: [499.1407962  646.37750244]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 949.79645
+99 Percentiles of gt_al: [379.12352875 999.89482422]
+99 Percentiles of pred_al: [949.79644775 949.79644775]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 650.01733
+99 Percentiles of gt_crfal: [379.12352875 999.89482422]
+99 Percentiles of pref_crfal: [500.57266571 650.01733398]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.6955
+99 Percentiles of gt_al: [378.22484985 999.99804987]
+99 Percentiles of pred_al: [948.69549561 948.69549561]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 655.5184
+99 Percentiles of gt_crfal: [378.22484985 999.99804987]
+99 Percentiles of pref_crfal: [500.04903351 655.51837158]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.7413
+99 Percentiles of gt_al: [378.54505615 999.99311975]
+99 Percentiles of pred_al: [948.74127197 948.74127197]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 658.6563
+99 Percentiles of gt_crfal: [378.54505615 999.99311975]
+99 Percentiles of pref_crfal: [500.49213287 658.65631104]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 952.09595
+99 Percentiles of gt_al: [379.58986145 999.98527539]
+99 Percentiles of pred_al: [952.09594727 952.09594727]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 661.8383
+99 Percentiles of gt_crfal: [379.58986145 999.98527539]
+99 Percentiles of pref_crfal: [501.3868927  661.83831787]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 949.54443
+99 Percentiles of gt_al: [378.70775085 999.92940076]
+99 Percentiles of pred_al: [949.54443359 949.54443359]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 673.40137
+99 Percentiles of gt_crfal: [378.70775085 999.92940076]
+99 Percentiles of pref_crfal: [500.22841919 673.40136719]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 951.96204
+99 Percentiles of gt_al: [378.90928345 999.99410577]
+99 Percentiles of pred_al: [951.96203613 951.96203613]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 665.71783
+99 Percentiles of gt_crfal: [378.90928345 999.99410577]
+99 Percentiles of pref_crfal: [500.8400296  665.71783447]
+################
+
+
+Computing CVVDP for video: GirlbyTable
+
+  0%|          | 0/1 [00:00<?, ?it/s][A
+100%|██████████| 1/1 [00:00<00:00,  3.55it/s][A100%|██████████| 1/1 [00:00<00:00,  3.55it/s]
+
+Frames [bistro_02]: 100%|██████████| 17/17 [03:07<00:00, 11.27s/frame][A
                                                                       [AMax of gt_al: 1000.0
 max of pred_al: 359.3301
 99 Percentiles of gt_al: [330.98263458 999.98952625]
@@ -2559,213 +3099,960 @@ max of pref_crfal: 456.29553
 Computing CVVDP for video: bistro_02
 
   0%|          | 0/1 [00:00<?, ?it/s][A
-100%|██████████| 1/1 [00:00<00:00,  4.07it/s][A100%|██████████| 1/1 [00:00<00:00,  4.07it/s]
+100%|██████████| 1/1 [00:00<00:00,  3.40it/s][A100%|██████████| 1/1 [00:00<00:00,  3.39it/s]
+Videos:  22%|██▏       | 2/9 [06:26<22:33, 193.38s/video]CVVDP Score: 6.812592506408691
+Wrote per-video: /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4_eval_output/results_lediffltm_stuttgart_ltm_bistro_02_17_ds1.csv
+Updating FID/FVD accumulators for video: bistro_02
 
-Frames [bistro_02]: 100%|██████████| 17/17 [03:08<00:00, 11.09s/frame][A
-                                                                      [AMax of gt_al: 1000.0
-max of pred_al: 11.705414
-99 Percentiles of gt_al: [330.98263458 999.98952625]
-99 Percentiles of pred_al: [4.55471757 5.1033144 ]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1633.3928
-99 Percentiles of gt_crfal: [330.98263458 999.98952625]
-99 Percentiles of pref_crfal: [263.34875336 789.87278827]
+Frames [bistro_03]:   0%|          | 0/17 [00:00<?, ?frame/s][AVideos:  22%|██▏       | 2/9 [06:28<22:36, 193.76s/video]Videos:  22%|██▏       | 2/9 [06:27<22:38, 194.02s/video]CVVDP Score: 6.627455234527588
+Wrote per-video: /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4_eval_output/results_x2hdrltm_stuttgart_ltm_bistro_02_17_ds1.csv
+Updating FID/FVD accumulators for video: bistro_02
+
+Frames [bistro_03]:   0%|          | 0/17 [00:00<?, ?frame/s][ACVVDP Score: 7.01674747467041
+Wrote per-video: /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4_eval_output/results_hdrcnnltm_stuttgart_ltm_bistro_02_17_ds1.csv
+Updating FID/FVD accumulators for video: bistro_02
+
+Frames [bistro_03]:   0%|          | 0/17 [00:00<?, ?frame/s][AVideos:  20%|██        | 2/10 [06:50<27:09, 203.72s/video]CVVDP Score: 4.821011543273926
+Wrote per-video: /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4_eval_output/results_oursltm_ubc_ltm_GirlbyTable_17_ds1.csv
+Updating FID/FVD accumulators for video: GirlbyTable
+
+Frames [Hallway]:   0%|          | 0/17 [00:00<?, ?frame/s][AVideos:  22%|██▏       | 2/9 [06:30<22:44, 194.95s/video]441 999.99412769]
+99 Percentiles of pref_crfal: [210.48254395 518.5874826 ]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 13.348711
-99 Percentiles of gt_al: [331.77190247 999.97458252]
-99 Percentiles of pred_al: [4.5805773 5.1504085]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1750.3801
-99 Percentiles of gt_crfal: [331.77190247 999.97458252]
-99 Percentiles of pref_crfal: [263.89229797 811.42256946]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 13.931212
-99 Percentiles of gt_al: [330.22951782 999.98834302]
-99 Percentiles of pred_al: [4.59679281 5.16361208]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1776.8896
-99 Percentiles of gt_crfal: [330.22951782 999.98834302]
-99 Percentiles of pref_crfal: [264.10327515 802.9199071 ]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 10.718561
-99 Percentiles of gt_al: [330.27872955 999.99474121]
-99 Percentiles of pred_al: [4.61000197 5.19155955]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1713.2972
-99 Percentiles of gt_crfal: [330.27872955 999.99474121]
-99 Percentiles of pref_crfal: [263.03153717 796.67037421]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 13.060049
-99 Percentiles of gt_al: [331.46110352 999.9996275 ]
-99 Percentiles of pred_al: [4.61173828 5.19611222]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1718.8876
-99 Percentiles of gt_crfal: [331.46110352 999.9996275 ]
-99 Percentiles of pref_crfal: [265.13062531 779.90135114]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 10.692918
-99 Percentiles of gt_al: [330.49027466 999.99496033]
-99 Percentiles of pred_al: [4.57463429 5.148751  ]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1674.7682
-99 Percentiles of gt_crfal: [330.49027466 999.99496033]
-99 Percentiles of pref_crfal: [262.31092499 761.96737555]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 10.20142
-99 Percentiles of gt_al: [328.90799591 999.98115601]
-99 Percentiles of pred_al: [4.61476323 5.19744927]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1647.3994
-99 Percentiles of gt_crfal: [328.90799591 999.98115601]
-99 Percentiles of pref_crfal: [261.99996735 796.48747882]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 10.741461
-99 Percentiles of gt_al: [328.25915314 999.99772119]
-99 Percentiles of pred_al: [4.60262731 5.18634213]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1648.2183
-99 Percentiles of gt_crfal: [328.25915314 999.99772119]
-99 Percentiles of pref_crfal: [261.32191193 809.8416181 ]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 8.035896
-99 Percentiles of gt_al: [330.53768372 999.98139703]
-99 Percentiles of pred_al: [4.61667593 5.18750466]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1640.2656
-99 Percentiles of gt_crfal: [330.53768372 999.98139703]
-99 Percentiles of pref_crfal: [262.06746552 775.37445032]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 10.370064
-99 Percentiles of gt_al: [331.34921448 999.99219946]
-99 Percentiles of pred_al: [4.59854013 5.17580241]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1656.9012
-99 Percentiles of gt_crfal: [331.34921448 999.99219946]
-99 Percentiles of pref_crfal: [263.67796814 738.72754852]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 10.827105
-99 Percentiles of gt_al: [330.99929779 999.9986853 ]
-99 Percentiles of pred_al: [4.55166409 5.12414451]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1713.3042
-99 Percentiles of gt_crfal: [330.99929779 999.9986853 ]
-99 Percentiles of pref_crfal: [264.60077789 763.72293091]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 9.669303
-99 Percentiles of gt_al: [331.62933441 999.99412769]
-99 Percentiles of pred_al: [4.51228918 5.06918591]
-########
-Max of gt_crfal: 1000.0
-max of pref_crfal: 1661.465
-99 Percentiles of gt_crfal: [331.62933441 999.99412769]
-99 Percentiles of pref_crfal: [264.99465729 765.93290399]
-################
-
-
-Max of gt_al: 1000.0
-max of pred_al: 10.0356
+max of pred_al: 20.467173
 99 Percentiles of gt_al: [330.82212158 999.98174762]
-99 Percentiles of pred_al: [4.50878317 5.06007111]
+99 Percentiles of pred_al: [7.76143311 8.38042678]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 1663.9043
+max of pref_crfal: 1824.7911
 99 Percentiles of gt_crfal: [330.82212158 999.98174762]
-99 Percentiles of pref_crfal: [265.94575928 750.64635437]
+99 Percentiles of pref_crfal: [209.48209686 528.14788855]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 8.148197
+max of pred_al: 20.189741
 99 Percentiles of gt_al: [331.73476563 999.99577106]
-99 Percentiles of pred_al: [4.50607894 5.05898628]
+99 Percentiles of pred_al: [7.74804545 8.37482479]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 1606.6316
+max of pref_crfal: 1822.2521
 99 Percentiles of gt_crfal: [331.73476563 999.99577106]
-99 Percentiles of pref_crfal: [264.04418488 739.33198584]
+99 Percentiles of pref_crfal: [208.51163422 546.81325946]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 10.840384
+max of pred_al: 19.82173
 99 Percentiles of gt_al: [329.84918396 999.98851831]
-99 Percentiles of pred_al: [4.5041363  5.05631661]
+99 Percentiles of pred_al: [7.74286509 8.38219823]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 1598.7194
+max of pref_crfal: 1830.2848
 99 Percentiles of gt_crfal: [329.84918396 999.98851831]
-99 Percentiles of pref_crfal: [263.62792664 760.53218445]
+99 Percentiles of pref_crfal: [209.18081665 548.69808319]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 9.984782
+max of pred_al: 20.003998
 99 Percentiles of gt_al: [331.46726013 999.98569171]
-99 Percentiles of pred_al: [4.50378801 5.04452033]
+99 Percentiles of pred_al: [7.79358467 8.4450708 ]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 1615.19
+max of pref_crfal: 1866.8203
 99 Percentiles of gt_crfal: [331.46726013 999.98569171]
-99 Percentiles of pref_crfal: [265.75413605 751.88887573]
+99 Percentiles of pref_crfal: [209.85904907 537.74906189]
 ################
 
 
 Max of gt_al: 1000.0
-max of pred_al: 10.449728
+max of pred_al: 19.08504
 99 Percentiles of gt_al: [331.13127716 999.99783075]
-99 Percentiles of pred_al: [4.46136541 4.99970881]
+99 Percentiles of pred_al: [7.81237316 8.4461889 ]
 ########
 Max of gt_crfal: 1000.0
-max of pref_crfal: 1649.6416
+max of pref_crfal: 1717.0746
 99 Percentiles of gt_crfal: [331.13127716 999.99783075]
-99 Percentiles of pref_crfal: [264.81619598 742.35723236]
+99 Percentiles of pref_crfal: [209.92567474 516.9130545 ]
 ################
 
 
 Computing CVVDP for video: bistro_02
 
   0%|          | 0/1 [00:00<?, ?it/s][A
+Frames [GirlbyTable]:  94%|█████████▍| 16/17 [02:53<00:11, 11.46s/frame][A
+100%|██████████| 1/1 [00:00<00:00,  3.83it/s][A100%|██████████| 1/1 [00:00<00:00,  3.82it/s]
+Videos:  22%|██▏       | 2/9 [06:26<22:29, 192.78s/video]CVVDP Score: 7.357644557952881
+Wrote per-video: /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4_eval_output/results_oursltm_stuttgart_ltm_bistro_02_17_ds1.csv
+Updating FID/FVD accumulators for video: bistro_02
+
+Frames [bistro_03]:   0%|          | 0/17 [00:00<?, ?frame/s][A
+Frames [bistro_02]: 100%|██████████| 17/17 [03:10<00:00, 11.10s/frame][A
+                                                                      [AMax of gt_al: 1000.0
+max of pred_al: 229.95175
+99 Percentiles of gt_al: [330.98263458 999.98952625]
+99 Percentiles of pred_al: [52.9972229  73.77502441]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2261.0642
+99 Percentiles of gt_crfal: [330.98263458 999.98952625]
+99 Percentiles of pref_crfal: [338.89773865 751.80571948]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 209.00049
+99 Percentiles of gt_al: [331.77190247 999.97458252]
+99 Percentiles of pred_al: [49.87461853 69.35093689]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2486.9045
+99 Percentiles of gt_crfal: [331.77190247 999.97458252]
+99 Percentiles of pref_crfal: [332.74233887 791.5501709 ]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 214.22714
+99 Percentiles of gt_al: [330.22951782 999.98834302]
+99 Percentiles of pred_al: [50.25646973 69.91262054]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2353.1404
+99 Percentiles of gt_crfal: [330.22951782 999.98834302]
+99 Percentiles of pref_crfal: [327.36890686 756.10351007]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 228.99886
+99 Percentiles of gt_al: [330.27872955 999.99474121]
+99 Percentiles of pred_al: [51.90213394 72.27219391]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2545.968
+99 Percentiles of gt_crfal: [330.27872955 999.99474121]
+99 Percentiles of pref_crfal: [334.16168213 780.97259521]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 211.68126
+99 Percentiles of gt_al: [331.46110352 999.9996275 ]
+99 Percentiles of pred_al: [49.66852951 70.22930908]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2696.1804
+99 Percentiles of gt_crfal: [331.46110352 999.9996275 ]
+99 Percentiles of pref_crfal: [340.05615814 764.62278845]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 210.70943
+99 Percentiles of gt_al: [330.49027466 999.99496033]
+99 Percentiles of pred_al: [49.44142532 68.77359009]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2600.508
+99 Percentiles of gt_crfal: [330.49027466 999.99496033]
+99 Percentiles of pref_crfal: [333.71798706 769.48662939]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 216.07777
+99 Percentiles of gt_al: [328.90799591 999.98115601]
+99 Percentiles of pred_al: [49.02371216 68.2386322 ]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2342.0671
+99 Percentiles of gt_crfal: [328.90799591 999.98115601]
+99 Percentiles of pref_crfal: [333.50747681 803.50999591]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 224.39998
+99 Percentiles of gt_al: [328.25915314 999.99772119]
+99 Percentiles of pred_al: [50.03822708 70.83911133]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2524.7703
+99 Percentiles of gt_crfal: [328.25915314 999.99772119]
+99 Percentiles of pref_crfal: [330.17791351 783.32843018]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 220.25273
+99 Percentiles of gt_al: [330.53768372 999.98139703]
+99 Percentiles of pred_al: [50.79045105 70.68852234]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2297.7947
+99 Percentiles of gt_crfal: [330.53768372 999.98139703]
+99 Percentiles of pref_crfal: [340.35131836 784.33630731]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 221.09557
+99 Percentiles of gt_al: [331.34921448 999.99219946]
+99 Percentiles of pred_al: [52.70975113 74.5281601 ]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2775.8562
+99 Percentiles of gt_crfal: [331.34921448 999.99219946]
+99 Percentiles of pref_crfal: [335.65439514 785.97784424]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 238.88002
+99 Percentiles of gt_al: [330.99929779 999.9986853 ]
+99 Percentiles of pred_al: [55.94231415 79.15865326]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2562.5715
+99 Percentiles of gt_crfal: [330.99929779 999.9986853 ]
+99 Percentiles of pref_crfal: [336.95089355 786.87839404]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 221.04509
+99 Percentiles of gt_al: [331.62933441 999.99412769]
+99 Percentiles of pred_al: [54.48126221 74.51261902]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2787.5334
+99 Percentiles of gt_crfal: [331.62933441 999.99412769]
+99 Percentiles of pref_crfal: [338.20546051 746.38739014]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 217.98257
+99 Percentiles of gt_al: [330.82212158 999.98174762]
+99 Percentiles of pred_al: [50.27461624 69.96669006]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2732.2192
+99 Percentiles of gt_crfal: [330.82212158 999.98174762]
+99 Percentiles of pref_crfal: [338.56687714 791.52686298]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 230.32193
+99 Percentiles of gt_al: [331.73476563 999.99577106]
+99 Percentiles of pred_al: [51.33058548 75.10705566]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2688.5437
+99 Percentiles of gt_crfal: [331.73476563 999.99577106]
+99 Percentiles of pref_crfal: [332.73547363 841.26421466]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 221.8361
+99 Percentiles of gt_al: [329.84918396 999.98851831]
+99 Percentiles of pred_al: [51.15181732 72.36917114]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2776.5164
+99 Percentiles of gt_crfal: [329.84918396 999.98851831]
+99 Percentiles of pref_crfal: [336.10201813 816.45916974]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 226.23528
+99 Percentiles of gt_al: [331.46726013 999.98569171]
+99 Percentiles of pred_al: [49.59841919 70.24425507]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2533.1938
+99 Percentiles of gt_crfal: [331.46726013 999.98569171]
+99 Percentiles of pref_crfal: [329.7433252 807.0737915]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 222.24518
+99 Percentiles of gt_al: [331.13127716 999.99783075]
+99 Percentiles of pred_al: [48.73986435 70.16168976]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 2398.7573
+99 Percentiles of gt_crfal: [331.13127716 999.99783075]
+99 Percentiles of pref_crfal: [330.06634521 819.24073724]
+################
+
+
+Computing CVVDP for video: bistro_02
+
+  0%|          | 0/1 [00:00<?, ?it/s][A
+100%|██████████| 1/1 [00:00<00:00,  3.64it/s][A100%|██████████| 1/1 [00:00<00:00,  3.63it/s]
+
+Frames [GirlbyTable]: 100%|██████████| 17/17 [03:06<00:00, 11.17s/frame][A
+                                                                        [AMax of gt_al: 1000.0
+max of pred_al: 948.7406
+99 Percentiles of gt_al: [374.77092926 999.89079248]
+99 Percentiles of pred_al: [308.63754272 758.11431885]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1811.509
+99 Percentiles of gt_crfal: [374.77092926 999.89079248]
+99 Percentiles of pref_crfal: [352.81550537 999.51375146]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.485
+99 Percentiles of gt_al: [374.90839233 999.99016168]
+99 Percentiles of pred_al: [303.62295532 734.0557251 ]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1821.6644
+99 Percentiles of gt_crfal: [374.90839233 999.99016168]
+99 Percentiles of pref_crfal: [351.2288736  999.24884033]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 949.5175
+99 Percentiles of gt_al: [375.79379608 999.97541516]
+99 Percentiles of pred_al: [310.62210083 749.6104126 ]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1767.615
+99 Percentiles of gt_crfal: [375.79379608 999.97541516]
+99 Percentiles of pref_crfal: [ 354.28364227 1000.15203857]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 947.30035
+99 Percentiles of gt_al: [375.77005005 999.99901398]
+99 Percentiles of pred_al: [302.14108276 717.01251221]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1815.3003
+99 Percentiles of gt_crfal: [375.77005005 999.99901398]
+99 Percentiles of pref_crfal: [355.67593384 999.30873254]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 946.71094
+99 Percentiles of gt_al: [375.68888184 999.92653033]
+99 Percentiles of pred_al: [310.32852173 733.64283216]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1721.4534
+99 Percentiles of gt_crfal: [375.68888184 999.92653033]
+99 Percentiles of pref_crfal: [ 359.23501617 1000.58409894]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.5586
+99 Percentiles of gt_al: [375.4086026  999.99412769]
+99 Percentiles of pred_al: [307.65185547 754.91992188]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1770.6748
+99 Percentiles of gt_crfal: [375.4086026  999.99412769]
+99 Percentiles of pref_crfal: [352.82241272 998.90494507]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 947.5876
+99 Percentiles of gt_al: [376.593396  999.9038299]
+99 Percentiles of pred_al: [311.99023438 778.43829346]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1738.9282
+99 Percentiles of gt_crfal: [376.593396  999.9038299]
+99 Percentiles of pref_crfal: [355.67175781 999.94564209]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 946.6159
+99 Percentiles of gt_al: [376.91365631 999.97451678]
+99 Percentiles of pred_al: [322.26968384 815.60644531]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1706.9962
+99 Percentiles of gt_crfal: [376.91365631 999.97451678]
+99 Percentiles of pref_crfal: [354.13061615 998.11340332]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 949.23346
+99 Percentiles of gt_al: [378.10475769 999.96954285]
+99 Percentiles of pred_al: [327.84405518 828.73461914]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1703.547
+99 Percentiles of gt_crfal: [378.10475769 999.96954285]
+99 Percentiles of pref_crfal: [358.31938385 997.79262354]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 950.1462
+99 Percentiles of gt_al: [378.66088867 999.96954285]
+99 Percentiles of pred_al: [322.7835083  815.79638672]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1707.7394
+99 Percentiles of gt_crfal: [378.66088867 999.96954285]
+99 Percentiles of pref_crfal: [ 358.85636292 1000.75728125]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.75037
+99 Percentiles of gt_al: [378.33905334 999.98626141]
+99 Percentiles of pred_al: [324.35675049 780.64630127]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1751.1805
+99 Percentiles of gt_crfal: [378.33905334 999.98626141]
+99 Percentiles of pref_crfal: [ 364.06378815 1002.30419922]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 949.79645
+99 Percentiles of gt_al: [379.12352875 999.89482422]
+99 Percentiles of pred_al: [325.08877563 823.16265869]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1707.4917
+99 Percentiles of gt_crfal: [379.12352875 999.89482422]
+99 Percentiles of pref_crfal: [361.59501404 998.17387341]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.6955
+99 Percentiles of gt_al: [378.22484985 999.99804987]
+99 Percentiles of pred_al: [309.01043701 758.12567139]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1771.2375
+99 Percentiles of gt_crfal: [378.22484985 999.99804987]
+99 Percentiles of pref_crfal: [355.56766602 999.68019031]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.7413
+99 Percentiles of gt_al: [378.54505615 999.99311975]
+99 Percentiles of pred_al: [309.80023193 785.17016602]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1690.2659
+99 Percentiles of gt_crfal: [378.54505615 999.99311975]
+99 Percentiles of pref_crfal: [ 352.27148438 1000.14021021]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 952.09595
+99 Percentiles of gt_al: [379.58986145 999.98527539]
+99 Percentiles of pred_al: [312.54138184 806.51397705]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1697.3793
+99 Percentiles of gt_crfal: [379.58986145 999.98527539]
+99 Percentiles of pref_crfal: [355.82570313 997.66614075]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 949.54443
+99 Percentiles of gt_al: [378.70775085 999.92940076]
+99 Percentiles of pred_al: [312.91793823 768.62347412]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1757.4303
+99 Percentiles of gt_crfal: [378.70775085 999.92940076]
+99 Percentiles of pref_crfal: [354.66626892 999.84906879]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 951.96204
+99 Percentiles of gt_al: [378.90928345 999.99410577]
+99 Percentiles of pred_al: [320.95001221 812.23864746]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1703.2131
+99 Percentiles of gt_crfal: [378.90928345 999.99410577]
+99 Percentiles of pref_crfal: [357.29370178 996.59064252]
+################
+
+
+Computing CVVDP for video: GirlbyTable
+
+  0%|          | 0/1 [00:00<?, ?it/s][AVideos:  22%|██▏       | 2/9 [06:27<22:37, 193.97s/video]
+100%|██████████| 1/1 [00:00<00:00,  3.30it/s][A100%|██████████| 1/1 [00:00<00:00,  3.30it/s]
+CVVDP Score: 6.812592506408691
+Wrote per-video: /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4_eval_output/results_lediffltm_stuttgart_ltm_bistro_02_17_ds1.csv
+Updating FID/FVD accumulators for video: bistro_02
+
+Frames [bistro_03]:   0%|          | 0/17 [00:00<?, ?frame/s][A
+Frames [GirlbyTable]: 100%|██████████| 17/17 [03:10<00:00, 11.44s/frame][A
+                                                                        [AMax of gt_al: 1000.0
+max of pred_al: 948.7406
+99 Percentiles of gt_al: [374.77092926 999.89079248]
+99 Percentiles of pred_al: [948.74060059 948.74060059]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 616.3075
+99 Percentiles of gt_crfal: [374.77092926 999.89079248]
+99 Percentiles of pref_crfal: [484.19373322 616.30749512]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.485
+99 Percentiles of gt_al: [374.90839233 999.99016168]
+99 Percentiles of pred_al: [948.48498535 948.48498535]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 618.9262
+99 Percentiles of gt_crfal: [374.90839233 999.99016168]
+99 Percentiles of pref_crfal: [486.60296661 618.9262085 ]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 949.5175
+99 Percentiles of gt_al: [375.79379608 999.97541516]
+99 Percentiles of pred_al: [949.51751709 949.51751709]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 618.58234
+99 Percentiles of gt_crfal: [375.79379608 999.97541516]
+99 Percentiles of pref_crfal: [486.18109558 618.58233643]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 947.30035
+99 Percentiles of gt_al: [375.77005005 999.99901398]
+99 Percentiles of pred_al: [947.300354 947.300354]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 622.6167
+99 Percentiles of gt_crfal: [375.77005005 999.99901398]
+99 Percentiles of pref_crfal: [487.81335693 622.61669922]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 946.71094
+99 Percentiles of gt_al: [375.68888184 999.92653033]
+99 Percentiles of pred_al: [946.7109375 946.7109375]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 621.67755
+99 Percentiles of gt_crfal: [375.68888184 999.92653033]
+99 Percentiles of pref_crfal: [487.0038501  621.67755127]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.5586
+99 Percentiles of gt_al: [375.4086026  999.99412769]
+99 Percentiles of pred_al: [948.55859375 948.55859375]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 623.2587
+99 Percentiles of gt_crfal: [375.4086026  999.99412769]
+99 Percentiles of pref_crfal: [488.65642853 623.25872803]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 947.5876
+99 Percentiles of gt_al: [376.593396  999.9038299]
+99 Percentiles of pred_al: [947.58758545 947.58758545]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 626.0267
+99 Percentiles of gt_crfal: [376.593396  999.9038299]
+99 Percentiles of pref_crfal: [491.02384644 626.02667236]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 946.6159
+99 Percentiles of gt_al: [376.91365631 999.97451678]
+99 Percentiles of pred_al: [946.61590576 946.61590576]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 634.60156
+99 Percentiles of gt_crfal: [376.91365631 999.97451678]
+99 Percentiles of pref_crfal: [494.24265533 634.6015625 ]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 949.23346
+99 Percentiles of gt_al: [378.10475769 999.96954285]
+99 Percentiles of pred_al: [949.23345947 949.23345947]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 647.4234
+99 Percentiles of gt_crfal: [378.10475769 999.96954285]
+99 Percentiles of pref_crfal: [498.69856506 647.42340088]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 950.1462
+99 Percentiles of gt_al: [378.66088867 999.96954285]
+99 Percentiles of pred_al: [950.1461792 950.1461792]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 647.17615
+99 Percentiles of gt_crfal: [378.66088867 999.96954285]
+99 Percentiles of pref_crfal: [499.35403198 647.17614746]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.75037
+99 Percentiles of gt_al: [378.33905334 999.98626141]
+99 Percentiles of pred_al: [948.75036621 948.75036621]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 646.3775
+99 Percentiles of gt_crfal: [378.33905334 999.98626141]
+99 Percentiles of pref_crfal: [499.1407962  646.37750244]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 949.79645
+99 Percentiles of gt_al: [379.12352875 999.89482422]
+99 Percentiles of pred_al: [949.79644775 949.79644775]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 650.01733
+99 Percentiles of gt_crfal: [379.12352875 999.89482422]
+99 Percentiles of pref_crfal: [500.57266571 650.01733398]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.6955
+99 Percentiles of gt_al: [378.22484985 999.99804987]
+99 Percentiles of pred_al: [948.69549561 948.69549561]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 655.5184
+99 Percentiles of gt_crfal: [378.22484985 999.99804987]
+99 Percentiles of pref_crfal: [500.04903351 655.51837158]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 948.7413
+99 Percentiles of gt_al: [378.54505615 999.99311975]
+99 Percentiles of pred_al: [948.74127197 948.74127197]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 658.6563
+99 Percentiles of gt_crfal: [378.54505615 999.99311975]
+99 Percentiles of pref_crfal: [500.49213287 658.65631104]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 952.09595
+99 Percentiles of gt_al: [379.58986145 999.98527539]
+99 Percentiles of pred_al: [952.09594727 952.09594727]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 661.8383
+99 Percentiles of gt_crfal: [379.58986145 999.98527539]
+99 Percentiles of pref_crfal: [501.3868927  661.83831787]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 949.54443
+99 Percentiles of gt_al: [378.70775085 999.92940076]
+99 Percentiles of pred_al: [949.54443359 949.54443359]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 673.40137
+99 Percentiles of gt_crfal: [378.70775085 999.92940076]
+99 Percentiles of pref_crfal: [500.22841919 673.40136719]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 951.96204
+99 Percentiles of gt_al: [378.90928345 999.99410577]
+99 Percentiles of pred_al: [951.96203613 951.96203613]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 665.71783
+99 Percentiles of gt_crfal: [378.90928345 999.99410577]
+99 Percentiles of pref_crfal: [500.8400296  665.71783447]
+################
+
+
+Computing CVVDP for video: GirlbyTable
+
+  0%|          | 0/1 [00:00<?, ?it/s][AVideos:  22%|██▏       | 2/9 [06:30<22:40, 194.32s/video]
+100%|██████████| 1/1 [00:00<00:00,  3.48it/s][A100%|██████████| 1/1 [00:00<00:00,  3.47it/s]
+
+Frames [GirlbyTable]: 100%|██████████| 17/17 [03:06<00:00, 10.88s/frame][A
+                                                                        [ACVVDP Score: 7.01674747467041
+Wrote per-video: /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4_eval_output/results_hdrcnnltm_stuttgart_ltm_bistro_02_17_ds1.csv
+Updating FID/FVD accumulators for video: bistro_02
+
+Frames [bistro_03]:   0%|          | 0/17 [00:00<?, ?frame/s][AMax of gt_al: 1000.0
+max of pred_al: 726.2327
+99 Percentiles of gt_al: [374.77092926 999.89079248]
+99 Percentiles of pred_al: [140.31925919 167.51758899]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1346.8475
+99 Percentiles of gt_crfal: [374.77092926 999.89079248]
+99 Percentiles of pref_crfal: [281.30872742 481.06658624]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 699.303
+99 Percentiles of gt_al: [374.90839233 999.99016168]
+99 Percentiles of pred_al: [140.19031616 167.20018889]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1331.8534
+99 Percentiles of gt_crfal: [374.90839233 999.99016168]
+99 Percentiles of pref_crfal: [280.95675873 483.44683093]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 722.4326
+99 Percentiles of gt_al: [375.79379608 999.97541516]
+99 Percentiles of pred_al: [141.20012405 168.66991287]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1347.451
+99 Percentiles of gt_crfal: [375.79379608 999.97541516]
+99 Percentiles of pref_crfal: [282.19025665 491.34375226]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 657.4377
+99 Percentiles of gt_al: [375.77005005 999.99901398]
+99 Percentiles of pred_al: [139.51737061 166.29764705]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1309.2311
+99 Percentiles of gt_crfal: [375.77005005 999.99901398]
+99 Percentiles of pref_crfal: [281.42862274 484.9813663 ]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 717.4633
+99 Percentiles of gt_al: [375.68888184 999.92653033]
+99 Percentiles of pred_al: [140.50058334 168.07200291]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1345.2793
+99 Percentiles of gt_crfal: [375.68888184 999.92653033]
+99 Percentiles of pref_crfal: [281.44255402 489.88166656]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 733.47546
+99 Percentiles of gt_al: [375.4086026  999.99412769]
+99 Percentiles of pred_al: [140.3889563  168.25913362]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1369.7437
+99 Percentiles of gt_crfal: [375.4086026  999.99412769]
+99 Percentiles of pref_crfal: [281.43753448 491.71398169]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 716.1201
+99 Percentiles of gt_al: [376.593396  999.9038299]
+99 Percentiles of pred_al: [140.18605148 166.85522319]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1333.887
+99 Percentiles of gt_crfal: [376.593396  999.9038299]
+99 Percentiles of pref_crfal: [280.92636841 480.9242507 ]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 742.28766
+99 Percentiles of gt_al: [376.91365631 999.97451678]
+99 Percentiles of pred_al: [140.23728195 167.84391731]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1350.578
+99 Percentiles of gt_crfal: [376.91365631 999.97451678]
+99 Percentiles of pref_crfal: [280.54740997 484.20892038]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 698.66486
+99 Percentiles of gt_al: [378.10475769 999.96954285]
+99 Percentiles of pred_al: [139.72131302 166.97095891]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1337.9662
+99 Percentiles of gt_crfal: [378.10475769 999.96954285]
+99 Percentiles of pref_crfal: [280.95471008 485.82680206]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 705.37384
+99 Percentiles of gt_al: [378.66088867 999.96954285]
+99 Percentiles of pred_al: [139.84520187 167.08548904]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1337.1981
+99 Percentiles of gt_crfal: [378.66088867 999.96954285]
+99 Percentiles of pref_crfal: [280.76380646 481.84293552]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 667.5801
+99 Percentiles of gt_al: [378.33905334 999.98626141]
+99 Percentiles of pred_al: [140.32179489 167.58518648]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1315.9996
+99 Percentiles of gt_crfal: [378.33905334 999.98626141]
+99 Percentiles of pref_crfal: [281.24450989 483.05170261]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 721.639
+99 Percentiles of gt_al: [379.12352875 999.89482422]
+99 Percentiles of pred_al: [140.87532471 168.5367924 ]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1342.9252
+99 Percentiles of gt_crfal: [379.12352875 999.89482422]
+99 Percentiles of pref_crfal: [282.97079285 490.92919342]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 686.66943
+99 Percentiles of gt_al: [378.22484985 999.99804987]
+99 Percentiles of pred_al: [140.14219849 167.41167274]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1323.9346
+99 Percentiles of gt_crfal: [378.22484985 999.99804987]
+99 Percentiles of pref_crfal: [281.25030579 487.43274982]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 709.57245
+99 Percentiles of gt_al: [378.54505615 999.99311975]
+99 Percentiles of pred_al: [140.68476624 168.07728737]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1341.8529
+99 Percentiles of gt_crfal: [378.54505615 999.99311975]
+99 Percentiles of pref_crfal: [283.36816406 492.67256439]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 716.08154
+99 Percentiles of gt_al: [379.58986145 999.98527539]
+99 Percentiles of pred_al: [140.51923859 167.7603309 ]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1343.4783
+99 Percentiles of gt_crfal: [379.58986145 999.98527539]
+99 Percentiles of pref_crfal: [284.18164948 493.88253839]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 700.36194
+99 Percentiles of gt_al: [378.70775085 999.92940076]
+99 Percentiles of pred_al: [140.63820541 166.985714  ]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1321.2673
+99 Percentiles of gt_crfal: [378.70775085 999.92940076]
+99 Percentiles of pref_crfal: [282.74402985 483.73642267]
+################
+
+
+Max of gt_al: 1000.0
+max of pred_al: 699.10077
+99 Percentiles of gt_al: [378.90928345 999.99410577]
+99 Percentiles of pred_al: [140.41872025 167.13423773]
+########
+Max of gt_crfal: 1000.0
+max of pref_crfal: 1312.4915
+99 Percentiles of gt_crfal: [378.90928345 999.99410577]
+99 Percentiles of pref_crfal: [282.46893158 486.41684573]
+################
+
+
+Computing CVVDP for video: GirlbyTable
+
+  0%|          | 0/1 [00:00<?, ?it/s][A
+100%|██████████| 1/1 [00:00<00:00,  3.81it/s][A100%|██████████| 1/1 [00:00<00:00,  3.80it/s]
+Videos:  22%|██▏       | 2/9 [06:33<22:58, 196.92s/video]CVVDP Score: 6.627455234527588
+Wrote per-video: /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4_eval_output/results_x2hdrltm_stuttgart_ltm_bistro_02_17_ds1.csv
+Updating FID/FVD accumulators for video: bistro_02
+
+Frames [bistro_03]:   0%|          | 0/17 [00:00<?, ?frame/s][AVideos:  20%|██        | 2/10 [06:32<26:07, 195.95s/video]CVVDP Score: 7.989040851593018
+Wrote per-video: /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4_eval_output/results_x2hdrltm_ubc_ltm_GirlbyTable_17_ds1.csv
+Updating FID/FVD accumulators for video: GirlbyTable
+
+Frames [Hallway]:   0%|          | 0/17 [00:00<?, ?frame/s][AVideos:  20%|██        | 2/10 [06:39<26:34, 199.33s/video]CVVDP Score: 4.821011543273926
+Wrote per-video: /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4_eval_output/results_oursltm_ubc_ltm_GirlbyTable_17_ds1.csv
+Updating FID/FVD accumulators for video: GirlbyTable
+
+Frames [Hallway]:   0%|          | 0/17 [00:00<?, ?frame/s][AVideos:  20%|██        | 2/10 [06:39<26:27, 198.47s/video]
+Frames [bistro_03]:   6%|▌         | 1/17 [00:10<02:49, 10.62s/frame][ACVVDP Score: 6.904694557189941
+Wrote per-video: /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4_eval_output/results_lediffltm_ubc_ltm_GirlbyTable_17_ds1.csv
+Updating FID/FVD accumulators for video: GirlbyTable
+
+Frames [Hallway]:   0%|          | 0/17 [00:00<?, ?frame/s][A

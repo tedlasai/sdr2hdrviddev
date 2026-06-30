@@ -9,6 +9,7 @@ max_pixels: 921600
 height: 704 #512 #704
 width: 1280 #768 #1280
 num_frames: 3
+
 num_hdr_frames: 17
 data_file_keys: "image,video"
 dataset_repeat: 1
