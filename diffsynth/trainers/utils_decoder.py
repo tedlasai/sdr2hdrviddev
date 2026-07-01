@@ -661,13 +661,14 @@ def launch_training_task(
                         
 
                         out_hdr_video = outputs["hdr_video"].to(device)
-                        out_combined_video = outputs["combined_video"].to(device)
+                        out_combined_video = outputs.get("combined_video")  # absent for modes that merge before decoding (e.g. "latent")
                         gt_hdr_video = torch.from_numpy(data["hdr_video"]).unsqueeze(0).to(device)
                         gt_combined_video = torch.from_numpy(data["bracket_video"]).unsqueeze(0).to(device)/255 #This scale feels funky here
-                        gt_hdr_video = rearrange(gt_hdr_video, 'b t h w c -> b t c h w') 
+                        gt_hdr_video = rearrange(gt_hdr_video, 'b t h w c -> b t c h w')
                         gt_combined_video = rearrange(gt_combined_video, 'b t h w c -> b t c h w')
                         out_hdr_video = rearrange(out_hdr_video, 'b c t h w -> b t c h w')
-                        out_combined_video = rearrange(out_combined_video, 'b c t h w -> b t c h w')
+                        if out_combined_video is not None:
+                            out_combined_video = rearrange(out_combined_video.to(device), 'b c t h w -> b t c h w')
 
 
                         max_val = torch.max(gt_hdr_video)
@@ -703,8 +704,8 @@ def launch_training_task(
                             [save_ldr(gt_multi_exposure_video[b, idx], f"{name}_orig_epoch-{epoch_id+1}_item-{saves}.mp4") for name, idx in exposures] + \
                             [save_ldr(gt_combined_video[b], f"gt_combined_epoch-{epoch_id+1}_item-{saves}.mp4")] + \
                             [save_ldr(out_multi_exposure_video[b, idx], f"{name}_pred_epoch-{epoch_id+1}_item-{saves}.mp4") for name, idx in exposures] + \
-                            [save_ldr(out_combined_video[b], f"out_combined_epoch-{epoch_id+1}_item-{saves}.mp4"),
-                            save_ldr(normalized_gt_hdr_video[b],  f"hdrnorm_gt_epoch-{epoch_id+1}_item-{saves}.mp4"),
+                            ([save_ldr(out_combined_video[b], f"out_combined_epoch-{epoch_id+1}_item-{saves}.mp4")] if out_combined_video is not None else []) + \
+                            [save_ldr(normalized_gt_hdr_video[b],  f"hdrnorm_gt_epoch-{epoch_id+1}_item-{saves}.mp4"),
                             save_ldr(normalized_out_hdr_video[b], f"hdrnorm_pred_epoch-{epoch_id+1}_item-{saves}.mp4")]
 
                             # ----- frames (kept readable) -----
@@ -713,7 +714,8 @@ def launch_training_task(
                             output_frames(gt_combined_video[b],                 str(out_dir / "combined_gt"  / f"gt_epoch-{epoch_id+1}_item-{saves}"),  mode="ldr", channel_order="NCHW")
                             for name, idx in exposures:
                                 output_frames(out_multi_exposure_video[b, idx], str(out_dir / f"{name}_pred"/ f"ours_epoch-{epoch_id+1}_item-{saves}"), mode="ldr", channel_order="NCHW")
-                            output_frames(out_combined_video[b],                str(out_dir / "combined_pred"/ f"ours_epoch-{epoch_id+1}_item-{saves}"), mode="ldr", channel_order="NCHW")
+                            if out_combined_video is not None:
+                                output_frames(out_combined_video[b],            str(out_dir / "combined_pred"/ f"ours_epoch-{epoch_id+1}_item-{saves}"), mode="ldr", channel_order="NCHW")
                             output_frames(normalized_gt_hdr_video[b],           str(out_dir / "hdrnorm_gt"   / f"gt_epoch-{epoch_id+1}_item-{saves}"),  mode="ldr", channel_order="NCHW")
                             output_frames(normalized_out_hdr_video[b],          str(out_dir / "hdrnorm_pred" / f"ours_epoch-{epoch_id+1}_item-{saves}"),mode="ldr", channel_order="NCHW")
                             output_frames(normalized_gt_hdr_video[b],           str(out_dir / "hdr_gt"       / f"gt_epoch-{epoch_id+1}_item-{saves}"),  mode="hdr", channel_order="NCHW")

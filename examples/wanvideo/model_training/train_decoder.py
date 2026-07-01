@@ -72,6 +72,11 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
         self.pipe = WanVideoPipeline.from_pretrained(torch_dtype=torch.bfloat16, device="cpu", model_configs=model_configs)
         self.pipe.dit.require_vae_embedding = False  # Enable image VAE embeddings
 
+        # Swap in the latent-space merger before loading any checkpoint, so state_dict keys line up
+        if encoder_decoder_mode == "latent":
+            from diffsynth.models.wan_video_vae_latent_merger import WanVideoVAELatentMerger
+            self.pipe.merge_decoder = WanVideoVAELatentMerger(latent_channels=self.pipe.vae.model.z_dim).to(dtype=torch.bfloat16)
+
         if model_paths is not None:
             load_models_from_paths(model_paths, self.pipe)
 

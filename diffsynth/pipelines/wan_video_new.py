@@ -599,6 +599,12 @@ class WanVideoPipeline(BasePipeline):
         num_latents = latents.shape[1]
         assert num_latents % len(exposures) == 0, f"num_latents {num_latents} must be divisible by exposures {len(exposures)}"
 
+        if encoder_decoder_mode == "latent":
+            merged_latents = self.merge_decoder(latents, exposures * 4)
+            log_hdr = self.vae.decode(merged_latents, device=self.device, tiled=tiled, tile_size=tile_size, tile_stride=tile_stride).to(dtype=torch.float32, device=device)
+            hdr_video = torch.exp(log_hdr.clamp(min=-20, max=20))  # decoder predicts log-HDR; clamp guards against exp() overflow
+            return {"hdr_video": hdr_video}
+
         num_latents_per_exposure = num_latents // len(exposures)
         videos = []
         for i in range(len(exposures)):
@@ -746,7 +752,7 @@ class WanVideoUnit_InputVideoEmbedder(PipelineUnit):
 
             input_latents = torch.concat([crf_latents, normal_exposure_latents, short_exposure_latents, long_exposure_latents], dim=2)
 
-        elif encoder_decoder_mode == "seperate_train":
+        elif encoder_decoder_mode in ("seperate_train", "pixel", "latent"):
             latent_segments = []
             for i in range(len(exposures)):
                 video_segment = input_video[:, :, i*num_frames_per_exposure:(i+1)*num_frames_per_exposure]
