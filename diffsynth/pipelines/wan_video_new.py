@@ -595,29 +595,29 @@ class WanVideoPipeline(BasePipeline):
         return inputs_shared
 
     
-    # def decode_latents_hdr_merge(self, latents, encoder_decoder_mode, exposures, tiled=True, tile_size=(30, 52), tile_stride=(15, 26), device="cpu"):
-    #     num_latents = latents.shape[1]
-    #     assert num_latents % len(exposures) == 0, f"num_latents {num_latents} must be divisible by exposures {len(exposures)}"
+    def decode_latents_hdr_merge(self, latents, encoder_decoder_mode, exposures, tiled=True, tile_size=(30, 52), tile_stride=(15, 26), device="cpu"):
+        num_latents = latents.shape[1]
+        assert num_latents % len(exposures) == 0, f"num_latents {num_latents} must be divisible by exposures {len(exposures)}"
 
-    #     num_latents_per_exposure = num_latents // len(exposures)
-    #     videos = []
-    #     for i in range(len(exposures)):
-    #         video = self.vae.decode(latents[:,i], device=self.device, tiled=tiled, tile_size=tile_size, tile_stride=tile_stride).to(dtype=torch.float32, device=device)
-    #         videos.append(self.vae_output_to_video(video, mode="tensor"))
+        num_latents_per_exposure = num_latents // len(exposures)
+        videos = []
+        for i in range(len(exposures)):
+            video = self.vae.decode(latents[:,i], device=self.device, tiled=tiled, tile_size=tile_size, tile_stride=tile_stride).to(dtype=torch.float32, device=device)
+            videos.append(self.vae_output_to_video(video, mode="tensor"))
 
-    #     hdr_video = self.merge_decoder(videos, exposures*4, encoder_decoder_mode, mem_efficient=True)
-    #     combined_video = torch.cat(videos, dim=2)
-    #     outputs = {"hdr_video": hdr_video}
+        hdr_video = self.merge_decoder(videos, exposures*4, encoder_decoder_mode, mem_efficient=True)
+        combined_video = torch.cat(videos, dim=2)
+        outputs = {"hdr_video": hdr_video}
 
-    #     if 'normal_video' in locals():
-    #         outputs["normal_video"] = videos[0]
-    #     if 'short_video' in locals():
-    #         outputs["short_video"] = videos[1]
-    #     if 'long_video' in locals():
-    #         outputs["long_video"] = videos[2]
-    #     if 'combined_video' in locals():
-    #         outputs["combined_video"] = combined_video
-    #     return outputs
+        if 'normal_video' in locals():
+            outputs["normal_video"] = videos[0]
+        if 'short_video' in locals():
+            outputs["short_video"] = videos[1]
+        if 'long_video' in locals():
+            outputs["long_video"] = videos[2]
+        if 'combined_video' in locals():
+            outputs["combined_video"] = combined_video
+        return outputs
 
     def vae_output_to_image(self, vae_output, pattern="B C H W", min_value=-1, max_value=1, mode="pil"):
         # To PIL.Image (uint8), NumPy (float [0,1]), Torch (float [0,1]) or same-shape Tensor
