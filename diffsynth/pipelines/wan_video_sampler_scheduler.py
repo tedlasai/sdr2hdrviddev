@@ -274,8 +274,19 @@ class ValScheduler:
             keep[self.pad_idx] = False
             videos_tensor = videos_tensor[:, :, :, keep]
                 
-        print("Merging videos with encoder-decoder mode:", self.encoder_decoder_mode)    
-        hdr_video = self.pipe.merge_decoder(videos_tensor, exposures, self.encoder_decoder_mode, mem_efficient=True)
+        print("Merging videos with encoder-decoder mode:", self.encoder_decoder_mode)
+        if self.encoder_decoder_mode == "latent":
+            # Latent-space merger: merge raw latents before decoding, then decode once.
+            # The decoder output for this mode is log-HDR, so it must be exponentiated.
+            sorted_exposures = sorted(self.exposures)
+            latents_tensor = torch.stack([self.latents[e].unsqueeze(0) for e in sorted_exposures], dim=1)
+            merged_latents = self.pipe.merge_decoder(latents_tensor, exposures)
+            log_hdr = self.pipe.vae.decode(merged_latents, device=merged_latents.device, tiled=self.tiled, tile_size=self.tile_size, tile_stride=self.tile_stride).to(dtype=torch.float32, device=merged_latents.device)
+            hdr_video = torch.exp(log_hdr.clamp(min=-20, max=20))
+            if self.num_end_pad_frames > 0:
+                hdr_video = hdr_video[:, :, :-self.num_end_pad_frames]
+        else:
+            hdr_video = self.pipe.merge_decoder(videos_tensor, exposures, self.encoder_decoder_mode, mem_efficient=True)
         combined_video = torch.cat([self.videos[0], self.videos[-4], self.videos[4]], dim=2)
         torch.cuda.empty_cache()
 
