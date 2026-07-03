@@ -4,32 +4,41 @@ output_path: "/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_
 dataset_base_path: "/data2/saikiran.tedla/hdrvideo/diff/data/stuttgart" # Base path of the dataset
 datasets: null
 datasets_train:
+  # - rawhdr
+  # - invert_pipeline
+  # - hdrps_raws
   - stuttgart
 datasets_val:
   - stuttgart
 invert_pipeline_path: "/data2/saikiran.tedla/hdrvideo/diff/data/invert_pipeline"
+rawhdr_path: "/data2/saikiran.tedla/hdrvideo/diff/data/RawHDR"
+hdrps_raws_path: "/data2/saikiran.tedla/hdrvideo/diff/data/HDRPS_Raws"
 max_pixels: 921600
 height: 704
 width: 1280
-crop_size_w: 128
-crop_size_h: 128
-num_hdr_frames: 5
-exp_gap: 6 # three-bracket EV spacing: (-exp_gap, 0, +exp_gap)
+crop_size_w: 256
+crop_size_h: 256
+num_hdr_frames: 1
+exp_gap: 5  # three-bracket EV spacing: (-exp_gap, 0, +exp_gap)
+bracket_mode: flex_brackets  # flex_brackets: scale global_max to darkest bracket; fixed_brackets: (-exp_gap, 0, +exp_gap) relative to crf_radiance
 data_file_keys: "image,video"
 dataset_repeat: 1
-model_paths: null #"[\"/data2/saikiran.tedla/hdrvideo/diff/models/train/Wan2.2-TI2V-5B_full/epoch-0.safetensors\"]" # Paths to load models. In JSON format.
+model_paths: null
 model_id_with_origin_paths: "Wan-AI/Wan2.2-TI2V-5B:models_t5_umt5-xxl-enc-bf16.pth,Wan-AI/Wan2.2-TI2V-5B:diffusion_pytorch_model*.safetensors,Wan-AI/Wan2.2-TI2V-5B:Wan2.2_VAE.pth"
-learning_rate: 0.0001 #0.0001 for merge decoder, 0.00001 for vae decoder
+learning_rate: 0.0001       # stage 1: merge_decoder only
+ea_learning_rate: 0.00001   # stage 2: after ea_start_epoch, applied to all param groups + new vae.decoder group
 num_epochs: 200
 remove_prefix_in_ckpt: "pipe."
-trainable_models: "merge_decoder" #"vae.model.decoder" #,merge_decoder"
+trainable_models: "merge_decoder"                       # stage 1
+ea_start_epoch: 1                                       # transition to EA stage after this many epochs
+ea_trainable_models: "vae.model.decoder,merge_decoder"  # stage 2
 lora_base_model: null
 lora_target_modules: "q,k,v,o,ffn.0,ffn.2"
 lora_rank: 32
 lora_checkpoint: null
 extra_inputs: "bracket_video"
 use_gradient_checkpointing_offload: false
-gradient_accumulation_steps: 8
+gradient_accumulation_steps: 6
 max_timestep_boundary: 1.0
 min_timestep_boundary: 0.0
 find_unused_parameters: false
@@ -37,6 +46,5 @@ save_steps: null
 dataset_num_workers: 4
 weight_decay: 0.01
 loss_type: "hdr_l1"
-use_vae_ea: false      # set true to enable cross-exposure attention in the VAE decoder
-ea_num_heads: 4        # attention heads in ExposureAttentionBlock (only used when use_vae_ea: true)
-                       # when use_vae_ea: true, also set trainable_models: "vae.model.decoder.ea_block,merge_decoder"
+use_vae_ea: false   # stage 1 starts without EA; transitions at ea_start_epoch
+ea_num_heads: 4

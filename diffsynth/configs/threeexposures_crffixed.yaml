@@ -21,12 +21,12 @@ height: 512
 width: 768
 height_full: 704
 width_full: 1280
-resolution_warmup_epochs: 20
-num_hdr_frames: 5
-exp_gap: 4  # three-bracket EV spacing: (-exp_gap, 0, +exp_gap)
-bracket_mode: fixed_brackets  # flex_brackets: scale global_max to darkest bracket; fixed_brackets: (-exp_gap, 0, +exp_gap) relative to crf_radiance
+resolution_warmup_epochs: 5
+num_hdr_frames: 1
+exp_gap: 5  # three-bracket EV spacing: (-exp_gap, 0, +exp_gap)
+bracket_mode: fixed_brackets #fixed_brackets  # flex_brackets: scale global_max to darkest bracket; fixed_brackets: (-exp_gap, 0, +exp_gap) relative to crf_radiance
 ratio_loss_weight: 0.1  # weight for latent exposure-ratio loss (0 to disable term, still logged)
-loss_type: "l1"  # denoising loss: "l1" or "l2"
+loss_type: "l2_reweight"  # denoising loss: "l1" or "l2"
 data_file_keys: "image,video"
 dataset_repeat: 1
 model_paths: null #[\"/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_justmerger/checkpoints/epoch-199.safetensors\"] # Paths to load models. In JSON format.
@@ -36,10 +36,12 @@ learning_rate: 0.00003
 num_epochs: 201
 remove_prefix_in_ckpt: "pipe."
 trainable_models: "dit"
-lora_base_model: null #"dit"
+use_lora: false
+lora_base_model: null
 lora_target_modules: "q,k,v,o,ffn.0,ffn.2"
 lora_rank: 32
 lora_checkpoint: null
+lora_extra_trainable_params: "all_info_embedding"
 extra_inputs: "condition_video"
 use_gradient_checkpointing_offload: false
 use_gradient_checkpointing: true
@@ -50,5 +52,5 @@ find_unused_parameters: false
 save_steps: null
 dataset_num_workers: 15
 weight_decay: 0.01
-predict_gamma: False
+predict_gamma: True
 #ablation: "no_rope_add"

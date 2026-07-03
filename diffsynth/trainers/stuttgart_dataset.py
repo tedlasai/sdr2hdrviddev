@@ -273,9 +273,9 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
     exposures = [-g, 0, g]
 
     if bracket_mode == "flex_brackets":
-        global_max = max(f.max() for f in raw_frames)
-        MAP_MAX = 0.8
-        fit_scale = MAP_MAX / (global_max * 2**exposures[0])  # global max → darkest bracket peaks at MAP_MAX
+        global_max = max(np.percentile(f, 99.9) for f in raw_frames)
+        MAP_MAX = 0.9
+        fit_scale = MAP_MAX / (global_max * 2**exposures[0])  # robust 99.9th percentile → darkest bracket peaks at MAP_MAX
     else:
         fit_scale = 1.0
 
@@ -305,7 +305,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
         if i == 0:
             min_exposure = np.log2(exposure_scale(hdr_in, 0.3, "under"))
             max_exposure = np.log2(exposure_scale(hdr_in, 0.3, "over"))
-            max_in_exposure = np.log2(0.7 / hdr_in.mean())
+            max_in_exposure = np.log2(0.7 / max(hdr_in.mean(), 1e-8))
 
             if crf_aug == "random":
                 if min_exposure < max_exposure:

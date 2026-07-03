@@ -14,7 +14,7 @@ data_file_keys: "image,video"
 dataset_repeat: 1
 model_paths: null #[\"/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_justmerger/checkpoints/epoch-199.safetensors\"] # Paths to load models. In JSON format.
 model_id_with_origin_paths: "Wan-AI/Wan2.2-TI2V-5B:models_t5_umt5-xxl-enc-bf16.pth,Wan-AI/Wan2.2-TI2V-5B:diffusion_pytorch_model*.safetensors,Wan-AI/Wan2.2-TI2V-5B:Wan2.2_VAE.pth"
-decoder_path: "/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_mergeragain/checkpoints/epoch-2.safetensors" #"/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_justmerger/checkpoints/epoch-199.safetensors"
+decoder_path: "/data2/saikiran.tedla/hdrvideo/diff/models/train/three_exposures_crfchanging_multimode_17_val/checkpoints/mergedeocderwieghts.safetensors" #"/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_justmerger/checkpoints/epoch-199.safetensors"
 use_vae_ea: true
 ea_num_heads: 4
 exp_gap: 7  # three-bracket EV spacing: (-exp_gap, 0, +exp_gap), e.g. 7 -> -7,0,7 or 6 -> -6,0,6

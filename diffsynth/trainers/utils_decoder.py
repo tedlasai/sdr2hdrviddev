@@ -579,6 +579,10 @@ def launch_training_task(
         find_unused_parameters = args.find_unused_parameters
         epochs_done = args.epochs_done
         loss_type = args.loss_type
+
+    ea_start_epoch = getattr(args, "ea_start_epoch", None) if args is not None else None
+    ea_learning_rate = getattr(args, "ea_learning_rate", learning_rate) if args is not None else learning_rate
+    ea_enabled = ea_start_epoch is None  # True when no staged training or already in EA mode
     
 
     optimizer = torch.optim.AdamW(model.trainable_modules(), lr=learning_rate, weight_decay=weight_decay)
@@ -610,7 +614,20 @@ def launch_training_task(
     accelerator.wait_for_everyone()
     for epoch_id in range(epochs_done, num_epochs):
 
-        out_metrics = None 
+        # Transition to EA stage at ea_start_epoch
+        if not ea_enabled and epoch_id >= ea_start_epoch:
+            ea_enabled = True
+            unwrapped = accelerator.unwrap_model(model)
+            new_params = unwrapped.enable_ea_stage()
+            # Lower lr for all existing param groups to ea_learning_rate
+            for pg in optimizer.param_groups:
+                pg["lr"] = ea_learning_rate
+            # Add newly unfrozen vae.decoder params as a fresh param group
+            if new_params:
+                optimizer.add_param_group({"params": new_params, "lr": ea_learning_rate, "weight_decay": weight_decay})
+            print(f"[EA Stage] Transitioned at epoch {epoch_id}. Optimizer now has {len(optimizer.param_groups)} param group(s).")
+
+        out_metrics = None
         skip_val = False #debugging thing
         with torch.no_grad():
             saves = 0
