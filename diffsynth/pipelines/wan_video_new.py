@@ -611,9 +611,16 @@ class WanVideoPipeline(BasePipeline):
             video = self.vae.decode(latents[:,i], device=self.device, tiled=tiled, tile_size=tile_size, tile_stride=tile_stride).to(dtype=torch.float32, device=device)
             videos.append(self.vae_output_to_video(video, mode="tensor"))
 
-        hdr_video = self.merge_decoder(videos, exposures*4, encoder_decoder_mode, mem_efficient=True)
+        if encoder_decoder_mode == "deephdr":
+            hdr_video, hdr_video_compressed = self.merge_decoder(
+                videos, exposures*4, encoder_decoder_mode, mem_efficient=True, return_compressed=True
+            )
+        else:
+            hdr_video = self.merge_decoder(videos, exposures*4, encoder_decoder_mode, mem_efficient=True)
         combined_video = torch.cat(videos, dim=2)
         outputs = {"hdr_video": hdr_video}
+        if encoder_decoder_mode == "deephdr":
+            outputs["hdr_video_compressed"] = hdr_video_compressed
 
         if 'normal_video' in locals():
             outputs["normal_video"] = videos[0]
@@ -752,7 +759,7 @@ class WanVideoUnit_InputVideoEmbedder(PipelineUnit):
 
             input_latents = torch.concat([crf_latents, normal_exposure_latents, short_exposure_latents, long_exposure_latents], dim=2)
 
-        elif encoder_decoder_mode in ("seperate_train", "pixel", "latent"):
+        elif encoder_decoder_mode in ("seperate_train", "pixel", "latent", "deephdr"):
             latent_segments = []
             for i in range(len(exposures)):
                 video_segment = input_video[:, :, i*num_frames_per_exposure:(i+1)*num_frames_per_exposure]

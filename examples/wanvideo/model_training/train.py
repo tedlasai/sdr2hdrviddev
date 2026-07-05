@@ -51,6 +51,9 @@ class WanTrainingModule(DiffusionTrainingModule):
         if encoder_decoder_mode == "latent":
             from diffsynth.models.wan_video_vae_latent_merger import WanVideoVAELatentMerger
             self.pipe.merge_decoder = WanVideoVAELatentMerger(latent_channels=self.pipe.vae.model.z_dim).to(dtype=torch.bfloat16)
+        elif encoder_decoder_mode == "deephdr":
+            from diffsynth.models.wan_video_vae_merge_decoder_deephdr import WanVideoVAEMergeDecoderDeepHDR
+            self.pipe.merge_decoder = WanVideoVAEMergeDecoderDeepHDR()
 
         if model_paths is not None:
             load_models_from_paths(model_paths, self.pipe)

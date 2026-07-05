@@ -674,6 +674,8 @@ def launch_training_task(
                         max_val = torch.max(gt_hdr_video)
                         normalized_out_hdr_video = out_hdr_video.to(torch.float32)/max_val
                         normalized_gt_hdr_video = gt_hdr_video.to(torch.float32)/max_val
+                        raw_out_hdr_video = out_hdr_video.to(torch.float32)
+                        raw_gt_hdr_video = gt_hdr_video.to(torch.float32)
 
                         from utils import generate_multi_exposure_video
                         arbitrary_scale_metrics = 16 #(if things  are normalized to 1 than this just lets me visualize correctlY)
@@ -718,8 +720,8 @@ def launch_training_task(
                                 output_frames(out_combined_video[b],            str(out_dir / "combined_pred"/ f"ours_epoch-{epoch_id+1}_item-{saves}"), mode="ldr", channel_order="NCHW")
                             output_frames(normalized_gt_hdr_video[b],           str(out_dir / "hdrnorm_gt"   / f"gt_epoch-{epoch_id+1}_item-{saves}"),  mode="ldr", channel_order="NCHW")
                             output_frames(normalized_out_hdr_video[b],          str(out_dir / "hdrnorm_pred" / f"ours_epoch-{epoch_id+1}_item-{saves}"),mode="ldr", channel_order="NCHW")
-                            output_frames(normalized_gt_hdr_video[b],           str(out_dir / "hdr_gt"       / f"gt_epoch-{epoch_id+1}_item-{saves}"),  mode="hdr", channel_order="NCHW")
-                            output_frames(normalized_out_hdr_video[b],          str(out_dir / "hdr_pred"     / f"ours_epoch-{epoch_id+1}_item-{saves}"),mode="hdr", channel_order="NCHW")
+                            output_frames(raw_gt_hdr_video[b],                  str(out_dir / "hdr_gt"       / f"gt_epoch-{epoch_id+1}_item-{saves}"),  mode="hdr", channel_order="NCHW")
+                            output_frames(raw_out_hdr_video[b],                 str(out_dir / "hdr_pred"     / f"ours_epoch-{epoch_id+1}_item-{saves}"),mode="hdr", channel_order="NCHW")
 
                             saves += 1
                         # end for b
@@ -744,6 +746,21 @@ def launch_training_task(
                     eps = 1e-6
                     scale = inputs["hdr_video"].max()
                     hdr_loss = torch.nn.functional.l1_loss(torch.log(inputs["hdr_video"]/scale + eps), torch.log(outputs["hdr_video"]/scale + eps))
+                    loss = hdr_loss
+                    loss_dict["hdr_loss"] = hdr_loss
+                elif loss_type == "hdr_mulaw_l1":
+                    # matches the original Deep-HDR-with-Pytorch training convention:
+                    # L1 in the mu-law tonemapped domain, not linear/log radiance.
+                    # Supervise the sigmoid's native compressed-domain tensor directly
+                    # (outputs["hdr_video_compressed"]) instead of round-tripping the
+                    # returned linear radiance back through mu_law_compress.
+                    from ..models.wan_video_vae_merge_decoder_deephdr import mu_law_compress
+                    predicted_compressed = outputs.get("hdr_video_compressed")
+                    if predicted_compressed is None:
+                        predicted_compressed = mu_law_compress(outputs["hdr_video"])
+                    hdr_loss = torch.nn.functional.l1_loss(
+                        mu_law_compress(inputs["hdr_video"]), predicted_compressed
+                    )
                     loss = hdr_loss
                     loss_dict["hdr_loss"] = hdr_loss
                 elif loss_type == "hdr_multiexp":

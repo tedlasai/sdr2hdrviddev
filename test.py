@@ -78,8 +78,8 @@ if __name__ == "__main__":
 
 
     val_dataset = VideoDataset(
-        base_path="/data2/saikiran.tedla/hdrvideo/diff/evaluations/stuttgart",
-        out_path = "/data2/saikiran.tedla/hdrvideo/diff/evaluations/ourslatentmerge_stuttgart",
+        base_path="/data2/saikiran.tedla/hdrvideo/diff/evaluations/stuttgart/auto",
+        out_path = "/data2/saikiran.tedla/hdrvideo/diff/evaluations/oursdeephdr_stuttgart/auto",
         main_data_operator=VideoDataset.default_video_operator(
             num_frames=17,
             max_pixels=args.max_pixels,
