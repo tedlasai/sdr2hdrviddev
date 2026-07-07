@@ -30,7 +30,7 @@ from typing import List, Optional, Tuple
 EVAL_BASE = "/data2/saikiran.tedla/hdrvideo/diff/evaluations"
 EVAL_OUTPUT_DIR = "/data2/saikiran.tedla/hdrvideo/diff/metrics/evaluations_output"
 DATASETS = ("stuttgart", "ubc")
-METHODS = ("oursmay4",  "ablatepu", "ablatebracketed", "ablateloglinear", "ablatelinear", "ablatebracketedmerger")
+METHODS = ("oursmay4",  "ablatepu", "ablatebracketed", "ablateloglinear", "ablatelinear", "ablatebracketedmerger", "oursdeephdr")
 SCRIPT_NAME = "compute_metrics_parallel_siddhu.py"
 IGNORED_TYPES = {"normal", "over20", "under5"}
 

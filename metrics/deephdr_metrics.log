@@ -1,0 +1,113 @@
+Discovered 3 tasks missing output CSV; running 3 after filters.
+  stuttgart / oursdeephdr / auto
+  stuttgart / oursdeephdr / over
+  stuttgart / oursdeephdr / under
+GPU mode: 5 GPU(s) ['3', '4', '5', '6', '7'], 1 process(es) per GPU → 5 total
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/compute_metrics_parallel_siddhu.py", line 21, in <module>
+    from metrics_helpers import (
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/metrics_helpers.py", line 28, in <module>
+    import pycvvdp
+ModuleNotFoundError: No module named 'pycvvdp'
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/compute_metrics_parallel_siddhu.py", line 21, in <module>
+    from metrics_helpers import (
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/metrics_helpers.py", line 28, in <module>
+    import pycvvdp
+ModuleNotFoundError: No module named 'pycvvdp'
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/compute_metrics_parallel_siddhu.py", line 21, in <module>
+    from metrics_helpers import (
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/metrics_helpers.py", line 28, in <module>
+    import pycvvdp
+ModuleNotFoundError: No module named 'pycvvdp'
+Failed (gpu 3): stuttgart / oursdeephdr / auto
+Failed (gpu 4): stuttgart / oursdeephdr / over
+Failed (gpu 5): stuttgart / oursdeephdr / under
+Some tasks failed (will retry next round): [('stuttgart', 'oursdeephdr', 'auto'), ('stuttgart', 'oursdeephdr', 'over'), ('stuttgart', 'oursdeephdr', 'under')]
+Round 2: 3 task(s) still missing output CSV.
+  stuttgart / oursdeephdr / auto
+  stuttgart / oursdeephdr / over
+  stuttgart / oursdeephdr / under
+GPU mode: 5 GPU(s) ['3', '4', '5', '6', '7'], 1 process(es) per GPU → 5 total
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/compute_metrics_parallel_siddhu.py", line 21, in <module>
+    from metrics_helpers import (
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/metrics_helpers.py", line 28, in <module>
+    import pycvvdp
+ModuleNotFoundError: No module named 'pycvvdp'
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/compute_metrics_parallel_siddhu.py", line 21, in <module>
+    from metrics_helpers import (
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/metrics_helpers.py", line 28, in <module>
+    import pycvvdp
+ModuleNotFoundError: No module named 'pycvvdp'
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/compute_metrics_parallel_siddhu.py", line 21, in <module>
+    from metrics_helpers import (
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/metrics_helpers.py", line 28, in <module>
+    import pycvvdp
+ModuleNotFoundError: No module named 'pycvvdp'
+Failed (gpu 5): stuttgart / oursdeephdr / under
+Failed (gpu 3): stuttgart / oursdeephdr / auto
+Failed (gpu 4): stuttgart / oursdeephdr / over
+Some tasks failed (will retry next round): [('stuttgart', 'oursdeephdr', 'under'), ('stuttgart', 'oursdeephdr', 'auto'), ('stuttgart', 'oursdeephdr', 'over')]
+Round 3: 3 task(s) still missing output CSV.
+  stuttgart / oursdeephdr / auto
+  stuttgart / oursdeephdr / over
+  stuttgart / oursdeephdr / under
+GPU mode: 5 GPU(s) ['3', '4', '5', '6', '7'], 1 process(es) per GPU → 5 total
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/compute_metrics_parallel_siddhu.py", line 21, in <module>
+    from metrics_helpers import (
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/metrics_helpers.py", line 28, in <module>
+    import pycvvdp
+ModuleNotFoundError: No module named 'pycvvdp'
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/compute_metrics_parallel_siddhu.py", line 21, in <module>
+    from metrics_helpers import (
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/metrics_helpers.py", line 28, in <module>
+    import pycvvdp
+ModuleNotFoundError: No module named 'pycvvdp'
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/compute_metrics_parallel_siddhu.py", line 21, in <module>
+    from metrics_helpers import (
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/metrics_helpers.py", line 28, in <module>
+    import pycvvdp
+ModuleNotFoundError: No module named 'pycvvdp'
+Failed (gpu 4): stuttgart / oursdeephdr / over
+Failed (gpu 5): stuttgart / oursdeephdr / under
+Failed (gpu 3): stuttgart / oursdeephdr / auto
+Some tasks failed (will retry next round): [('stuttgart', 'oursdeephdr', 'over'), ('stuttgart', 'oursdeephdr', 'under'), ('stuttgart', 'oursdeephdr', 'auto')]
+Round 4: 3 task(s) still missing output CSV.
+  stuttgart / oursdeephdr / auto
+  stuttgart / oursdeephdr / over
+  stuttgart / oursdeephdr / under
+GPU mode: 5 GPU(s) ['3', '4', '5', '6', '7'], 1 process(es) per GPU → 5 total
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/compute_metrics_parallel_siddhu.py", line 21, in <module>
+    from metrics_helpers import (
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/metrics_helpers.py", line 28, in <module>
+    import pycvvdp
+ModuleNotFoundError: No module named 'pycvvdp'
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/compute_metrics_parallel_siddhu.py", line 21, in <module>
+    from metrics_helpers import (
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/metrics_helpers.py", line 28, in <module>
+    import pycvvdp
+ModuleNotFoundError: No module named 'pycvvdp'
+Traceback (most recent call last):
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/compute_metrics_parallel_siddhu.py", line 21, in <module>
+    from metrics_helpers import (
+  File "/data2/saikiran.tedla/hdrvideo/diff/metrics/metrics_helpers.py", line 28, in <module>
+    import pycvvdp
+ModuleNotFoundError: No module named 'pycvvdp'
+Failed (gpu 3): stuttgart / oursdeephdr / auto
+Failed (gpu 5): stuttgart / oursdeephdr / under
+Failed (gpu 4): stuttgart / oursdeephdr / over
+Some tasks failed (will retry next round): [('stuttgart', 'oursdeephdr', 'auto'), ('stuttgart', 'oursdeephdr', 'under'), ('stuttgart', 'oursdeephdr', 'over')]
+Round 5: 3 task(s) still missing output CSV.
+  stuttgart / oursdeephdr / auto
+  stuttgart / oursdeephdr / over
+  stuttgart / oursdeephdr / under
+GPU mode: 5 GPU(s) ['3', '4', '5', '6', '7'], 1 process(es) per GPU → 5 total

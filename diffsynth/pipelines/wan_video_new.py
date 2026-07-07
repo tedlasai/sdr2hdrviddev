@@ -752,7 +752,7 @@ class WanVideoUnit_InputVideoEmbedder(PipelineUnit):
 
             input_latents = torch.concat([crf_latents, normal_exposure_latents, short_exposure_latents, long_exposure_latents], dim=2)
 
-        elif encoder_decoder_mode in ("seperate_train", "pixel", "latent"):
+        elif encoder_decoder_mode in ("seperate_train", "pixel", "latent", "deephdr"):
             latent_segments = []
             for i in range(len(exposures)):
                 video_segment = input_video[:, :, i*num_frames_per_exposure:(i+1)*num_frames_per_exposure]

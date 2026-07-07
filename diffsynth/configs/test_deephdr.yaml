@@ -1,0 +1,23 @@
+name: "test_deephdr"
+encode_decoder_mode: "deephdr"
+eval_name: "oursdeephdr" # -> writes to evaluations/oursdeephdr_stuttgart/<type>/<scene> (auto/over/under/normal/ltm/over20/under5, mirroring evaluations/stuttgart/<type>)
+output_path: "/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_deephdr" # set_load_paths auto-discovers the latest epoch-*.safetensors under output_path/checkpoints
+max_pixels: 921600
+height: 704
+width: 1280
+model_paths: null # auto-discovered from output_path/checkpoints (currently resolves to epoch-1.safetensors)
+decoder_path: null
+model_id_with_origin_paths: "Wan-AI/Wan2.2-TI2V-5B:models_t5_umt5-xxl-enc-bf16.pth,Wan-AI/Wan2.2-TI2V-5B:diffusion_pytorch_model*.safetensors,Wan-AI/Wan2.2-TI2V-5B:Wan2.2_VAE.pth"
+trainable_models: "merge_decoder"
+lora_base_model: null
+lora_target_modules: "q,k,v,o,ffn.0,ffn.2"
+lora_rank: 32
+lora_checkpoint: null
+extra_inputs: null
+use_gradient_checkpointing_offload: false
+max_timestep_boundary: 1.0
+min_timestep_boundary: 0.0
+find_unused_parameters: false
+dataset_num_workers: 4
+num_epochs: 1
+use_vae_ea: false
