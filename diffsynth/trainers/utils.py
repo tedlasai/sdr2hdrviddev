@@ -451,6 +451,19 @@ def validate(val_dataloader, model, model_logger, epoch_id, accelerator, dataset
     return combined_psnr
 
 
+def resolve_training_resolution(epoch_id, args):
+    # Resolution warmup: train at (height, width) for the first `resolution_warmup_epochs`
+    # epochs, then switch to (height_full, width_full) for the remainder of training.
+    warmup_epochs = int(getattr(args, "resolution_warmup_epochs", 0) or 0)
+    if warmup_epochs > 0 and epoch_id < warmup_epochs:
+        return int(args.height), int(args.width)
+    height_full = getattr(args, "height_full", None)
+    width_full = getattr(args, "width_full", None)
+    if height_full is not None and width_full is not None:
+        return int(height_full), int(width_full)
+    return int(args.height), int(args.width)
+
+
 def launch_training_task(
     dataset: torch.utils.data.Dataset,
     val_dataset: torch.utils.data.Dataset,
@@ -474,19 +487,26 @@ def launch_training_task(
         gradient_accumulation_steps = args.gradient_accumulation_steps
         find_unused_parameters = args.find_unused_parameters
         epochs_done = args.epochs_done
-    
+
 
     optimizer = torch.optim.AdamW(model.trainable_modules(), lr=learning_rate, weight_decay=weight_decay)
     scheduler = torch.optim.lr_scheduler.ConstantLR(optimizer)
-    dataloader = torch.utils.data.DataLoader(dataset, shuffle=True, collate_fn=lambda x: x[0], num_workers=num_workers, drop_last=True)
+
+    def make_train_dataloader():
+        return torch.utils.data.DataLoader(dataset, shuffle=True, collate_fn=lambda x: x[0], num_workers=num_workers, drop_last=True)
+
+    def make_val_dataloader():
+        return torch.utils.data.DataLoader(val_dataset, shuffle=False, collate_fn=lambda x: x[0], num_workers=num_workers)
+
+    dataloader = make_train_dataloader()
     accelerator = Accelerator(
         gradient_accumulation_steps=gradient_accumulation_steps,
         kwargs_handlers=[DistributedDataParallelKwargs(find_unused_parameters=find_unused_parameters)],
         log_with="wandb",
 
     )
-        
-    val_dataloader = torch.utils.data.DataLoader(val_dataset, shuffle=False, collate_fn=lambda x: x[0], num_workers=num_workers)
+
+    val_dataloader = make_val_dataloader()
 
     accelerator.init_trackers(
         project_name="hdrgen",
@@ -510,7 +530,29 @@ def launch_training_task(
         accelerator.print(f"Loaded optimizer & scheduler state from: {opt_ckpt}")
         accelerator.wait_for_everyone()
     model_logger._load_existing_best_psnr()
+
+    current_height, current_width = None, None
+
+    def maybe_update_resolution(epoch_id):
+        nonlocal current_height, current_width, dataloader, val_dataloader
+        if args is None:
+            return
+        height, width = resolve_training_resolution(epoch_id, args)
+        if height == current_height and width == current_width:
+            return
+        dataset.set_resolution(height, width)
+        val_dataset.set_resolution(height, width)
+        args.height = height
+        args.width = width
+        current_height, current_width = height, width
+        del dataloader, val_dataloader
+        torch.cuda.empty_cache()
+        dataloader = accelerator.prepare(make_train_dataloader())
+        val_dataloader = accelerator.prepare(make_val_dataloader())
+        accelerator.print(f"Epoch {epoch_id + 1}: using resolution {height}x{width}")
+
     for epoch_id in range(epochs_done, num_epochs):
+        maybe_update_resolution(epoch_id)
         val_combined_psnr = None
         if epoch_id == epochs_done:
             with torch.no_grad():

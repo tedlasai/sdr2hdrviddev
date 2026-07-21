@@ -76,6 +76,7 @@ def run_inference(model, args, input_dir, output_dir):
 
     condition_video = data['input_video']   # (T, H, W, C) uint8
     exposures = data['exposures']           # (4,) float
+    ev = getattr(args, 'ev', 4)
 
     with torch.no_grad():
         outputs = model.pipe(
@@ -89,7 +90,7 @@ def run_inference(model, args, input_dir, output_dir):
             cfg_scale=1.0,
             encoder_decoder_mode=model.encoder_decoder_mode,
             exposures=exposures,
-            generate_exposures=(-4, 0, 4),
+            generate_exposures=(-ev, 0, ev),
             use_vae_ea=model.use_vae_ea,
         )
 

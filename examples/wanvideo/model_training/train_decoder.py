@@ -61,6 +61,7 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
         loss_type="hdr_log",
         use_vae_ea=False,
         ea_num_heads=4,
+        ev=4,
     ):
         super().__init__()
         # Load models
@@ -137,6 +138,7 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
         self.min_timestep_boundary = min_timestep_boundary
         self.encoder_decoder_mode = encoder_decoder_mode
         self.loss_type = loss_type
+        self.ev = ev
         
         
     def forward_preprocess(self, data):
@@ -202,7 +204,7 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
             self.pipe.vae_output_to_video(raw[i:i+1], mode="tensor")
             for i in range(E)
         ]
-        hdr_video = self.pipe.merge_decoder(videos, exposures * 4, self.encoder_decoder_mode, mem_efficient=True)
+        hdr_video = self.pipe.merge_decoder(videos, exposures * self.ev, self.encoder_decoder_mode, mem_efficient=True)
         combined_video = torch.cat(videos, dim=2)
         return {"hdr_video": hdr_video, "combined_video": combined_video}
 
@@ -215,7 +217,7 @@ class WanDecoderTrainingModule(DiffusionTrainingModule):
         if self.use_vae_ea:
             outputs = self._decode_with_vae_ea(encoded_latents, data["exposures"], tiled=inputs["tiled"])
         else:
-            outputs = self.pipe.decode_latents_hdr_merge(encoded_latents, self.encoder_decoder_mode, data["exposures"], tiled=inputs["tiled"], device=self.pipe.device)
+            outputs = self.pipe.decode_latents_hdr_merge(encoded_latents, self.encoder_decoder_mode, data["exposures"], tiled=inputs["tiled"], device=self.pipe.device, ev=self.ev)
         decoded_hdr_video = outputs["hdr_video"].to(torch.bfloat16)
         
         min_value = 0
@@ -284,6 +286,8 @@ if __name__ == "__main__":
     args = load_yaml_config(args, args.config)
     args = set_load_paths(args)
 
+    ev = getattr(args, "ev", 4)
+
     dataset = StuttgartDataset(
         base_path=args.dataset_base_path,
         repeat=args.dataset_repeat,
@@ -299,6 +303,7 @@ if __name__ == "__main__":
             time_division_remainder=1,
             crop_size_h = args.crop_size_h,
             crop_size_w = args.crop_size_w,
+            ev=ev,
         ),
         mode = "hdr_and_brackets"
     )
@@ -316,7 +321,8 @@ if __name__ == "__main__":
             num_frames=args.num_frames,
             time_division_factor=4,
             time_division_remainder=1,
-            split="val"
+            split="val",
+            ev=ev,
         ),
         mode = "hdr_and_brackets",
         split = "val"
@@ -337,6 +343,7 @@ if __name__ == "__main__":
         loss_type=args.loss_type,
         use_vae_ea=getattr(args, "use_vae_ea", False),
         ea_num_heads=getattr(args, "ea_num_heads", 4),
+        ev=ev,
     )
     model_logger = ModelLogger(
         Path(args.output_path) / "checkpoints",

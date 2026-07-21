@@ -9,6 +9,7 @@ width: 1280
 crop_size_w: 128
 crop_size_h: 128
 num_frames: 15
+ev: 4 # magnitude of the +/- exposure brackets (in stops) generated from each HDR frame
 data_file_keys: "image,video"
 dataset_repeat: 1
 model_paths: null

@@ -1,21 +1,25 @@
-name: "three_exposures_crfchanging"
+name: "three_exposures_crfchanging_8ev"
 encode_decoder_mode: "seperate_debevec"
 skip_val: False
 input_type: "crf"
-output_path: "./models/train/three_exposures_crfchanging"
+output_path: "./models/train/three_exposures_crfchanging_8ev"
 dataset_base_path: "/data2/saikiran.tedla/hdrvideo/diff/data/stuttgart" # Base path of the dataset
 dataset_metadata_path: null
 max_pixels: 921600
-height: 704 #512 #12 #512 #512 #704 #512
-width: 1280 #768 #768 #768 #768
+height: 512 # resolution used for the first `resolution_warmup_epochs` epochs
+width: 768
+height_full: 704 # resolution used from `resolution_warmup_epochs` onward
+width_full: 1280
+resolution_warmup_epochs: 10
 num_frames: 3
+ev: 8 # magnitude of the +/- exposure brackets (in stops) generated from each HDR frame
 data_file_keys: "image,video"
 dataset_repeat: 1
 model_paths: null #[\"/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_justmerger/checkpoints/epoch-199.safetensors\"] # Paths to load models. In JSON format.
 model_id_with_origin_paths: "Wan-AI/Wan2.2-TI2V-5B:models_t5_umt5-xxl-enc-bf16.pth,Wan-AI/Wan2.2-TI2V-5B:diffusion_pytorch_model*.safetensors,Wan-AI/Wan2.2-TI2V-5B:Wan2.2_VAE.pth"
-decoder_path: "/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_justmerger/checkpoints/epoch-199.safetensors"
+decoder_path: "/data2/saikiran.tedla/hdrvideo/diff/models/train/three_exposures_crfchanging_multimode_17_val/checkpoints_final/mergedeocderwieghts.safetensors" # ev=4 decoder, used only for validation-time merging during unet training
 learning_rate: 0.00003
-num_epochs: 201
+num_epochs: 30
 remove_prefix_in_ckpt: "pipe."
 trainable_models: "dit"
 lora_base_model: null #"dit"

@@ -31,7 +31,7 @@ from metrics_helpers import (
 EVAL_BASE = "/data2/saikiran.tedla/hdrvideo/diff/evaluations"
 EVAL_OUTPUT_DIR = "/data2/saikiran.tedla/hdrvideo/diff/metrics/evaluations_output"
 DATASETS = ("stuttgart", "ubc")
-METHODS = ("eilertsen", "lediff", "ours", "hdrtv", "ours3", "oursolddecoder", "oursapr14", "oursmay4", "ablatepu", "ablatebracketed", "ablateloglinear", "ablatelinear", "ablatebracketedmerger")
+METHODS = ("eilertsen", "lediff", "ours", "hdrtv", "ours3", "oursolddecoder", "oursapr14", "oursmay4", "ours2ev", "ours6ev", "ours8ev", "ablatepu", "ablatebracketed", "ablateloglinear", "ablatelinear", "ablatebracketedmerger")
 
 
 def parse_args():

@@ -42,6 +42,7 @@ def launch_test_task(
 
 
 def validate(val_dataloader, model, accelerator, dataset, args):
+    ev = getattr(args, "ev", 4)
     for step, data in enumerate(tqdm(val_dataloader, desc="Validation", disable=not accelerator.is_local_main_process)):
         with accelerator.accumulate(model):
             if dataset.load_from_cache:
@@ -61,7 +62,7 @@ def validate(val_dataloader, model, accelerator, dataset, args):
                     cfg_scale=1.0,
                     encoder_decoder_mode=unwrapped_model.encoder_decoder_mode,
                     exposures = data["exposures"],
-                    generate_exposures = (-4, 0, 4),
+                    generate_exposures = (-ev, 0, ev),
                     use_vae_ea=unwrapped_model.use_vae_ea,
                 )
                 out_hdr_video = rearrange(outputs["hdr_video"], 'b c t h w -> b t c h w')
@@ -72,14 +73,18 @@ def validate(val_dataloader, model, accelerator, dataset, args):
 
 if __name__ == "__main__":
     parser = wan_parser()
+    parser.add_argument("--eval_dataset", type=str, default="ubc", choices=["stuttgart", "ubc"], help="Which evaluation set to run inference on.")
+    parser.add_argument("--output_name", type=str, default="oursdeephdr", help="Prefix for the output directory, e.g. 'ours2ev' -> evaluations/ours2ev_<eval_dataset>.")
     args = parser.parse_args()
     args = load_yaml_config(args, args.config)
     args = set_load_paths(args)
 
+    eval_base_path = f"/data2/saikiran.tedla/hdrvideo/diff/evaluations/{args.eval_dataset}"
+    eval_out_path = f"/data2/saikiran.tedla/hdrvideo/diff/evaluations/{args.output_name}_{args.eval_dataset}"
 
     val_dataset = VideoDataset(
-        base_path="/data2/saikiran.tedla/hdrvideo/diff/evaluations/stuttgart/auto",
-        out_path = "/data2/saikiran.tedla/hdrvideo/diff/evaluations/oursdeephdr_stuttgart/auto",
+        base_path=eval_base_path,
+        out_path=eval_out_path,
         main_data_operator=VideoDataset.default_video_operator(
             num_frames=17,
             max_pixels=args.max_pixels,

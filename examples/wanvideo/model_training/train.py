@@ -209,6 +209,8 @@ if __name__ == "__main__":
     args = load_yaml_config(args, args.config)
     args = set_load_paths(args)
 
+    ev = getattr(args, "ev", 4)
+
     dataset = StuttgartDataset(
         base_path=args.dataset_base_path,
         repeat=args.dataset_repeat,
@@ -222,7 +224,8 @@ if __name__ == "__main__":
             num_frames=args.num_frames,
             time_division_factor=4,
             time_division_remainder=1,
-            crf_aug="random"
+            crf_aug="random",
+            ev=ev,
         ),
         mode="hdr_and_brackets",
     )
@@ -239,6 +242,7 @@ if __name__ == "__main__":
             num_frames=args.num_frames,
             time_division_factor=4,
             time_division_remainder=1,
+            ev=ev,
         ),
         mode = "hdr_and_brackets",
         split = "val"

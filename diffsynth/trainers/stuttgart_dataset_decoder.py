@@ -236,13 +236,14 @@ def exposure_scale(frame, p, mode, lo=0.0, hi=1.0, eps=1e-8):
     raise ValueError("mode must be 'over' or 'under'")
 
 
-def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], split="train"):
+def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], split="train", ev=4):
     """
     Given a list of HDR image paths, generate exposure-bracketed LDR images.
 
     Args:
         hdr_paths (list[str]): Paths to HDR images.
         exposures (tuple[int|float]): EV values to apply for exposure scaling.
+        ev (int|float): Magnitude of the +/- exposure offsets from the center exposure.
 
     Returns:
         list[list[np.ndarray]]: For each HDR path, a list of LDR images
@@ -273,7 +274,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], spli
         
 
         if i == 0:
-            exposures = [0, -4, 4]
+            exposures = [0, -ev, ev]
             #choose random number between 3 and 5
             if split == "train":
                 num_exposures =3
@@ -281,19 +282,19 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], spli
                     center = np.random.uniform(min_exposure, max_exposure)
                 else:
                     center = (min_exposure + max_exposure)//2 #this shouldn't be reached that often
-                
+
                 if num_exposures == 4:
                     #either add -8 or +8
                     if np.random.rand() < 0.5:
-                        exposures.append(-8)
+                        exposures.append(-2 * ev)
                     else:
-                        exposures.append(8)
+                        exposures.append(2 * ev)
                 elif num_exposures == 5:
-                    exposures.append(-8)
-                    exposures.append(8)
+                    exposures.append(-2 * ev)
+                    exposures.append(2 * ev)
             else:
                 print("IN VAL")
-                exposures = [0, -4, 4]
+                exposures = [0, -ev, ev]
                 center = min_in_exposure
 
 
@@ -310,9 +311,9 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], spli
         hdr_images.append(hdr_in)
 
         ldr_images = []
-        for ev in exposures:
+        for exposure_val in exposures:
             # Scale exposure (2^EV), clip to [0,1]
-            ldr = np.clip(hdr_in * (2.0 ** ev), 0.0, 1.0)
+            ldr = np.clip(hdr_in * (2.0 ** exposure_val), 0.0, 1.0)
             ldr = (ldr * 255.0)
             ldr_images.append(ldr)
         all_brackets.append(ldr_images)
@@ -321,7 +322,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], spli
     all_brackets = np.array(all_brackets)  # shape (N, len(exposures), H, W, 3)
     all_brackets = all_brackets.transpose(1,0,2,3,4)  # shape (len(exposures), N, H, W, 3)
 
-    exposures = np.array(exposures)/4
+    exposures = np.array(exposures)/ev
 
     input_type = "crf" #DUMMY
     input_video = all_brackets[0]  #DUMMY (shouldn't be used anyway)
@@ -332,7 +333,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], spli
     return data
 
 class LoadHDRVideo(DataProcessingOperator):
-    def __init__(self, num_frames=49, time_division_factor=4, time_division_remainder=1, frame_processor=lambda x: x, crf_aug=None, split="train"):
+    def __init__(self, num_frames=49, time_division_factor=4, time_division_remainder=1, frame_processor=lambda x: x, crf_aug=None, split="train", ev=4):
         self.num_frames = num_frames
         self.time_division_factor = time_division_factor
         self.time_division_remainder = time_division_remainder
@@ -340,6 +341,7 @@ class LoadHDRVideo(DataProcessingOperator):
         self.frame_processor = frame_processor
         self.crf_aug = crf_aug
         self.split = split
+        self.ev = ev
         self.cache = {}
 
     # def get_num_frames(self, reader):
@@ -359,7 +361,7 @@ class LoadHDRVideo(DataProcessingOperator):
 
         hdr_paths = next_paths(data, num_hdr_frames, same_suffix=True, include_self=True)
 
-        data = make_exposure_brackets(hdr_paths, self.frame_processor, split=self.split)
+        data = make_exposure_brackets(hdr_paths, self.frame_processor, split=self.split, ev=self.ev)
         data["bracket_video"] = data["bracket_video"].reshape(-1, *data["bracket_video"].shape[2:])  # shape (num_frames, H, W, 3)
 
 
@@ -483,15 +485,16 @@ class StuttgartDataset(torch.utils.data.Dataset):
         max_pixels=1920*1080, height=None, width=None,
         height_division_factor=16, width_division_factor=16,
         num_frames=81, time_division_factor=4, time_division_remainder=1,
-        crop_size_h=None, crop_size_w=None, 
+        crop_size_h=None, crop_size_w=None,
         crf_aug=None,
         split = "train",
+        ev=4,
     ):
         return RouteByType(operator_map=[(str, ToAbsolutePath(base_path) >> RouteByExtensionName(operator_map=[
                 (("hdr", "exr"), LoadHDRVideo(
                     num_frames, time_division_factor, time_division_remainder,
                     frame_processor=ImageCropAndResize(height, width, max_pixels, height_division_factor, width_division_factor, crop_size_h=crop_size_h, crop_size_w=crop_size_w),
-                    crf_aug=crf_aug, split = split
+                    crf_aug=crf_aug, split = split, ev=ev,
                 )),
             ]))
         ])

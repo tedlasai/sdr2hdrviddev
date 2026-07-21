@@ -2,8 +2,6 @@ from collections import deque
 import numpy as np
 import torch
 
-DEPENDENCY = {+8: +4, -8: -4, -12: -8, 12: +8, 0: 0, -16: -12, +16: +12}  # others have no dependency
-BASE_EXPOSURE = (0,-4,+4) #also will generate +4 and -4 as base exposures
 FIRST_CHUNK = 5 # latent frames
 NEXT_CHUNK = 3 # latent frames
 TEMPORAL_STRIDE = 4
@@ -60,11 +58,18 @@ class ValScheduler:
         num_frames = condition_video.shape[0]
         # ==============================================================================
 
+        # Derive the base EV step size from the exposures actually requested,
+        # instead of assuming a fixed +/-4 stop bracket. Extended exposures
+        # (e.g. +/-8, +/-12) are multiples of this base step.
+        self.ev = min(abs(e) for e in exposures if e != 0)
+        self.base_exposure = (0, -self.ev, +self.ev)
+        self.dependency = {e: self._compute_dependency(e) for e in exposures}
+
         self.condition_video = condition_video
         self.exposures = exposures
         self.num_frames = num_frames
         self.num_latents = num_latents
-        
+
         self.videos = None#create empty videos dict with correct shape once we know it from the first decoded latents 
         self.latents = None
         self.out_frames = None
@@ -80,11 +85,18 @@ class ValScheduler:
 
         self.latent_condition=True
 
+    def _compute_dependency(self, e):
+        # Base exposures (0, -ev, +ev) have no dependency. Anything further out
+        # (e.g. +/-2ev, +/-3ev) depends on the exposure one step closer to 0.
+        if e == 0 or abs(e) <= self.ev:
+            return None
+        return e - self.ev if e > 0 else e + self.ev
+
     def exposure_complete(self, e):
         return self.done_latents[e] >= self.num_latents
 
     def dependency_ready(self, e):
-        dep = DEPENDENCY.get(e, None)
+        dep = self.dependency.get(e, None)
         if dep is None:
             return True
         # You want conditioning latents for the same frame range, so dep must be at least as complete.
@@ -97,14 +109,15 @@ class ValScheduler:
 
     def pick_exposure(self):
         # 1) finish base exposures first
-        for e in BASE_EXPOSURE:
+        for e in self.base_exposure:
             if not (self.exposure_complete(e)) and self.dependency_ready(e):
                 return e
 
-        # 2) then generate +8 / -8 when their deps exist
-
-        #grab +8 or -8 if in self.exposures
-        larger_exps = [e for e in (+8, -8, +12, -12) if e in self.exposures]
+        # 2) then generate the more extreme exposures (+/-2ev, +/-3ev, ...) once their deps exist
+        larger_exps = sorted(
+            (e for e in self.exposures if e not in self.base_exposure),
+            key=abs,
+        )
         for e in larger_exps:
             if (not self.exposure_complete(e)) and self.dependency_ready(e):
                 return e
@@ -125,8 +138,8 @@ class ValScheduler:
 
         temporal_mode = "" if l_start == 0 else "_extend"
 
-        # Conditioning for +8/-8 from +4/-4
-        cond_exposure = DEPENDENCY.get(e, None)
+        # Conditioning for +2ev/-2ev from +ev/-ev (and so on for further exposures)
+        cond_exposure = 0
 
         # # if cond_exposure is not None:
         # #     if self.latent_condition:
@@ -152,21 +165,21 @@ class ValScheduler:
                 alpha = 0
                 noise = torch.randn_like(self.latents[cond_exposure][:, max(0, l_start - PREV_LATENT_FRAMES):l_start]) * alpha
                 prev_frames_base = self.latents[cond_exposure][:, max(0, l_start - PREV_LATENT_FRAMES):l_start] + noise
-                prev_frames_down = self.latents[cond_exposure-4][:, max(0, l_start - PREV_LATENT_FRAMES):l_start] + noise
-                prev_frames_up = self.latents[cond_exposure+4][:, max(0, l_start - PREV_LATENT_FRAMES):l_start] + noise
+                prev_frames_down = self.latents[cond_exposure-self.ev][:, max(0, l_start - PREV_LATENT_FRAMES):l_start] + noise
+                prev_frames_up = self.latents[cond_exposure+self.ev][:, max(0, l_start - PREV_LATENT_FRAMES):l_start] + noise
 
                 # video_latents = video_latents[:, :, 0:5]
                 # prev_frames_base = self.latents[cond_exposure][:, 0:2]
-                # prev_frames_down = self.latents[cond_exposure-4][:, 0:2]
-                # prev_frames_up = self.latents[cond_exposure+4][:, 0:2]
+                # prev_frames_down = self.latents[cond_exposure-self.ev][:, 0:2]
+                # prev_frames_up = self.latents[cond_exposure+self.ev][:, 0:2]
             else:
                 if cond_exposure == 0:
                     prev_frames_base = self.videos[cond_exposure][:, :, max(0, f_start - PREV_FRAMES):f_start]
                 else:
                     prev_frames_base = self.videos[cond_exposure][:, :, f_start- PREV_FRAMES:f_end]
                 prev_frames_base = self.pipe.vae.encode(self.pipe.preprocess_video(prev_frames_base[0].permute(1,2,3,0).cpu().float().numpy()*255), device=self.pipe.device, tiled=self.tiled, tile_size=self.tile_size, tile_stride=self.tile_stride).to(dtype=self.pipe.torch_dtype, device=self.pipe.device)
-                prev_frames_down = self.videos[cond_exposure-4][:, :, max(0, f_start - PREV_FRAMES):f_start]
-                prev_frames_up = self.videos[cond_exposure+4][:, :, max(0, f_start - PREV_FRAMES):f_start]
+                prev_frames_down = self.videos[cond_exposure-self.ev][:, :, max(0, f_start - PREV_FRAMES):f_start]
+                prev_frames_up = self.videos[cond_exposure+self.ev][:, :, max(0, f_start - PREV_FRAMES):f_start]
                 prev_frames_down  = self.pipe.vae.encode(self.pipe.preprocess_video(prev_frames_down[0].permute(1,2,3,0).cpu().float().numpy()*255), device=self.pipe.device, tiled=self.tiled, tile_size=self.tile_size, tile_stride=self.tile_stride).to(dtype=self.pipe.torch_dtype, device=self.pipe.device)
                 prev_frames_up   = self.pipe.vae.encode(self.pipe.preprocess_video(prev_frames_up[0].permute(1,2,3,0).cpu().float().numpy()*255), device=self.pipe.device, tiled=self.tiled, tile_size=self.tile_size, tile_stride=self.tile_stride).to(dtype=self.pipe.torch_dtype, device=self.pipe.device)
 
@@ -178,7 +191,7 @@ class ValScheduler:
             "video_segment": self.condition_video[f_start-PREV_FRAMES:f_end] if temporal_mode == "_extend" else self.condition_video[f_start:f_end],
             "video_latents": video_latents,
             "cond_exposure": cond_exposure,
-            "generating_exposures": (e, e-4, e+4) if cond_exposure == 0 else (e,),
+            "generating_exposures": (e, e-self.ev, e+self.ev) if cond_exposure == 0 else (e,),
             "f_start": f_start,
             "f_end": f_end,
             "l_start": l_start,
@@ -207,16 +220,16 @@ class ValScheduler:
             self.videos[self.instruction["cond_exposure"]][:, :, self.instruction["f_start"]:self.instruction["f_end"]] = self.decode_latents(base_video)[:, :, - (self.instruction["f_end"]-self.instruction["f_start"]):]
 
 
-        if self.instruction["cond_exposure"]-4 in self.instruction["generating_exposures"]:
-            self.latents[self.instruction["cond_exposure"]-4][:, self.instruction["l_start"]:self.instruction["l_end"]] = low_video[:,:,-(self.instruction["l_end"]-self.instruction["l_start"]):]
-            self.done_latents[self.instruction["cond_exposure"]-4] = self.instruction["l_end"]
-            self.videos[self.instruction["cond_exposure"]-4][:, :, self.instruction["f_start"]:self.instruction["f_end"]] = self.decode_latents(low_video)[:, :, - (self.instruction["f_end"]-self.instruction["f_start"]):]
+        if self.instruction["cond_exposure"]-self.ev in self.instruction["generating_exposures"]:
+            self.latents[self.instruction["cond_exposure"]-self.ev][:, self.instruction["l_start"]:self.instruction["l_end"]] = low_video[:,:,-(self.instruction["l_end"]-self.instruction["l_start"]):]
+            self.done_latents[self.instruction["cond_exposure"]-self.ev] = self.instruction["l_end"]
+            self.videos[self.instruction["cond_exposure"]-self.ev][:, :, self.instruction["f_start"]:self.instruction["f_end"]] = self.decode_latents(low_video)[:, :, - (self.instruction["f_end"]-self.instruction["f_start"]):]
 
 
-        if self.instruction["cond_exposure"]+4 in self.instruction["generating_exposures"]:
-            self.latents[self.instruction["cond_exposure"]+4][:, self.instruction["l_start"]:self.instruction["l_end"]] = high_video[:,:,-(self.instruction["l_end"]-self.instruction["l_start"]):]
-            self.done_latents[self.instruction["cond_exposure"]+4] = self.instruction["l_end"]
-            self.videos[self.instruction["cond_exposure"]+4][:, :, self.instruction["f_start"]:self.instruction["f_end"]] = self.decode_latents(high_video)[:, :, - (self.instruction["f_end"]-self.instruction["f_start"]):]
+        if self.instruction["cond_exposure"]+self.ev in self.instruction["generating_exposures"]:
+            self.latents[self.instruction["cond_exposure"]+self.ev][:, self.instruction["l_start"]:self.instruction["l_end"]] = high_video[:,:,-(self.instruction["l_end"]-self.instruction["l_start"]):]
+            self.done_latents[self.instruction["cond_exposure"]+self.ev] = self.instruction["l_end"]
+            self.videos[self.instruction["cond_exposure"]+self.ev][:, :, self.instruction["f_start"]:self.instruction["f_end"]] = self.decode_latents(high_video)[:, :, - (self.instruction["f_end"]-self.instruction["f_start"]):]
 
     def create_latents(self, latents_shape, device, dtype):
         if self.latents is None:
@@ -287,7 +300,7 @@ class ValScheduler:
                 hdr_video = hdr_video[:, :, :-self.num_end_pad_frames]
         else:
             hdr_video = self.pipe.merge_decoder(videos_tensor, exposures, self.encoder_decoder_mode, mem_efficient=True)
-        combined_video = torch.cat([self.videos[0], self.videos[-4], self.videos[4]], dim=2)
+        combined_video = torch.cat([self.videos[0], self.videos[-self.ev], self.videos[self.ev]], dim=2)
         torch.cuda.empty_cache()
 
         outputs = {

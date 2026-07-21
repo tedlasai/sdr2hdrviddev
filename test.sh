@@ -10,4 +10,4 @@ export NCCL_IB_TIMEOUT=22
 export TORCH_NCCL_BLOCKING_WAIT=0
 
 # Training command
-accelerate launch test.py --config /data2/saikiran.tedla/hdrvideo/diff/diffsynth/configs/threeexposures_crffixed_test_val.yaml
+accelerate launch test.py --config /data2/saikiran.tedla/hdrvideo/diff/diffsynth/configs/threeexposures_crfchanging_test_val.yaml

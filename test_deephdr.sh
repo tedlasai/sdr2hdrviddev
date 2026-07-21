@@ -2,7 +2,7 @@
 
 # Environment variables
 export PYTHONPATH="/data2/saikiran.tedla/hdrvideo/diff:$PYTHONPATH"
-export CUDA_VISIBLE_DEVICES=0,1
+export CUDA_VISIBLE_DEVICES=4,5,6,7
 export OPENCV_IO_ENABLE_OPENEXR=1
 export NCCL_P2P_LEVEL=2
 export NCCL_P2P_DISABLE=1
@@ -11,4 +11,4 @@ export TORCH_NCCL_BLOCKING_WAIT=0
 
 # Test command
 accelerate launch test.py --config /data2/saikiran.tedla/hdrvideo/diff/diffsynth/configs/threeexposures_deephdr_test_val.yaml
-(cd /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4 && CUDA_VISIBLE_DEVICES=0,1 python compute_metrics_parallel.py stuttgart oursdeephdr auto --no-fvd)
+(cd /data2/saikiran.tedla/hdrvideo/diff/final_metrics_may_4 && CUDA_VISIBLE_DEVICES=0,1 python compute_metrics_parallel.py stuttgart oursdeephdr auto)

@@ -36,7 +36,6 @@ from examples.wanvideo.model_training.train import (
 )
 
 OUT_BASE = "figures/model_viz"
-GENERATE_EXPOSURES = (-4, 0, 4)
 
 
 # --------------------------------------------------------------------------- #
@@ -92,11 +91,11 @@ def save_turbo_colorbar(out_path, height=512, width=64):
     cv2.imwrite(out_path, colorbar)
 
 
-def save_ev_map_frames(ev_value, num_frames, height, width, out_dir):
+def save_ev_map_frames(ev_value, num_frames, height, width, out_dir, ev=4):
     """Saves solid-grey frames showing relative EV scale.
-    ev_value: EV stop (e.g. -4, 0, 4).  Maps linearly: -4→0, 0→0.5, 4→1."""
+    ev_value: EV stop (e.g. -ev, 0, ev).  Maps linearly: -ev→0, 0→0.5, +ev→1."""
     os.makedirs(out_dir, exist_ok=True)
-    brightness = np.clip((ev_value + 4) / 8.0, 0.0, 1.0)
+    brightness = np.clip((ev_value + ev) / (2.0 * ev), 0.0, 1.0)
     fill = int(round(brightness * 255))
     frame = np.full((height, width, 3), fill, dtype=np.uint8)
     for i in range(num_frames):
@@ -197,6 +196,9 @@ def extract_merge_intermediates(per_exp, sorted_evs, merge_decoder):
 # --------------------------------------------------------------------------- #
 
 def visualize(data, model, args):
+    ev = getattr(args, "ev", 4)
+    generate_exposures = (-ev, 0, ev)
+
     condition_video = data["input_video"]   # numpy (T, H, W, 3) float [0, 255]
 
     # ── 1. Input CRF frames ─────────────────────────────────────────────────
@@ -219,7 +221,7 @@ def visualize(data, model, args):
         cfg_scale=1.0,
         encoder_decoder_mode=model.encoder_decoder_mode,
         exposures=data["exposures"],
-        generate_exposures=GENERATE_EXPOSURES,
+        generate_exposures=generate_exposures,
         use_vae_ea=getattr(model, "use_vae_ea", False),
     )
 
@@ -231,48 +233,51 @@ def visualize(data, model, args):
 
     # Per-exposure LDR videos: trim padding to match HDR length
     per_exp = {
-        0:  combined[:, :, 0*T_per:1*T_per][:, :, :T_hdr],
-        -4: combined[:, :, 1*T_per:2*T_per][:, :, :T_hdr],
-        4:  combined[:, :, 2*T_per:3*T_per][:, :, :T_hdr],
+        0:   combined[:, :, 0*T_per:1*T_per][:, :, :T_hdr],
+        -ev: combined[:, :, 1*T_per:2*T_per][:, :, :T_hdr],
+        ev:  combined[:, :, 2*T_per:3*T_per][:, :, :T_hdr],
     }
 
     # ── 3. Multiexposure output frames ───────────────────────────────────────
-    for ev in GENERATE_EXPOSURES:
-        ev_str = f"ev{ev:+d}"
-        # per_exp[ev]: (1, 3, T, H, W) → permute to (T, H, W, 3)
+    for exposure in generate_exposures:
+        ev_str = f"ev{exposure:+d}"
+        # per_exp[exposure]: (1, 3, T, H, W) → permute to (T, H, W, 3)
         save_ldr_frames(
-            per_exp[ev][0].permute(1, 2, 3, 0),
+            per_exp[exposure][0].permute(1, 2, 3, 0),
             os.path.join(OUT_BASE, "multiexposure", ev_str),
         )
-    print(f"[viz] multiexposure: EVs {GENERATE_EXPOSURES}")
+    print(f"[viz] multiexposure: EVs {generate_exposures}")
 
     # ── 3b. EV maps (solid-colour scale reference) ───────────────────────────
     H, W = hdr_video.shape[3], hdr_video.shape[4]
-    for ev in GENERATE_EXPOSURES:
+    for exposure in generate_exposures:
         save_ev_map_frames(
-            ev, T_hdr, H, W,
-            os.path.join(OUT_BASE, "ev_maps", f"ev{ev:+d}"),
+            exposure, T_hdr, H, W,
+            os.path.join(OUT_BASE, "ev_maps", f"ev{exposure:+d}"),
+            ev=ev,
         )
-    print(f"[viz] ev_maps: EVs {GENERATE_EXPOSURES} (ev-4→black, ev0→mid-grey, ev+4→white)")
+    print(f"[viz] ev_maps: EVs {generate_exposures} (ev-{ev}→black, ev0→mid-grey, ev+{ev}→white)")
 
     # ── 4. Merge decoder intermediates ───────────────────────────────────────
-    sorted_evs = sorted(GENERATE_EXPOSURES)
+    sorted_evs = sorted(generate_exposures)
     ldr_dict, radiance_dict, weights_dict, out_radiance = extract_merge_intermediates(
         per_exp, sorted_evs, model.pipe.merge_decoder
     )
 
-    for ev in sorted_evs:
-        ev_str = f"ev{ev:+d}"
+    radiance_scale = 2.0 ** ev  # ldr=1 at ev-{ev} gives 1*2^ev
+    for exposure in sorted_evs:
+        ev_str = f"ev{exposure:+d}"
         save_ldr_frames(
-            ldr_dict[ev].permute(1, 2, 3, 0),
+            ldr_dict[exposure].permute(1, 2, 3, 0),
             os.path.join(OUT_BASE, "merging", "ldr", ev_str),
         )
         save_radiance_frames(
-            radiance_dict[ev].permute(1, 2, 3, 0),
+            radiance_dict[exposure].permute(1, 2, 3, 0),
             os.path.join(OUT_BASE, "merging", "radiance", ev_str),
+            scale=radiance_scale,
         )
         save_weight_frames(
-            weights_dict[ev],
+            weights_dict[exposure],
             os.path.join(OUT_BASE, "merging", "ev_weights", ev_str),
         )
     save_turbo_colorbar(os.path.join(OUT_BASE, "merging", "ev_weights_colorbar.png"))
@@ -281,6 +286,7 @@ def visualize(data, model, args):
     save_radiance_frames(
         hdr_video[0].permute(1, 2, 3, 0),
         os.path.join(OUT_BASE, "merging", "output_radiance"),
+        scale=radiance_scale,
     )
     print("[viz] merging/output_radiance")
 

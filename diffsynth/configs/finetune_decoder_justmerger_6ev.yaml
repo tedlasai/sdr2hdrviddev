@@ -1,6 +1,6 @@
-name: "finetune_decoder_mergeragain"
+name: "finetune_decoder_justmerger_6ev"
 encode_decoder_mode: "pixel" # baseline: decode each exposure, then merge in pixel/radiance space (was "seperate_train")
-output_path: "/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_mergeragain"
+output_path: "/data2/saikiran.tedla/hdrvideo/diff/models/train/finetune_decoder_justmerger_6ev"
 dataset_base_path: "/data2/saikiran.tedla/hdrvideo/diff/data/stuttgart" # Base path of the dataset
 dataset_metadata_path: null
 max_pixels: 921600
@@ -9,7 +9,7 @@ width: 1280
 crop_size_w: 128
 crop_size_h: 128
 num_frames: 15
-ev: 4 # magnitude of the +/- exposure brackets (in stops) generated from each HDR frame
+ev: 6 # magnitude of the +/- exposure brackets (in stops) generated from each HDR frame
 data_file_keys: "image,video"
 dataset_repeat: 1
 model_paths: null #"[\"/data2/saikiran.tedla/hdrvideo/diff/models/train/Wan2.2-TI2V-5B_full/epoch-0.safetensors\"]" # Paths to load models. In JSON format.

@@ -286,6 +286,7 @@ def ours_worker(jobs, gpu_id):
 
     frame_processor = ImageCropAndResize(args.height, args.width, args.height * args.width, 16, 16)
     loader = LoadPNGVideo(num_frames=17, frame_processor=frame_processor)
+    ev = getattr(args, 'ev', 4)
 
     for name, input_dir, output_dir in jobs:
         if is_done(output_dir):
@@ -305,7 +306,7 @@ def ours_worker(jobs, gpu_id):
                 seed=1, tiled=False, cfg_scale=1.0,
                 encoder_decoder_mode=model.encoder_decoder_mode,
                 exposures=data['exposures'],
-                generate_exposures=(-4, 0, 4),
+                generate_exposures=(-ev, 0, ev),
                 use_vae_ea=model.use_vae_ea,
             )
 

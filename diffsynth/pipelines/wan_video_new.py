@@ -595,12 +595,13 @@ class WanVideoPipeline(BasePipeline):
         return inputs_shared
 
     
-    def decode_latents_hdr_merge(self, latents, encoder_decoder_mode, exposures, tiled=True, tile_size=(30, 52), tile_stride=(15, 26), device="cpu"):
+    def decode_latents_hdr_merge(self, latents, encoder_decoder_mode, exposures, tiled=True, tile_size=(30, 52), tile_stride=(15, 26), device="cpu", ev=4):
+        # `exposures` here are normalized by the dataset (divided by `ev`); rescale back to raw EV stops for the merge decoder.
         num_latents = latents.shape[1]
         assert num_latents % len(exposures) == 0, f"num_latents {num_latents} must be divisible by exposures {len(exposures)}"
 
         if encoder_decoder_mode == "latent":
-            merged_latents = self.merge_decoder(latents, exposures * 4)
+            merged_latents = self.merge_decoder(latents, exposures * ev)
             log_hdr = self.vae.decode(merged_latents, device=self.device, tiled=tiled, tile_size=tile_size, tile_stride=tile_stride).to(dtype=torch.float32, device=device)
             hdr_video = torch.exp(log_hdr.clamp(min=-20, max=20))  # decoder predicts log-HDR; clamp guards against exp() overflow
             return {"hdr_video": hdr_video}
@@ -613,10 +614,10 @@ class WanVideoPipeline(BasePipeline):
 
         if encoder_decoder_mode == "deephdr":
             hdr_video, hdr_video_compressed = self.merge_decoder(
-                videos, exposures*4, encoder_decoder_mode, mem_efficient=True, return_compressed=True
+                videos, exposures*ev, encoder_decoder_mode, mem_efficient=True, return_compressed=True
             )
         else:
-            hdr_video = self.merge_decoder(videos, exposures*4, encoder_decoder_mode, mem_efficient=True)
+            hdr_video = self.merge_decoder(videos, exposures*ev, encoder_decoder_mode, mem_efficient=True)
         combined_video = torch.cat(videos, dim=2)
         outputs = {"hdr_video": hdr_video}
         if encoder_decoder_mode == "deephdr":
