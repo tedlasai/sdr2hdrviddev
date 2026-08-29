@@ -426,7 +426,8 @@ class ModelManager:
         elif os.path.isfile(file_path):
             state_dict = load_state_dict(file_path)
         else:
-            state_dict = None
+            print(f"    File not found, skipping: {file_path}")
+            return
         for model_detector in self.model_detector:
             if model_detector.match(file_path, state_dict):
                 model_names, models = model_detector.load(

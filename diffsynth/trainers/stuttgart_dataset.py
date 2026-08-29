@@ -250,7 +250,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
                                 (same order as exposures).
     """
 
-    if crf_aug == "random":
+    if crf_aug in ("random", "flexible_bracket"):
         #modes = ["crf", "nocrf"] #for 10 epochs
 
         modes = ["crf"]#,"crf_extend"]#  "nocrf","nocrf_extend"] #for last 10 epochs
@@ -292,6 +292,9 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
                     center = np.random.uniform(min_exposure, max_exposure)
                 else:
                     center = (min_exposure + max_exposure)//2 #this shouldn't be reached that often
+            elif crf_aug == "flexible_bracket":
+                # pick center so the brightest pixel in the top (+ev) bracket lands at 0.9
+                center = np.log2(0.9) - np.log2(max_value) - ev
             else:
                 center = max_in_exposure
                 #center = 0
@@ -329,7 +332,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
         all_brackets.append(ldr_images)
 
         if i== 0:
-            if crf_aug == "random":
+            if crf_aug in ("random", "flexible_bracket"):
                 # Randomly gamma
                 n = np.random.normal(0.9, 0.1)
                 sigma = np.random.normal(0.6, 0.1)
@@ -346,7 +349,7 @@ def make_exposure_brackets(hdr_paths, frame_processor, exposures=[0,-4, 4], crf_
         mid_exposure = exposures[0]
         radiance = np.clip((hdr_in * (2.0 ** mid_exposure)), 0.0, 1.0)
 
-        if crf_aug == "random":
+        if crf_aug in ("random", "flexible_bracket"):
             noise_std = np.sqrt((sigma_s**2) * radiance + (sigma_r ** 2))
             u_t = np.random.normal(0.0, 1.0, radiance.shape)
             if prev_noise is None:

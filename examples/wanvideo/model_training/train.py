@@ -210,6 +210,7 @@ if __name__ == "__main__":
     args = set_load_paths(args)
 
     ev = getattr(args, "ev", 4)
+    crf_aug = getattr(args, "crf_aug", "random")
 
     dataset = StuttgartDataset(
         base_path=args.dataset_base_path,
@@ -224,7 +225,7 @@ if __name__ == "__main__":
             num_frames=args.num_frames,
             time_division_factor=4,
             time_division_remainder=1,
-            crf_aug="random",
+            crf_aug=crf_aug,
             ev=ev,
         ),
         mode="hdr_and_brackets",

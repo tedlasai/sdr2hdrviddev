@@ -22,4 +22,4 @@ wandb
 /final_metrics_may_4_eval_output/
 /genvideos
 /tmp*
-/data
+/datasensitivity_analysis_logs/

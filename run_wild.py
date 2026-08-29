@@ -15,7 +15,7 @@ LEDIFF_ROOT = os.path.join(BASE_DIR, 'lediff')
 LEDIFF_HIGHLIGHT_MODEL = os.path.join(BASE_DIR, 'lediff', 'model_highlight')
 LEDIFF_SHADOW_MODEL = os.path.join(BASE_DIR, 'lediff', 'model_shadow')
 DIFF_DIR = os.path.join(BASE_DIR, 'diff')
-OURS_CONFIG = os.path.join(BASE_DIR, 'diff', 'diffsynth', 'configs', 'threeexposures_crffixed_test_val.yaml')
+OURS_CONFIG = os.path.join(BASE_DIR, 'diff', 'diffsynth', 'configs', 'threeexposures_crfchanging_test_val.yaml')
 LTX2_DIR       = os.path.join(BASE_DIR, 'LTX-2')
 LTX2_DISTILLED = os.path.join(LTX2_DIR, 'models', 'ltx-2.3-22b-distilled-1.1.safetensors')
 LTX2_UPSAMPLER = os.path.join(LTX2_DIR, 'models', 'ltx-2.3-spatial-upscaler-x2-1.1.safetensors')
@@ -412,7 +412,10 @@ def gpu_worker(gpu_id, video_chunk):
         if not pending:
             print(f'[GPU {gpu_id}] {method}: all done, skipping')
             return
-        worker_fn(pending, gpu_id)
+        try:
+            worker_fn(pending, gpu_id)
+        except Exception as e:
+            print(f'[FAIL GPU {gpu_id}] {method}: {e}')
 
     run_if_needed(ours_worker, 'ours')
     run_if_needed(lumivid_worker, 'lumivid')
